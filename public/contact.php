@@ -2,9 +2,9 @@
 /**
  * Contact form handler for GoDaddy shared hosting (static export, Option B).
  * Set NEXT_PUBLIC_FORM_ENDPOINT=/contact.php before `npm run build`.
- * Edit the three settings below on the server.
+ * Edit the three settings below on the server (or set them as server environment variables).
  */
-$CONTACT_TO_EMAIL   = 'a.dar4166@gmail.com';
+$CONTACT_TO_EMAIL   = getenv('CONTACT_TO_EMAIL') ?: ''; // TODO: the inbox that receives enquiries
 $CONTACT_FROM_EMAIL = 'no-reply@vasay.ai';   // must be a mailbox on your domain
 $GHL_WEBHOOK_URL    = '';                    // optional GoHighLevel inbound webhook
 
@@ -14,6 +14,10 @@ function respond($code, $data) {
     http_response_code($code);
     echo json_encode($data);
     exit;
+}
+
+if ($CONTACT_TO_EMAIL === '') {
+    respond(500, ['ok' => false, 'error' => 'The contact form is not configured yet. Please call us instead.']);
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
