@@ -133,7 +133,7 @@ export default function Navbar() {
           }`}
           onMouseLeave={closeMega}
         >
-          <Logo variant={solid ? "light" : "dark"} crossfade priority className="h-10 sm:h-11 lg:h-[52px]" />
+          <Logo variant={solid ? "light" : "dark"} crossfade priority className="h-11 lg:h-[52px]" />
 
           <nav aria-label="Main" className="hidden lg:block">
             <ul className="flex items-center gap-1">

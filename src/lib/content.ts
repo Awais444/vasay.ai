@@ -76,6 +76,8 @@ export const hero = {
   trustShort: "Google / Meta / TikTok",
   lines: ["Smarter marketing.", "Real business", "growth."],
   sub: "One team for your brand, website, content, ads and automation, built to work together so every dollar you spend turns into attention, leads and booked revenue.",
+  /** Shorter version for phones (under 640px). */
+  subShort: "One team for your brand, website, ads and automation, built to turn attention into booked revenue.",
   primaryCta: { label: "Book a free strategy call", href: "#contact" },
   secondaryCta: { label: "See what we do", href: "#services" },
   checks: ["15+ years in the game", "No hidden fees", "Unlimited revisions"],

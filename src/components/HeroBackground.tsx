@@ -49,10 +49,11 @@ export default function HeroBackground({ ringsClassName = "top-[330px] sm:top-[3
         <div className="absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 sm:h-[560px] sm:w-[560px]" />
         <div className="absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/15 sm:h-[820px] sm:w-[820px]" />
         <div className="absolute left-1/2 top-1/2 h-[760px] w-[760px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.07] sm:h-[1080px] sm:w-[1080px]" />
-        <div className="orbit absolute left-1/2 top-1/2 h-[760px] w-[760px] -translate-x-1/2 -translate-y-1/2 sm:h-[1080px] sm:w-[1080px]">
+        {/* Orbiting star and dot: ≥768px only (on phones the dot crossed the CTA buttons). */}
+        <div className="orbit absolute left-1/2 top-1/2 hidden h-[760px] w-[760px] -translate-x-1/2 -translate-y-1/2 sm:h-[1080px] sm:w-[1080px] md:block">
           <Star size={22} className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 text-brand-orange drop-shadow-[0_0_12px_rgb(255_112_1/0.9)]" />
         </div>
-        <div className="orbit-rev absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 sm:h-[560px] sm:w-[560px]">
+        <div className="orbit-rev absolute left-1/2 top-1/2 hidden h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 sm:h-[560px] sm:w-[560px] md:block">
           <span className="absolute bottom-0 left-1/2 h-2 w-2 -translate-x-1/2 translate-y-1/2 rounded-full bg-white shadow-[0_0_10px_white]" />
         </div>
       </div>

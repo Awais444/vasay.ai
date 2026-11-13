@@ -121,7 +121,7 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      <div className="hero-content mx-auto w-full max-w-7xl px-5 py-4 text-center sm:px-6">
+      <div className="hero-content relative z-10 mx-auto w-full max-w-7xl px-5 pb-7 pt-4 text-center sm:px-6 sm:py-4">
         <p className="hero-fade mx-auto inline-flex max-w-full items-center gap-2 rounded-full bg-white/10 py-1.5 pl-1.5 pr-4 text-[13px] ring-1 ring-white/20 backdrop-blur sm:text-sm">
           <span className="shrink-0 rounded-full bg-brand-orange px-2.5 py-1 font-semibold text-white">{hero.badge}</span>
           <span className="truncate text-white/90 sm:hidden">{hero.trustShort}</span>
@@ -137,7 +137,10 @@ export default function Hero() {
           ))}
         </h1>
 
-        <p className={`hero-fade hero-sub mx-auto ${gap} text-white/85`}>{hero.sub}</p>
+        <p className={`hero-fade hero-sub mx-auto ${gap} text-white/85`}>
+          <span className="sm:hidden">{hero.subShort}</span>
+          <span className="hidden sm:inline">{hero.sub}</span>
+        </p>
 
         <div className={`hero-fade ${gap} flex flex-col items-center justify-center gap-3 sm:flex-row`}>
           <a

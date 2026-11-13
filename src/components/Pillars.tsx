@@ -23,7 +23,7 @@ export default function Pillars() {
     <section
       id="intro"
       aria-labelledby="pillars-title"
-      className="relative z-10 -mt-10 rounded-t-[40px] bg-white py-[clamp(90px,10vw,120px)] tone-white"
+      className="relative z-10 -mt-7 rounded-t-[28px] bg-white sm:-mt-10 sm:rounded-t-[40px] py-[clamp(90px,10vw,120px)] tone-white"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
         {/* Header: heading left, supporting text bottom-right */}

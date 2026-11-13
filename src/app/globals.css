@@ -239,7 +239,7 @@ main:focus { outline: none; }
   display: grid;
   /* [navbar spacer] [content] [scroll cue] [services marquee] */
   grid-template-rows: var(--nav-h) 1fr auto auto;
-  /* The next section overlaps the hero's last 40px (rounded corners), so the marquee always sits above it. */
+  /* The next section overlaps the hero's last 40px (28px on phones), so the marquee always sits above it. */
   padding-bottom: 40px;
 }
 .hero-content { align-self: center; }
@@ -300,5 +300,6 @@ main:focus { outline: none; }
 @media (max-width: 639px) {
   :root { --section-y: clamp(56px, 14vw, 80px); }
   .hero-h1 { font-size: clamp(36px, 11vw, 52px); line-height: 0.95; }
-  .hero-sub { font-size: 16px; max-width: 100%; }
+  .hero-sub { font-size: 16px; line-height: 1.55; max-width: 100%; }
+  .hero-screen { padding-bottom: 28px; }
 }
