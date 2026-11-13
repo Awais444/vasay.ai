@@ -11,7 +11,7 @@ export default function Footer() {
     <footer className="relative overflow-clip bg-brand-black pt-20 text-white">
       <div className="mx-auto grid max-w-7xl gap-12 border-t border-white/10 px-4 pt-14 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.3fr_1.2fr_0.8fr_0.8fr]">
         <div>
-          <Logo variant="dark" className="h-14" />
+          <Logo variant="dark" className="h-20 sm:h-24" />
           <p className="mt-5 max-w-xs text-white/75">{site.tagline}</p>
           <div className="mt-6 space-y-1 text-sm text-white/75">
             <a href={site.phoneHref} className="block font-semibold text-white hover:text-brand-orange">
