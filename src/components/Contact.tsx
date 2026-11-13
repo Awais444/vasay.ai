@@ -112,7 +112,7 @@ export default function Contact({
         <div className="absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-accent/50 blur-[140px]" />
         <div className="absolute -right-40 bottom-0 h-[420px] w-[420px] rounded-full bg-brand-orange/30 blur-[140px]" />
       </div>
-      <div className="mx-auto grid max-w-7xl gap-14 px-4 sm:px-6 lg:grid-cols-[1fr_1.15fr]">
+      <div className="mx-auto grid max-w-7xl gap-14 px-5 sm:px-6 lg:grid-cols-[1fr_1.15fr]">
         {/* Pin the shorter column: the left one normally; the form when an `aside` makes the left column taller (/contact). */}
         <div className={aside ? "" : "contact-pin"}>
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-white/75">{contact.eyebrow}</p>

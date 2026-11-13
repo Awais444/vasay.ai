@@ -63,7 +63,8 @@ export function Heading({
 export const reveal = {
   initial: { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
+  // Starts when ~10% of the element is in view; `once` so it can never get stuck half-faded.
+  viewport: { once: true, amount: 0.1, margin: "0px 0px -10% 0px" },
   transition: { duration: 0.9, ease },
 };
 
@@ -86,7 +87,7 @@ export function Stats({
           v: end,
           duration: 2,
           ease: "expo.out",
-          scrollTrigger: { trigger: el, start: "top 85%", once: true },
+          scrollTrigger: { trigger: el, start: "top 90%", once: true },
           onUpdate: () => (el.textContent = Math.round(obj.v).toString()),
         });
       });
@@ -119,17 +120,17 @@ export function Stats({
           : "section-y tone-light"
       }
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-[var(--radius-card)] border border-brand-silver bg-white p-8">
-            <p className="font-display text-6xl font-semibold tracking-[-0.05em] text-accent sm:text-7xl">
+          <div key={s.label} className="rounded-[18px] border border-brand-silver bg-white p-3.5 sm:rounded-[var(--radius-card)] sm:p-8">
+            <p className="font-display text-[clamp(28px,9vw,40px)] font-semibold leading-none tracking-[-0.05em] text-accent sm:text-7xl">
               <span className="count" data-end={s.value}>
                 {s.value}
               </span>
               <span className="text-brand-orange">{s.suffix}</span>
             </p>
-            <p className="mt-3 text-ink-2">{s.label}</p>
+            <p className="mt-2 text-[13px] leading-snug text-ink-2 sm:mt-3 sm:text-base">{s.label}</p>
           </div>
         ))}
       </div>
@@ -152,7 +153,7 @@ export function Services() {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <section id="services" className="bg-white section-y tone-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6">
         <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:items-end">
           <Heading {...servicesSection} />
           <p className="text-lg text-ink-2">{servicesSection.intro}</p>
@@ -229,7 +230,7 @@ export function Services() {
 const whyIcons = ["◎", "▤", "$", "✦"];
 export function WhyUs() {
   return (
-    <section aria-labelledby="why" className="mx-auto max-w-7xl px-4 sm:px-6 section-y tone-light">
+    <section aria-labelledby="why" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <div className="grid gap-12 lg:grid-cols-[1fr_1.3fr]">
         <div className="lg:sticky lg:top-32 lg:self-start">
           <Heading eyebrow={whyUs.eyebrow} title={whyUs.title} accent={whyUs.accent} />
@@ -351,7 +352,7 @@ export function Process() {
 
   return (
     <section id="process" ref={root} className="bg-brand-black text-white section-y">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6">
         <motion.div {...reveal}>
           <Heading eyebrow={process.eyebrow} title={process.title} accent={process.accent} dark />
         </motion.div>
@@ -568,7 +569,7 @@ function WorkCard({ item, index }: { item: (typeof work)[number]; index: number 
 
 export function Work() {
   return (
-    <section id="work" className="mx-auto max-w-7xl px-4 sm:px-6 section-y tone-light">
+    <section id="work" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <Heading {...workSection} />
       <div className="mt-16 grid gap-x-8 gap-y-14 md:grid-cols-2">
         {work.map((w, i) => (
@@ -593,7 +594,7 @@ function TRow({ items, reverse }: { items: typeof visibleTestimonials; reverse?:
             <div className="flex items-center justify-between gap-3">
               <div className="text-brand-orange" aria-label="5 stars">★★★★★</div>
               {showPlaceholderLabel && !t.approved && (
-                <span className="rounded-full border border-dashed border-brand-orange/70 bg-brand-orange/10 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-[0.12em] text-brand-orange">
+                <span className="rounded-full border border-dashed border-brand-orange/70 bg-brand-orange/10 px-2.5 py-0.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-brand-orange">
                   Placeholder
                 </span>
               )}
@@ -614,7 +615,7 @@ export function Testimonials() {
   const half = Math.ceil(visibleTestimonials.length / 2);
   return (
     <section aria-label="Testimonials" className="bg-brand-black text-white section-y">
-      <Heading {...testimonialsSection} dark className="mx-auto max-w-7xl px-4 sm:px-6" />
+      <Heading {...testimonialsSection} dark className="mx-auto max-w-7xl px-5 sm:px-6" />
       <div className="mt-16 space-y-4">
         <TRow items={visibleTestimonials.slice(0, half)} />
         <TRow items={visibleTestimonials.slice(half)} reverse />
@@ -626,7 +627,7 @@ export function Testimonials() {
 /* ---------- 7. Team ---------- */
 export function Team() {
   return (
-    <section id="team" className="mx-auto max-w-7xl px-4 sm:px-6 section-y tone-light">
+    <section id="team" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <Heading {...teamSection} />
       <ul className="mt-16 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         {team.map((m, i) => (
@@ -705,7 +706,7 @@ export function Faq({
       id={id}
       className={`bg-white section-y tone-white ${overlap ? "relative z-10 -mt-10 rounded-t-[40px]" : ""}`}
     >
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:items-start">
+      <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:items-start">
         {/* Left column: sticky on desktop. The pin ends naturally where the grid (the questions) ends. */}
         <div className="lg:sticky lg:top-[calc(var(--nav-h)+40px)]">
           <Heading eyebrow={heading.eyebrow} title={heading.title} accent={heading.accent} />

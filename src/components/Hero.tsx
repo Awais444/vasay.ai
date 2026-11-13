@@ -121,10 +121,11 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      <div className="hero-content mx-auto w-full max-w-7xl px-4 py-4 text-center sm:px-6">
+      <div className="hero-content mx-auto w-full max-w-7xl px-5 py-4 text-center sm:px-6">
         <p className="hero-fade mx-auto inline-flex max-w-full items-center gap-2 rounded-full bg-white/10 py-1.5 pl-1.5 pr-4 text-[13px] ring-1 ring-white/20 backdrop-blur sm:text-sm">
           <span className="shrink-0 rounded-full bg-brand-orange px-2.5 py-1 font-semibold text-white">{hero.badge}</span>
-          <span className="truncate text-white/90">{hero.trust}</span>
+          <span className="truncate text-white/90 sm:hidden">{hero.trustShort}</span>
+          <span className="hidden truncate text-white/90 sm:inline">{hero.trust}</span>
         </p>
 
         {/* Size follows both width and height so it fits one screen. */}
@@ -141,23 +142,23 @@ export default function Hero() {
         <div className={`hero-fade ${gap} flex flex-col items-center justify-center gap-3 sm:flex-row`}>
           <a
             href={hero.primaryCta.href}
-            className="group inline-flex items-center gap-3 rounded-full bg-white py-1.5 pl-6 pr-1.5 font-semibold text-accent shadow-[0_10px_40px_rgb(0_0_0/0.15)] transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-0.5"
+            className="group inline-flex w-full max-w-[360px] items-center justify-between gap-3 rounded-full bg-white py-1.5 pl-6 pr-1.5 font-semibold text-accent sm:w-auto sm:justify-center shadow-[0_10px_40px_rgb(0_0_0/0.15)] transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-0.5"
           >
             {hero.primaryCta.label}
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-orange text-white">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-orange text-white">
               <ButtonArrow dir="up-right" />
             </span>
           </a>
           <a
             href={hero.secondaryCta.href}
-            className={`hero-btn ${arrowLink} rounded-full px-6 font-semibold ring-1 ring-white/40 transition-colors duration-300 hover:bg-white/10`}
+            className={`hero-btn ${arrowLink} w-full max-w-[360px] justify-center rounded-full px-6 font-semibold ring-1 sm:w-auto ring-white/40 transition-colors duration-300 hover:bg-white/10`}
           >
             {hero.secondaryCta.label}
             <ButtonArrow />
           </a>
         </div>
 
-        <ul className={`hero-fade ${gap} flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/85`}>
+        <ul className={`hero-fade ${gap} flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-white/85 sm:gap-x-6`}>
           {hero.checks.map((c) => (
             <li key={c} className="flex items-center gap-2">
               <Check />

@@ -84,7 +84,7 @@ function ProblemIcon({ name }: { name: ProblemIconName }) {
 
 export function Problems({ items }: { items: Service["problems"] }) {
   return (
-    <section aria-labelledby="problems" className="mx-auto max-w-7xl px-4 sm:px-6 section-y tone-light">
+    <section aria-labelledby="problems" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <Heading eyebrow="The problem" title="Sound" accent="familiar?" />
       <div className="mt-14 grid gap-4 md:grid-cols-3">
         {items.map((p, i) => (
@@ -116,7 +116,7 @@ export function Problems({ items }: { items: Service["problems"] }) {
 export function Included({ items, title }: { items: Service["included"]; title: string }) {
   return (
     <section id="included" className="bg-white section-y tone-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6">
         <Heading eyebrow={title} title="What's" accent="included." />
         <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((it, i) => (
@@ -151,7 +151,7 @@ function Tick() {
 
 export function Deliverables({ service }: { service: Service }) {
   return (
-    <section aria-label="Deliverables" className="mx-auto max-w-7xl px-4 sm:px-6 section-y tone-light">
+    <section aria-label="Deliverables" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr]">
         <div>
           <Heading eyebrow="Deliverables" title="What you" accent="walk away with." />
@@ -209,7 +209,7 @@ export function Timeline({ steps }: { steps: Service["process"] }) {
   );
   return (
     <section ref={root} aria-label="How it works" className="bg-accent-deep text-white section-y">
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.3fr]">
+      <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-6 lg:grid-cols-[1fr_1.3fr]">
         <div className="lg:sticky lg:top-32 lg:self-start">
           <Heading eyebrow="How it works" title="Four steps," accent="no surprises." dark />
         </div>
@@ -234,7 +234,7 @@ export function Timeline({ steps }: { steps: Service["process"] }) {
 
 export function Related({ items }: { items: Pick<Service, "slug" | "title" | "tag" | "description">[] }) {
   return (
-    <section aria-label="Related services" className="mx-auto max-w-7xl px-4 sm:px-6 section-y tone-light">
+    <section aria-label="Related services" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
         <Heading eyebrow="Related services" title="Works even better" accent="together." />
         <Link href="/services" className={`${arrowLink} shrink-0 font-semibold text-accent hover:text-accent-bright`}>

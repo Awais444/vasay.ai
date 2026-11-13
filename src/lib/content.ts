@@ -72,6 +72,8 @@ export const nav = {
 export const hero = {
   badge: "15+ yrs",
   trust: "Growing brands on Google / Meta / TikTok / Instagram / LinkedIn",
+  /** Shorter version for phones. */
+  trustShort: "Google / Meta / TikTok",
   lines: ["Smarter marketing.", "Real business", "growth."],
   sub: "One team for your brand, website, content, ads and automation, built to work together so every dollar you spend turns into attention, leads and booked revenue.",
   primaryCta: { label: "Book a free strategy call", href: "#contact" },

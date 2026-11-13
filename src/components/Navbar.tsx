@@ -128,7 +128,7 @@ export default function Navbar() {
         <div
           className={`relative mx-auto flex max-w-7xl items-center justify-between rounded-full py-2 pl-4 pr-2 lg:py-1 transition-[background-color,box-shadow,color] duration-300 sm:pl-5 ${
             solid
-              ? "bg-white/[0.92] text-brand-black shadow-[0_6px_24px_rgb(20_19_23/0.10)] ring-1 ring-brand-black/[0.06] backdrop-blur-[16px]"
+              ? "bg-white/[0.96] text-brand-black shadow-[0_6px_24px_rgb(20_19_23/0.10)] ring-1 ring-brand-black/[0.06] backdrop-blur-[16px]"
               : "bg-transparent text-white ring-1 ring-transparent"
           }`}
           onMouseLeave={closeMega}

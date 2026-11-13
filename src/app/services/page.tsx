@@ -27,7 +27,7 @@ export default function ServicesPage() {
         primary={{ label: "Book a free strategy call", href: "#contact" }}
         secondary={{ label: "Browse services", href: "#all-services", icon: "down" }}
       />
-      <section id="all-services" aria-label="All services" className="mx-auto max-w-7xl px-4 sm:px-6 section-y tone-light">
+      <section id="all-services" aria-label="All services" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
         <ul className="grid gap-4 md:grid-cols-2">
           {serviceList.map((s) => (
             <li key={s.slug}>

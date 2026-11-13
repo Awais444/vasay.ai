@@ -40,6 +40,10 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
 
     // Web fonts change text heights, so re-measure every ScrollTrigger once they're in.
     document.fonts?.ready.then(() => ScrollTrigger.refresh());
+    // Images change heights too: refresh once everything has loaded.
+    const onLoad = () => ScrollTrigger.refresh();
+    if (document.readyState === "complete") onLoad();
+    else window.addEventListener("load", onLoad, { once: true });
 
     // In-page anchors ("#faq", or "/#faq" while on "/") scroll through Lenis with a navbar offset.
     // Hash links to other pages are left to Next.js navigation.

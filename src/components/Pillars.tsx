@@ -25,7 +25,7 @@ export default function Pillars() {
       aria-labelledby="pillars-title"
       className="relative z-10 -mt-10 rounded-t-[40px] bg-white py-[clamp(90px,10vw,120px)] tone-white"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6">
         {/* Header: heading left, supporting text bottom-right */}
         <div className="grid gap-6 min-[860px]:grid-cols-[1.4fr_1fr] min-[860px]:items-end min-[860px]:gap-12">
           <div>

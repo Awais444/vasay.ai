@@ -47,7 +47,7 @@ export default function AboutPage() {
         secondary={{ label: "Meet the team", href: "#team", icon: "down" }}
       />
 
-      <section aria-label="Our story" className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr] section-y tone-light">
+      <section aria-label="Our story" className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-6 lg:grid-cols-[1fr_1.2fr] section-y tone-light">
         <Heading eyebrow={about.story.eyebrow} title={about.story.title} accent={about.story.accent} />
         <div className="space-y-6 text-lg leading-relaxed text-ink-2">
           {about.story.paragraphs.map((p) => (
@@ -57,7 +57,7 @@ export default function AboutPage() {
       </section>
 
       <section aria-label="Mission and values" className="bg-brand-black text-white section-y">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mx-auto max-w-7xl px-5 sm:px-6">
           <Heading eyebrow={about.mission.eyebrow} title={about.mission.title} accent={about.mission.accent} dark />
           <p className="mt-8 max-w-3xl font-display text-[clamp(1.4rem,2.6vw,2.2rem)] font-medium leading-snug tracking-tight text-white/90">
             {about.mission.statement}

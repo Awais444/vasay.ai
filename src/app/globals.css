@@ -47,6 +47,8 @@
 
 html {
   scroll-padding-top: var(--nav-offset);
+  /* Safety net against sideways scroll. clip (not hidden) keeps position: sticky working. */
+  overflow-x: clip;
 }
 html.lenis,
 html.lenis body {
@@ -228,6 +230,9 @@ main:focus { outline: none; }
   --hero-gap: clamp(12px, 2.6vh, 32px);
 }
 .hero-screen {
+  /* One column that may shrink below its content (the marquee track is w-max). Without this the
+     implicit column grows to the marquee's width and the whole hero overflows on phones. */
+  grid-template-columns: minmax(0, 1fr);
   height: 100vh;
   height: 100svh;
   min-height: 640px;
@@ -260,6 +265,7 @@ main:focus { outline: none; }
 .page-hero-screen {
   min-height: max(640px, 100svh);
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: var(--nav-h) 1fr clamp(24px, 5vh, 56px);
   --ph-gap: clamp(12px, 2.4vh, 28px);
 }
@@ -289,3 +295,10 @@ main:focus { outline: none; }
 }
 /* /contact: tighter bottom, plus room for the FAQ's 40px rounded overlap. */
 .contact-page-end { padding-bottom: calc(clamp(64px, 7vw, 96px) + 40px); }
+
+/* ---- Phones ---- */
+@media (max-width: 639px) {
+  :root { --section-y: clamp(56px, 14vw, 80px); }
+  .hero-h1 { font-size: clamp(36px, 11vw, 52px); line-height: 0.95; }
+  .hero-sub { font-size: 16px; max-width: 100%; }
+}
