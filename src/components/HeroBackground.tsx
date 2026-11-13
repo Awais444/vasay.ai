@@ -8,7 +8,7 @@ const spring = { stiffness: 60, damping: 20, mass: 0.6 };
 
 /**
  * The blue hero's depth layers: gradient mesh, dot grid, rings with orbiting star,
- * parallax glows, cursor spotlight and grain. Place inside a `relative isolate overflow-hidden`
+ * parallax glows, cursor spotlight and grain. Place inside a `relative isolate overflow-clip`
  * section; it listens to mouse moves on its parent.
  */
 export default function HeroBackground({ ringsClassName = "top-[330px] sm:top-[360px]" }: { ringsClassName?: string }) {

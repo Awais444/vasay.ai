@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function NotFound() {
   return (
-    <section className="relative isolate flex min-h-[100svh] items-center overflow-hidden bg-accent px-4 py-32 text-center text-white">
+    <section className="relative isolate flex min-h-[100svh] items-center overflow-clip bg-accent px-4 py-32 text-center text-white">
       <HeroBackground ringsClassName="top-1/2" />
       <div className="mx-auto max-w-2xl">
         <p className="font-display text-[clamp(7rem,26vw,16rem)] font-semibold leading-none tracking-[-0.06em]">

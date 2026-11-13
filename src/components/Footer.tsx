@@ -8,7 +8,7 @@ const link = "text-white/75 transition-colors hover:text-brand-orange";
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-brand-black pt-20 text-white">
+    <footer className="relative overflow-clip bg-brand-black pt-20 text-white">
       <div className="mx-auto grid max-w-7xl gap-12 border-t border-white/10 px-4 pt-14 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.3fr_1.2fr_0.8fr_0.8fr]">
         <div>
           <Logo variant="dark" className="h-14" />

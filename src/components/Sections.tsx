@@ -658,10 +658,13 @@ export function Faq({
   items = faqs,
   heading = faqSection,
   id = "faq",
+  overlap = false,
 }: {
   items?: { q: string; a: string }[];
   heading?: { eyebrow: string; title: string; accent: string; intro?: string };
   id?: string;
+  /** Pull up 40px over a dark section above, with rounded top corners (like the hero hand-off). */
+  overlap?: boolean;
 }) {
   const [open, setOpen] = useState<number | null>(0);
   const [current, setCurrent] = useState(0);
@@ -698,7 +701,10 @@ export function Faq({
   const pad = (n: number) => String(n).padStart(2, "0");
 
   return (
-    <section id={id} className="bg-white section-y tone-white">
+    <section
+      id={id}
+      className={`bg-white section-y tone-white ${overlap ? "relative z-10 -mt-10 rounded-t-[40px]" : ""}`}
+    >
       <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:items-start">
         {/* Left column: sticky on desktop. The pin ends naturally where the grid (the questions) ends. */}
         <div className="lg:sticky lg:top-[calc(var(--nav-h)+40px)]">

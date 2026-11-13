@@ -81,7 +81,7 @@ export default function Hero() {
       ref={root}
       onMouseMove={onMove}
       // Grid: [navbar spacer] [content] [scroll cue]. Sizes in globals.css (.hero-screen).
-      className="hero-screen relative isolate overflow-hidden bg-accent text-white"
+      className="hero-screen relative isolate overflow-clip bg-accent text-white"
     >
       <div aria-hidden="true" />
       <HeroBackground ringsClassName="top-1/2" />

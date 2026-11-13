@@ -107,13 +107,14 @@ export default function Contact({
   }
 
   return (
-    <section id="contact" className={`relative isolate overflow-clip bg-brand-black section-pb text-white ${asPage ? "pt-36 sm:pt-44" : "section-pt"}`}>
+    <section id="contact" className={`relative isolate overflow-clip bg-brand-black text-white ${asPage ? "contact-page-end pt-36 sm:pt-44" : "section-y"}`}>
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,#000_70%,transparent)]">
         <div className="absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-accent/50 blur-[140px]" />
         <div className="absolute -right-40 bottom-0 h-[420px] w-[420px] rounded-full bg-brand-orange/30 blur-[140px]" />
       </div>
       <div className="mx-auto grid max-w-7xl gap-14 px-4 sm:px-6 lg:grid-cols-[1fr_1.15fr]">
-        <div className="contact-pin">
+        {/* Pin the shorter column: the left one normally; the form when an `aside` makes the left column taller (/contact). */}
+        <div className={aside ? "" : "contact-pin"}>
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-white/75">{contact.eyebrow}</p>
           <H className="mt-4 font-display text-[clamp(3rem,8vw,6.5rem)] font-semibold leading-[0.92]">
             <span className="block">{contact.lines[0]}</span>
@@ -125,14 +126,19 @@ export default function Contact({
             <a href={site.phoneHref} className="block font-display text-3xl font-semibold tracking-tight hover:text-brand-orange">
               {site.phone}
             </a>
-            <a href={site.address.mapsHref} target="_blank" rel="noopener noreferrer" className="block text-white/75 hover:text-white">
-              {site.address.full}
-            </a>
+            {/* /contact shows the address in its location card instead. */}
+            {!aside && (
+              <a href={site.address.mapsHref} target="_blank" rel="noopener noreferrer" className="block text-white/75 hover:text-white">
+                {site.address.full}
+              </a>
+            )}
           </div>
           {aside}
         </div>
 
-        <div className="relative rounded-[28px] bg-white/[0.04] p-6 ring-1 ring-white/10 backdrop-blur sm:p-8">
+        {/* Right cell stretches to the row height; on /contact the card inside it is sticky, so both columns end on the same line. */}
+        <div className="self-stretch">
+        <div className={`relative rounded-[28px] bg-white/[0.04] p-6 ring-1 ring-white/10 backdrop-blur sm:p-8 ${aside ? "contact-pin-form" : ""}`}>
           <AnimatePresence mode="wait">
             {status === "success" ? (
               <motion.div
@@ -334,6 +340,7 @@ export default function Contact({
               </motion.form>
             )}
           </AnimatePresence>
+        </div>
         </div>
       </div>
     </section>

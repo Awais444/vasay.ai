@@ -63,7 +63,7 @@ export default function PageHero({
   );
 
   return (
-    <section ref={root} className="page-hero-screen relative isolate overflow-hidden bg-accent text-white">
+    <section ref={root} className="page-hero-screen relative isolate overflow-clip bg-accent text-white">
       <HeroBackground ringsClassName={visual ? "top-[45%] lg:left-[72%]" : "top-1/2"} />
       <div aria-hidden="true" />
       <div className={`page-hero-content mx-auto grid w-full max-w-7xl items-center gap-14 px-4 sm:px-6 ${visual ? "lg:grid-cols-[minmax(55%,1.25fr)_1fr]" : ""}`}>

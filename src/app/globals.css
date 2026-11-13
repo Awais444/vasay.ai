@@ -271,8 +271,9 @@ main:focus { outline: none; }
 .ph-h1 > span { max-width: 16ch; margin-inline: auto; }
 .ph-sub { font-size: clamp(16px, 2vh, 19px); max-width: 620px; }
 
-/* ---- Contact: left column pinned while the form scrolls (CSS sticky, works with Lenis) ----
-   Desktop only, and only when the screen is tall enough for the column to fit. */
+/* ---- Contact: the shorter column is pinned while the other scrolls (CSS sticky, works with Lenis) ----
+   .contact-pin = left column (homepage, service pages); .contact-pin-form = form card (/contact).
+   Desktop only, and only when the screen is tall enough for the pinned column to fit. */
 @media (min-width: 1024px) and (min-height: 760px) {
   .contact-pin {
     position: sticky;
@@ -280,3 +281,11 @@ main:focus { outline: none; }
     align-self: start;
   }
 }
+@media (min-width: 1024px) {
+  .contact-pin-form {
+    position: sticky;
+    top: calc(var(--nav-h) + 32px);
+  }
+}
+/* /contact: tighter bottom, plus room for the FAQ's 40px rounded overlap. */
+.contact-page-end { padding-bottom: calc(clamp(64px, 7vw, 96px) + 40px); }
