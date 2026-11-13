@@ -1,0 +1,19 @@
+# GoDaddy / Apache (static export). Keep in sync with redirects() in next.config.ts.
+Options -Indexes
+RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Old-site URLs (301)
+RewriteRule ^our-services/?$ /services [R=301,L]
+RewriteRule ^lead-generation-ai-automation/?$ /services/ai-automation [R=301,L]
+
+# Serve exported pages without .html: /about -> /about.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]
+
+ErrorDocument 404 /404.html
