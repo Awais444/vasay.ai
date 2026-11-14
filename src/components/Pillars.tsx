@@ -1,24 +1,14 @@
-"use client";
-
 import ButtonArrow from "@/components/ButtonArrow";
-import { m, useReducedMotion } from "framer-motion";
+import { revealProps } from "@/lib/reveal";
 import { MonitorSmartphone, Target, Zap, type LucideIcon } from "lucide-react";
 import Link from "@/components/TransitionLink";
 import { pillars } from "@/lib/content";
 
 const ICONS: Record<(typeof pillars.items)[number]["icon"], LucideIcon> = { Target, MonitorSmartphone, Zap };
-const expoOut = [0.16, 1, 0.3, 1] as const;
 const smooth = "ease-[cubic-bezier(0.22,1,0.36,1)]";
 
 /** "Three Pillars": Attract · Convert · Automate. White sheet that overlaps the hero's bottom edge. */
 export default function Pillars() {
-  const reduce = useReducedMotion();
-
-  const list = { hidden: {}, show: { transition: { staggerChildren: reduce ? 0 : 0.12 } } };
-  const item = reduce
-    ? { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } }
-    : { hidden: { opacity: 0, y: 40 }, show: { opacity: 1, y: 0, transition: { duration: 1, ease: expoOut } } };
-
   return (
     <section
       id="intro"
@@ -41,19 +31,15 @@ export default function Pillars() {
         </div>
 
         {/* Pillars: dividers only, no cards */}
-        <m.ul
-          variants={list}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-80px" }}
+        <ul
           className="mt-[70px] grid border-t border-brand-silver min-[860px]:grid-cols-3"
         >
           {pillars.items.map((p, i) => {
             const Icon = ICONS[p.icon];
             return (
-              <m.li
+              <li
                 key={p.title}
-                variants={item}
+                {...revealProps(i * 0.12)}
                 className={`relative ${
                   i > 0 ? "border-t border-brand-silver min-[860px]:border-l min-[860px]:border-t-0" : ""
                 }`}
@@ -92,10 +78,10 @@ export default function Pillars() {
                     <ButtonArrow size={16} />
                   </span>
                 </Link>
-              </m.li>
+              </li>
             );
           })}
-        </m.ul>
+        </ul>
       </div>
     </section>
   );

@@ -11,7 +11,7 @@ export default function Footer() {
     <footer className="relative overflow-clip bg-brand-black pt-20 text-white">
       <div className="mx-auto grid max-w-7xl gap-12 border-t border-white/10 px-4 pt-14 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.3fr_1.2fr_0.8fr_0.8fr]">
         <div>
-          <Logo variant="dark" className="h-20 sm:h-24" />
+          <Logo variant="dark" sizes="150px" className="h-20 sm:h-24" />
           <p className="mt-5 max-w-xs text-white/75">{site.tagline}</p>
           {/* NAP: must match the JSON-LD (src/lib/schema.ts) and the Google Business Profile exactly. */}
           <address className="mt-6 space-y-1 text-sm not-italic text-white/75">
@@ -71,10 +71,9 @@ export default function Footer() {
       </div>
       <p
         aria-hidden="true"
-        className="pointer-events-none mt-16 select-none text-center font-display text-[22vw] font-bold leading-[0.8] tracking-[-0.06em] text-white/[0.05]"
-      >
-        VASAY.AI
-      </p>
+        data-text="VASAY.AI"
+        className="watermark pointer-events-none mt-16 select-none text-center font-display text-[22vw] font-bold leading-[0.8] tracking-[-0.06em] text-white/[0.05]"
+      />
       <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-8 text-sm text-white/75 sm:flex-row sm:justify-between sm:px-6">
         <p>{site.copyright}</p>
         <p className="flex gap-4">

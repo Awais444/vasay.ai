@@ -60,7 +60,7 @@ function WebDesign() {
     <Panel label="yourbrand.ca">
       <m.div {...pop(0)} className="h-6 w-2/3 rounded-lg bg-white/80" />
       <m.div {...pop(1)} className="mt-3 h-3 w-1/2 rounded bg-white/25" />
-      <m.div {...pop(2)} className="mt-6 inline-block rounded-full bg-brand-orange px-4 py-2 text-[13px] font-semibold text-white">
+      <m.div {...pop(2)} className="mt-6 inline-block rounded-full bg-[var(--orange-strong)] px-4 py-2 text-[13px] font-semibold text-white">
         Book now
       </m.div>
       <div className="mt-8 grid grid-cols-3 gap-3">

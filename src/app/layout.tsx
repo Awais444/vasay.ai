@@ -4,6 +4,7 @@ import { heading, body } from "./fonts";
 import { site } from "@/lib/content";
 import SmoothScroll from "@/components/SmoothScroll";
 import MotionProvider from "@/components/MotionProvider";
+import RevealObserver from "@/components/RevealObserver";
 import Navbar from "@/components/Navbar";
 import TransitionProvider, { PAGE_ROOT_ID } from "@/components/TransitionProvider";
 import Footer from "@/components/Footer";
@@ -37,7 +38,7 @@ const jsonLd = [organization(), website()];
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-CA" className={`${heading.variable} ${body.variable} antialiased`}>
+    <html lang="en-CA" suppressHydrationWarning className={`${heading.variable} ${body.variable} antialiased`}>
       <body>
         <a
           href="#main"
@@ -45,7 +46,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
+        {/* Marks JS as available before first paint, so scroll-reveal never hides content without JS. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         <JsonLd data={jsonLd} />
+        <RevealObserver />
         <Analytics />
         <MotionProvider>
         <SmoothScroll>

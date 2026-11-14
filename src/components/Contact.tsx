@@ -14,7 +14,7 @@ type Status = "idle" | "sending" | "success" | "error";
 
 /** Dark-form field. Focus: Klein Blue border + soft glow. Error: Chilli Red border. */
 const fieldBase =
-  "w-full rounded-2xl bg-white/[0.06] px-4 py-3.5 text-base font-normal text-white outline-none ring-1 transition-[box-shadow,background-color] duration-200 placeholder:font-normal placeholder:text-white/40 focus:bg-white/[0.08] focus:ring-2 focus:ring-accent focus:shadow-[0_0_0_6px_color-mix(in_srgb,var(--accent-bright)_28%,transparent)]";
+  "w-full rounded-2xl bg-white/[0.06] px-4 py-3.5 text-base font-normal text-white outline-none ring-1 transition-[box-shadow,background-color] duration-200 placeholder:font-normal placeholder:text-white/60 focus:bg-white/[0.08] focus:ring-2 focus:ring-accent focus:shadow-[0_0_0_6px_color-mix(in_srgb,var(--accent-bright)_28%,transparent)]";
 const fieldClass = (invalid: boolean) => `${fieldBase} ${invalid ? "ring-brand-red focus:ring-brand-red" : "ring-white/15"}`;
 const labelClass = "mb-2 block text-sm text-white/75";
 
@@ -268,7 +268,7 @@ export default function Contact({
                       name="service"
                       value={service}
                       onChange={(e) => setService(e.target.value)}
-                      className={`${fieldClass(false)} appearance-none pr-11 ${service ? "text-white" : "text-white/40"}`}
+                      className={`${fieldClass(false)} appearance-none pr-11 ${service ? "text-white" : "text-white/60"}`}
                     >
                       <option value="" disabled className="text-brand-black">
                         Select a service
@@ -338,7 +338,7 @@ export default function Contact({
                   <button
                     type="submit"
                     disabled={status === "sending"}
-                    className={`${arrowLink} justify-center rounded-full bg-brand-orange px-7 py-4 font-semibold text-white transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-0.5 disabled:opacity-60`}
+                    className={`${arrowLink} justify-center rounded-full bg-[var(--orange-strong)] px-7 py-4 font-semibold text-white transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-0.5 disabled:opacity-60`}
                   >
                     {status === "sending" ? "Sending…" : "Send message"}
                     {status !== "sending" && <ButtonArrow />}

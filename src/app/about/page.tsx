@@ -2,7 +2,8 @@ import { about } from "@/lib/content";
 import { breadcrumbs, ORG_ID, webPage } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
-import { Heading, Stats, Team } from "@/components/Sections";
+import { Stats } from "@/components/Sections";
+import { Heading, Team } from "@/components/StaticSections";
 import Contact from "@/components/Contact";
 import JsonLd from "@/components/JsonLd";
 

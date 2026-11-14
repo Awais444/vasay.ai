@@ -1,10 +1,5 @@
-"use client";
-
 import ButtonArrow, { arrowLink } from "@/components/ButtonArrow";
-import { useRef } from "react";
 import Link from "@/components/TransitionLink";
-import { m } from "framer-motion";
-import { useLazyGsap } from "@/lib/gsap-lazy";
 import {
   History,
   Copy,
@@ -33,7 +28,10 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { ProblemIconName, Service } from "@/lib/services";
-import { Heading, reveal } from "./Sections";
+import { Heading } from "./StaticSections";
+import { revealProps } from "@/lib/reveal";
+
+export { default as Timeline } from "./Timeline";
 
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -85,10 +83,9 @@ export function Problems({ items }: { items: Service["problems"] }) {
       <Heading eyebrow="The problem" title="Sound" accent="familiar?" />
       <div className="mt-14 grid gap-4 md:grid-cols-3">
         {items.map((p, i) => (
-          <m.div
+          <div
             key={p.title}
-            {...reveal}
-            transition={{ ...reveal.transition, delay: i * 0.08 }}
+            {...revealProps(i * 0.08)}
             className="group flex flex-col rounded-[var(--radius-card)] border border-brand-silver bg-white p-8 transition-[transform,border-color] duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-[rgba(255,54,0,0.25)]"
           >
             <ProblemIcon name={p.icon} />
@@ -103,7 +100,7 @@ export function Problems({ items }: { items: Service["problems"] }) {
                 <ButtonArrow size={16} />
               </a>
             </div>
-          </m.div>
+          </div>
         ))}
       </div>
     </section>
@@ -117,10 +114,9 @@ export function Included({ items, title }: { items: Service["included"]; title: 
         <Heading eyebrow={title} title="What's" accent="included." />
         <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((it, i) => (
-            <m.li
+            <li
               key={it.title}
-              {...reveal}
-              transition={{ ...reveal.transition, delay: (i % 3) * 0.08 }}
+              {...revealProps((i % 3) * 0.08)}
               className="group rounded-[var(--radius-card)] border border-brand-silver bg-brand-bg p-7 transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-1"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent font-display text-sm font-semibold text-white transition-colors group-hover:bg-brand-orange">
@@ -128,7 +124,7 @@ export function Included({ items, title }: { items: Service["included"]; title: 
               </span>
               <h3 className="mt-6 text-xl font-semibold">{it.title}</h3>
               <p className="mt-2 text-base text-ink-2 sm:text-[17px]">{it.body}</p>
-            </m.li>
+            </li>
           ))}
         </ul>
       </div>
@@ -181,49 +177,6 @@ export function Deliverables({ service }: { service: Service }) {
             </div>
           )}
         </div>
-      </div>
-    </section>
-  );
-}
-
-export function Timeline({ steps }: { steps: Service["process"] }) {
-  const root = useRef<HTMLElement>(null);
-  useLazyGsap(
-    (gsap) => {
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.fromTo(
-          ".tl-line",
-          { scaleY: 0 },
-          { scaleY: 1, ease: "none", scrollTrigger: { trigger: ".tl-list", start: "top 70%", end: "bottom 60%", scrub: true } },
-        );
-        gsap.utils.toArray<HTMLElement>(".tl-step").forEach((el) => {
-          gsap.from(el, { opacity: 0, y: 24, duration: 1, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 80%", once: true } });
-        });
-      });
-    },
-    root,
-  );
-  return (
-    <section ref={root} aria-label="How it works" className="bg-accent-deep text-white section-y">
-      <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-6 lg:grid-cols-[1fr_1.3fr]">
-        <div className="lg:sticky lg:top-32 lg:self-start">
-          <Heading eyebrow="How it works" title="Four steps," accent="no surprises." dark />
-        </div>
-        <ol className="tl-list relative space-y-10 pl-12 sm:pl-16">
-          <span aria-hidden="true" className="absolute bottom-2 left-[19px] top-2 w-px bg-white/15 sm:left-[23px]">
-            <span className="tl-line block h-full w-full origin-top bg-brand-orange" />
-          </span>
-          {steps.map((s, i) => (
-            <li key={s.title} className="tl-step relative">
-              <span className="absolute -left-12 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-brand-orange font-display text-sm font-semibold sm:-left-16 sm:h-12 sm:w-12">
-                {pad(i)}
-              </span>
-              <h3 className="text-2xl font-semibold sm:text-3xl">{s.title}</h3>
-              <p className="mt-2 max-w-lg text-white/75">{s.body}</p>
-            </li>
-          ))}
-        </ol>
       </div>
     </section>
   );

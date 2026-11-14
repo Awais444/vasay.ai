@@ -50,8 +50,13 @@ export default function Hero() {
   const chipX2 = useTransform(sx, (v) => v * -18);
   const chipY2 = useTransform(sy, (v) => v * -18);
 
+  // Hero size measured on mouse enter, not on every mousemove (no layout reads in the hot path).
+  const rect = useRef<DOMRect | null>(null);
+  const onEnter = (e: React.MouseEvent<HTMLElement>) => {
+    rect.current = e.currentTarget.getBoundingClientRect();
+  };
   const onMove = (e: React.MouseEvent<HTMLElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
+    const r = (rect.current ??= e.currentTarget.getBoundingClientRect());
     mx.set((e.clientX - r.left) / r.width - 0.5);
     my.set((e.clientY - r.top) / r.height - 0.5);
   };
@@ -60,6 +65,7 @@ export default function Hero() {
     <section
       id="top"
       ref={root}
+      onMouseEnter={onEnter}
       onMouseMove={onMove}
       // Grid: [navbar spacer] [content] [scroll cue]. Sizes in globals.css (.hero-screen).
       className="hero-screen relative isolate overflow-clip bg-accent text-white"
@@ -104,7 +110,7 @@ export default function Hero() {
 
       <div className="hero-content relative z-10 mx-auto w-full max-w-7xl px-5 pb-7 pt-4 text-center sm:px-6 sm:py-4">
         <p style={{ "--i": 0 } as React.CSSProperties} className="hero-fade mx-auto inline-flex max-w-full items-center gap-2 rounded-full bg-white/10 py-1.5 pl-1.5 pr-4 text-[13px] ring-1 ring-white/20 sm:text-sm">
-          <span className="shrink-0 rounded-full bg-brand-orange px-2.5 py-1 font-semibold text-white">{hero.badge}</span>
+          <span className="shrink-0 rounded-full bg-[var(--orange-strong)] px-2.5 py-1 font-semibold text-white">{hero.badge}</span>
           <span className="truncate text-white/90 sm:hidden">{hero.trustShort}</span>
           <span className="hidden truncate text-white/90 sm:inline">{hero.trust}</span>
         </p>

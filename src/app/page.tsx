@@ -1,5 +1,6 @@
 import Hero from "@/components/Hero";
-import { Stats, Services, WhyUs, Process, Work, Testimonials, Team, Faq } from "@/components/Sections";
+import { Stats, Services, Process, Faq } from "@/components/Sections";
+import { WhyUs, Work, Testimonials, Team } from "@/components/StaticSections";
 import Contact from "@/components/Contact";
 import Pillars from "@/components/Pillars";
 import { faqs, showTestimonials, visibleTestimonials } from "@/lib/content";

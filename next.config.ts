@@ -38,8 +38,14 @@ const nextConfig: NextConfig = {
     return [{ source: "/studio/:path+", destination: "/studio" }];
   },
   images: {
+    // AVIF first (smallest), WebP fallback.
+    formats: ["image/avif", "image/webp"],
     // Blog images from Sanity's CDN
     remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
+  },
+  experimental: {
+    // Inline the (small, Tailwind) CSS into the HTML: no render-blocking stylesheet request.
+    inlineCss: true,
   },
   cacheComponents: true,
   partialPrefetching: true,

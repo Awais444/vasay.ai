@@ -6,6 +6,12 @@
   --brand-blue-light: #3a55ff;
   --brand-klein: #1b08b7;
   --brand-orange: #ff7001;
+  /* Orange for TEXT on light backgrounds (WCAG AA). Brand orange #ff7001 is only 2.8:1 on white.
+     --orange-text: small text, 4.5:1+.  --orange-text-lg: headlines/large text, 3:1+. */
+  --orange-text: #c44a00;
+  --orange-text-lg: #e85d00;
+  /* Orange behind white text (buttons, badges): 4.8:1 */
+  --orange-strong: #c44a00;
   --brand-red: #ff3600;
   --brand-silver: #e7eaec;
   --brand-black: #141317;
@@ -335,4 +341,23 @@ main:focus { outline: none; }
   .hero-h1 { font-size: clamp(36px, 11vw, 52px); line-height: 0.95; }
   .hero-sub { font-size: 16px; line-height: 1.55; max-width: 100%; }
   .hero-screen { padding-bottom: 28px; }
+}
+
+/* ---- Contrast (WCAG AA) ----
+   Orange text inside light sections/cards uses the darker text tokens. Dark and blue sections keep brand orange. */
+:is(.tone-light, .tone-white, .bg-white, .bg-brand-bg) .text-brand-orange,
+.bg-brand-bg.text-brand-orange,
+.bg-white.text-brand-orange { color: var(--orange-text); }
+:is(.tone-light, .tone-white, .bg-white, .bg-brand-bg) :is(h1, h2, h3, .font-display) .text-brand-orange,
+:is(.tone-light, .tone-white, .bg-white, .bg-brand-bg) .text-brand-orange:is(h1, h2, h3, .font-display) { color: var(--orange-text-lg); }
+/* Decorative watermark drawn by CSS (not text), so it stays visually faint without failing contrast checks. */
+.watermark::after { content: attr(data-text); }
+
+/* ---- Scroll reveal (replaces Framer Motion whileInView) ----
+   [data-reveal] elements (see src/lib/reveal.ts) fade/rise in when RevealObserver marks them .revealed.
+   Only hidden when JS runs (html.js) and motion is allowed; "backwards" fill so hover transforms still work. */
+@keyframes reveal-in { from { opacity: 0; transform: translateY(28px); } }
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal]:not(.revealed) { opacity: 0; }
+  html.js [data-reveal].revealed { animation: reveal-in 0.9s var(--ease-out-expo) var(--d, 0s) backwards; }
 }

@@ -2,7 +2,6 @@
 
 import ButtonArrow, { arrowLink } from "@/components/ButtonArrow";
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "@/components/TransitionLink";
 import { m } from "framer-motion";
 import { useLazyGsap } from "@/lib/gsap-lazy";
@@ -11,60 +10,18 @@ import {
   manifesto,
   servicesSection,
   services,
-  whyUs,
   process,
-  workSection,
-  work,
-  testimonialsSection,
-  visibleTestimonials,
-  showPlaceholderLabel,
-  teamSection,
-  team,
   faqSection,
   faqs,
 } from "@/lib/content";
-import { Star } from "./Logo";
 import { ServiceIconBox } from "./ServiceIcon";
 import RichText from "./RichText";
+import { Heading } from "./StaticSections";
+import { revealProps } from "@/lib/reveal";
 
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const MOTION_OK = "(prefers-reduced-motion: no-preference)";
-
-/* ---------- Shared heading ---------- */
-export function Heading({
-  eyebrow,
-  title,
-  accent,
-  dark = false,
-  className = "",
-}: {
-  eyebrow: string;
-  title: string;
-  accent: string;
-  dark?: boolean;
-  className?: string;
-}) {
-  return (
-    <div className={className}>
-      <p className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] ${dark ? "text-white/75" : "text-accent"}`}>
-        <Star size={10} className="text-brand-orange" />
-        {eyebrow}
-      </p>
-      <h2 className={`mt-4 font-display text-[clamp(2.3rem,5.5vw,4.5rem)] font-semibold leading-[1] ${dark ? "text-white" : ""}`}>
-        {title} <span className="text-brand-orange">{accent}</span>
-      </h2>
-    </div>
-  );
-}
-
-export const reveal = {
-  initial: { opacity: 0, y: 28 },
-  whileInView: { opacity: 1, y: 0 },
-  // Starts when ~10% of the element is in view; `once` so it can never get stuck half-faded.
-  viewport: { once: true, amount: 0.1, margin: "0px 0px -10% 0px" },
-  transition: { duration: 0.9, ease },
-};
 
 /* ---------- 1. Stats + manifesto ---------- */
 export function Stats({
@@ -94,9 +51,9 @@ export function Stats({
         if (!withManifesto) return;
         gsap.fromTo(
           ".mword",
-          { opacity: 0.12 },
+          { color: "#6f717a" },
           {
-            opacity: 1,
+            color: "#141317",
             stagger: 0.05,
             ease: "none",
             scrollTrigger: { trigger: ".manifesto", start: "top 80%", end: "bottom 45%", scrub: true },
@@ -222,44 +179,6 @@ export function Services() {
   );
 }
 
-/* ---------- 3. Why us ---------- */
-const whyIcons = ["◎", "▤", "$", "✦"];
-export function WhyUs() {
-  return (
-    <section aria-labelledby="why" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
-      <div className="grid gap-12 lg:grid-cols-[1fr_1.3fr]">
-        <div className="lg:sticky lg:top-32 lg:self-start">
-          <Heading eyebrow={whyUs.eyebrow} title={whyUs.title} accent={whyUs.accent} />
-          <p className="mt-6 max-w-md text-lg text-ink-2">{whyUs.intro}</p>
-          <a
-            href={whyUs.cta.href}
-            className="mt-8 inline-flex rounded-full bg-accent px-6 py-4 font-semibold text-white transition-[background-color,transform] duration-300 hover:-translate-y-0.5 hover:bg-accent-bright"
-          >
-            {whyUs.cta.label}
-          </a>
-        </div>
-        {/* Clean, equal-height 2×2 grid (no offset cards) */}
-        <div className="grid auto-rows-fr gap-4 sm:grid-cols-2">
-          {whyUs.items.map((it, i) => (
-            <m.div
-              key={it.title}
-              {...reveal}
-              transition={{ ...reveal.transition, delay: i * 0.08 }}
-              className="group flex h-full flex-col rounded-[var(--radius-card)] border border-brand-silver bg-white p-8 transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-1"
-            >
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-orange text-xl text-white">
-                {whyIcons[i]}
-              </span>
-              <h3 className="mt-8 text-2xl font-semibold">{it.title}</h3>
-              <p className="mt-3 text-base text-ink-2 sm:text-[17px]">{it.body}</p>
-            </m.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* ---------- 4. Process: Expanding Panels ---------- */
 const PROCESS_GRADIENTS = [
   "linear-gradient(150deg, var(--accent), var(--accent-deep))",
@@ -349,9 +268,9 @@ export function Process() {
   return (
     <section id="process" ref={root} className="bg-brand-black text-white section-y">
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
-        <m.div {...reveal}>
+        <div {...revealProps()}>
           <Heading eyebrow={process.eyebrow} title={process.title} accent={process.accent} dark />
-        </m.div>
+        </div>
 
         {/* Desktop: expanding panels */}
         <m.div
@@ -505,145 +424,13 @@ export function Process() {
         <div className="mt-12 flex justify-center">
           <a
             href={process.cta.href}
-            className={`${arrowLink} rounded-full bg-brand-orange px-7 py-4 font-semibold text-white transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-0.5`}
+            className={`${arrowLink} rounded-full bg-[var(--orange-strong)] px-7 py-4 font-semibold text-white transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-0.5`}
           >
             {process.cta.label}
             <ButtonArrow />
           </a>
         </div>
       </div>
-    </section>
-  );
-}
-
-/* ---------- 5. Work ---------- */
-function WorkCard({ item, index }: { item: (typeof work)[number]; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useLazyGsap(
-    (gsap) => {
-      const mm = gsap.matchMedia();
-      mm.add(MOTION_OK, () => {
-        gsap.fromTo(
-          ".parallax",
-          { yPercent: -8 },
-          { yPercent: 8, ease: "none", scrollTrigger: { trigger: ref.current, scrub: true } },
-        );
-      });
-    },
-    ref,
-  );
-  return (
-    <m.div ref={ref} {...reveal} className={index % 2 ? "md:mt-24" : ""}>
-      <Link href={item.href} className="group block">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)]">
-          <div className={`parallax absolute -inset-y-[10%] inset-x-0 bg-gradient-to-br ${item.gradient} transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105`}>
-            {item.image ? (
-              <Image src={item.image} alt={item.title} fill className="object-cover" sizes="(min-width: 768px) 50vw, 100vw" />
-            ) : (
-              <span className="absolute inset-0 flex items-center justify-center font-display text-[12vw] font-semibold tracking-tighter text-white/15 md:text-[6vw]" aria-hidden="true">
-                {item.category.split(/[ &+]/)[0]}
-              </span>
-            )}
-          </div>
-          <span className="absolute left-5 top-5 rounded-full bg-white px-3 py-1 text-[13px] font-semibold text-brand-black">
-            {item.category}
-          </span>
-          <span className="absolute right-5 top-5 flex h-11 w-11 scale-75 items-center justify-center rounded-full bg-white text-brand-black opacity-0 transition-all duration-500 ease-[var(--ease-out-expo)] group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100" aria-hidden="true">
-            <ButtonArrow dir="up-right" size={20} nudge={false} />
-          </span>
-        </div>
-        <h3 className="mt-5 text-2xl font-semibold">{item.title}</h3>
-        <p className="mt-2 text-base text-ink-2 sm:text-[17px]">{item.description}</p>
-        {/* Only real, verified results belong here (see TODO in content.ts). */}
-        {item.result && <p className="mt-2 text-sm font-semibold text-accent">{item.result}</p>}
-      </Link>
-    </m.div>
-  );
-}
-
-export function Work() {
-  return (
-    <section id="work" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
-      <Heading {...workSection} />
-      <div className="mt-16 grid gap-x-8 gap-y-14 md:grid-cols-2">
-        {work.map((w, i) => (
-          <WorkCard key={w.category} item={w} index={i} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ---------- 6. Testimonials (visibility rules: showTestimonials in content.ts) ---------- */
-function TRow({ items, reverse }: { items: typeof visibleTestimonials; reverse?: boolean }) {
-  return (
-    <div className="marquee overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]">
-      <div className={`marquee-track flex w-max gap-4 ${reverse ? "reverse" : ""}`}>
-        {[...items, ...items].map((t, i) => (
-          <figure
-            key={i}
-            aria-hidden={i >= items.length}
-            className="w-[320px] shrink-0 rounded-[var(--radius-card)] bg-white/[0.05] p-7 ring-1 ring-white/10 sm:w-[400px]"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-brand-orange" aria-label="5 stars">★★★★★</div>
-              {showPlaceholderLabel && !t.approved && (
-                <span className="rounded-full border border-dashed border-brand-orange/70 bg-brand-orange/10 px-2.5 py-0.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-brand-orange">
-                  Placeholder
-                </span>
-              )}
-            </div>
-            <blockquote className="mt-4 text-lg leading-snug text-white/90">“{t.quote}”</blockquote>
-            <figcaption className="mt-6 text-sm">
-              <span className="font-semibold text-white">{t.name}</span>
-              <span className="text-white/75"> · {t.role}</span>
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function Testimonials() {
-  const half = Math.ceil(visibleTestimonials.length / 2);
-  return (
-    <section aria-label="Testimonials" className="bg-brand-black text-white section-y">
-      <Heading {...testimonialsSection} dark className="mx-auto max-w-7xl px-5 sm:px-6" />
-      <div className="mt-16 space-y-4">
-        <TRow items={visibleTestimonials.slice(0, half)} />
-        <TRow items={visibleTestimonials.slice(half)} reverse />
-      </div>
-    </section>
-  );
-}
-
-/* ---------- 7. Team ---------- */
-export function Team() {
-  return (
-    <section id="team" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
-      <Heading {...teamSection} />
-      <ul className="mt-16 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-        {team.map((member, i) => (
-          <m.li key={member.slug} {...reveal} transition={{ ...reveal.transition, delay: i * 0.07 }} className="group">
-            <div
-              className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-card)]"
-              style={{ background: member.tint }}
-            >
-              {/* TODO: replace with real team photos */}
-              <Image
-                src={`/team/${member.slug}.svg`}
-                alt={`Illustrated portrait of ${member.name}`}
-                fill
-                unoptimized
-                className="object-contain object-bottom p-3 transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105"
-              />
-            </div>
-            <h3 className="mt-4 text-lg font-semibold">{member.name}</h3>
-            <p className="text-sm text-ink-2">{member.role}</p>
-          </m.li>
-        ))}
-      </ul>
     </section>
   );
 }
@@ -666,31 +453,20 @@ export function Faq({
   const listRef = useRef<HTMLUListElement>(null);
   const intro = heading.intro ?? faqSection.intro;
 
-  // Progress: the question nearest the viewport centre.
+  // Progress: the question crossing the middle of the viewport. An IntersectionObserver on a
+  // 1px band at the centre: no layout reads on scroll (avoids forced reflow).
   useEffect(() => {
     const list = listRef.current;
     if (!list) return;
-    const update = () => {
-      const mid = window.innerHeight / 2;
-      let best = 0;
-      let bestDist = Infinity;
-      [...list.children].forEach((li, i) => {
-        const r = li.getBoundingClientRect();
-        const dist = Math.abs(r.top + r.height / 2 - mid);
-        if (dist < bestDist) {
-          bestDist = dist;
-          best = i;
-        }
-      });
-      setCurrent(best);
-    };
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
+    const items = [...list.children];
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) if (e.isIntersecting) setCurrent(items.indexOf(e.target));
+      },
+      { rootMargin: "-50% 0px -50% 0px" },
+    );
+    items.forEach((li) => io.observe(li));
+    return () => io.disconnect();
   }, []);
 
   const pad = (n: number) => String(n).padStart(2, "0");

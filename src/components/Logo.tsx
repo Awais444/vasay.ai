@@ -31,12 +31,15 @@ export default function Logo({
   variant = "light",
   className = "h-11",
   priority = false,
+  sizes = "80px",
   crossfade = false,
   link = true,
 }: {
   variant?: Variant;
   className?: string;
   priority?: boolean;
+  /** Displayed width (CSS px) for next/image srcset selection. Navbar ≈ 67–80px, footer ≈ 150px. */
+  sizes?: string;
   crossfade?: boolean;
   link?: boolean;
 }) {
@@ -48,8 +51,9 @@ export default function Logo({
       aria-hidden={visible ? undefined : true}
       width={W}
       height={H}
-      priority={priority}
-      sizes="(min-width: 640px) 160px, 120px"
+      // Only the version visible on load is preloaded; the crossfade partner loads normally.
+      priority={priority && visible}
+      sizes={sizes}
       className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
     />
   );

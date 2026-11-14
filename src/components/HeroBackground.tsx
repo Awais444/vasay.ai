@@ -28,15 +28,23 @@ export default function HeroBackground({ ringsClassName = "top-[330px] sm:top-[3
   useEffect(() => {
     const parent = ref.current?.parentElement;
     if (!parent || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Measure once per hover (and on resize/scroll), not on every mousemove.
+    let r = parent.getBoundingClientRect();
+    const measure = () => (r = parent.getBoundingClientRect());
     const onMove = (e: MouseEvent) => {
-      const r = parent.getBoundingClientRect();
       mx.set((e.clientX - r.left) / r.width - 0.5);
       my.set((e.clientY - r.top) / r.height - 0.5);
       px.set(e.clientX - r.left);
       py.set(e.clientY - r.top);
     };
+    parent.addEventListener("mouseenter", measure);
     parent.addEventListener("mousemove", onMove);
-    return () => parent.removeEventListener("mousemove", onMove);
+    window.addEventListener("resize", measure, { passive: true });
+    return () => {
+      parent.removeEventListener("mouseenter", measure);
+      parent.removeEventListener("mousemove", onMove);
+      window.removeEventListener("resize", measure);
+    };
   }, [mx, my, px, py]);
 
   // Pause looping animations (mesh, rings, chips, marquee) while the hero is off-screen.
