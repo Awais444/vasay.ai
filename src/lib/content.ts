@@ -1,4 +1,4 @@
-import { isDev, siteUrl } from "./env";
+import { isDev, isLiveSite, siteUrl } from "./env";
 
 import { serviceList } from "./services";
 
@@ -274,7 +274,9 @@ export const testimonialsSection = {
  *
  * Visibility (computed below the list):
  * - Local development (`next dev`): every item shows, with no "Placeholder" label, for design review.
- * - Production builds: only approved items show (no label), and the whole section stays hidden
+ * - Preview / staging (any build that is not the live vasay.ai site, see isLiveSite in env.ts): every
+ *   item shows, with the "Placeholder" label on unapproved ones.
+ * - Live site (vasay.ai): only approved items show (no label), and the whole section stays hidden
  *   until at least MIN_APPROVED_TESTIMONIALS items are approved.
  */
 export type Testimonial = { quote: string; name: string; role: string; approved: boolean };
@@ -347,10 +349,10 @@ const MIN_APPROVED_TESTIMONIALS = 3;
 const approvedTestimonials = testimonials.filter((t) => t.approved);
 
 /** The items the Testimonials section actually renders. */
-export const visibleTestimonials: Testimonial[] = isDev ? testimonials : approvedTestimonials;
-export const showTestimonials = isDev || approvedTestimonials.length >= MIN_APPROVED_TESTIMONIALS;
-/** The "Placeholder" label: hidden in development; in production only approved items render anyway. */
-export const showPlaceholderLabel = false;
+export const visibleTestimonials: Testimonial[] = isLiveSite ? approvedTestimonials : testimonials;
+export const showTestimonials = !isLiveSite || approvedTestimonials.length >= MIN_APPROVED_TESTIMONIALS;
+/** "Placeholder" label on unapproved items: shown on previews/staging, not in local dev or on vasay.ai. */
+export const showPlaceholderLabel = !isLiveSite && !isDev;
 
 export const teamSection = {
   eyebrow: "Team",
