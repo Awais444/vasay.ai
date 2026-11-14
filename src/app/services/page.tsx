@@ -1,4 +1,6 @@
 import Link from "@/components/TransitionLink";
+import JsonLd from "@/components/JsonLd";
+import { abs, breadcrumbs, offerCatalog, ORG_ID, webPage } from "@/lib/schema";
 import ButtonArrow from "@/components/ButtonArrow";
 import { serviceList } from "@/lib/services";
 import { servicesSection } from "@/lib/content";
@@ -8,16 +10,27 @@ import { ServiceIconBox } from "@/components/ServiceIcon";
 import { Process } from "@/components/Sections";
 import Contact from "@/components/Contact";
 
-export const metadata = pageMetadata({
-  title: "Digital Marketing Services in Concord & the GTA | Smart Solutions",
+const meta = {
+  title: "Digital Marketing Services, Vaughan & GTA | Smart Solutions",
   description:
     "Brand identity, website design and development, SEO, social media, paid ads, AI automation and cybersecurity, all under one roof in Concord, Ontario.",
   path: "/services",
-});
+};
+export const metadata = pageMetadata(meta);
 
 export default function ServicesPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          { ...webPage({ type: "CollectionPage", path: meta.path, name: meta.title, description: meta.description }), mainEntity: { "@id": `${abs("/services")}#catalog` } },
+          breadcrumbs(meta.path, [
+            { name: "Home", path: "/" },
+            { name: "Services", path: "/services" },
+          ]),
+          { ...offerCatalog(), provider: { "@id": ORG_ID } },
+        ]}
+      />
       <PageHero
         crumbs={[{ label: "Home", href: "/" }, { label: "Services" }]}
         eyebrow="Services"
@@ -37,7 +50,7 @@ export default function ServicesPage() {
               >
                 <span
                   aria-hidden="true"
-                  className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-brand-orange/0 blur-3xl transition-colors duration-700 group-hover:bg-brand-orange/25"
+                  className="absolute -right-32 -top-32 h-80 w-80 bg-[radial-gradient(closest-side,rgb(255_112_1/0.25)_30%,transparent)] opacity-0 transition-opacity duration-700 group-hover:opacity-100"
                 />
                 <span className="flex items-center justify-between">
                   <ServiceIconBox name={s.icon} />

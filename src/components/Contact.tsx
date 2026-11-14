@@ -1,8 +1,10 @@
 "use client";
 
+import { Mail } from "lucide-react";
+import { track } from "@/lib/track";
 import ButtonArrow, { arrowLink } from "@/components/ButtonArrow";
 import { useId, useState, type ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { contact, site } from "@/lib/content";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -97,6 +99,7 @@ export default function Contact({
       const json = await res.json().catch(() => ({}));
       if (!res.ok || json.ok === false) throw new Error(json.error || "Something went wrong.");
       setStatus("success");
+      track("generate_lead", { form: "contact" });
       form.reset();
       setService(defaultService);
       setErrors({});
@@ -109,8 +112,8 @@ export default function Contact({
   return (
     <section id="contact" className={`relative isolate overflow-clip bg-brand-black text-white ${asPage ? "contact-page-end pt-36 sm:pt-44" : "section-y"}`}>
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,#000_70%,transparent)]">
-        <div className="absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-accent/50 blur-[140px]" />
-        <div className="absolute -right-40 bottom-0 h-[420px] w-[420px] rounded-full bg-brand-orange/30 blur-[140px]" />
+        <div className="absolute -left-[300px] -top-[140px] h-[780px] w-[780px] bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--accent)_50%,transparent)_35%,transparent)]" />
+        <div className="absolute -right-[300px] -bottom-[140px] h-[700px] w-[700px] bg-[radial-gradient(closest-side,rgb(255_112_1/0.3)_35%,transparent)]" />
       </div>
       <div className="mx-auto grid max-w-7xl gap-14 px-5 sm:px-6 lg:grid-cols-[1fr_1.15fr]">
         {/* Pin the shorter column: the left one normally; the form when an `aside` makes the left column taller (/contact). */}
@@ -126,6 +129,10 @@ export default function Contact({
             <a href={site.phoneHref} className="block font-display text-3xl font-semibold tracking-tight hover:text-brand-orange">
               {site.phone}
             </a>
+            <a href={site.emailHref} className="inline-flex items-center gap-2.5 text-lg font-semibold text-white hover:text-brand-orange">
+              <Mail size={20} strokeWidth={1.9} aria-hidden="true" className="text-brand-orange" />
+              {site.email}
+            </a>
             {/* /contact shows the address in its location card instead. */}
             {!aside && (
               <a href={site.address.mapsHref} target="_blank" rel="noopener noreferrer" className="block text-white/75 hover:text-white">
@@ -138,10 +145,10 @@ export default function Contact({
 
         {/* Right cell stretches to the row height; on /contact the card inside it is sticky, so both columns end on the same line. */}
         <div className="self-stretch">
-        <div className={`relative rounded-[28px] bg-white/[0.04] p-6 ring-1 ring-white/10 backdrop-blur sm:p-8 ${aside ? "contact-pin-form" : ""}`}>
+        <div className={`relative rounded-[28px] bg-white/[0.04] p-6 ring-1 ring-white/10 sm:p-8 ${aside ? "contact-pin-form" : ""}`}>
           <AnimatePresence mode="wait">
             {status === "success" ? (
-              <motion.div
+              <m.div
                 key="ok"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -150,14 +157,14 @@ export default function Contact({
                 className="flex min-h-[520px] flex-col items-center justify-center text-center"
                 role="status"
               >
-                <motion.span
+                <m.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 240, damping: 14, delay: 0.1 }}
                   className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-orange"
                 >
                   <svg viewBox="0 0 24 24" className="h-9 w-9" aria-hidden="true">
-                    <motion.path
+                    <m.path
                       d="M5 12.5 10 17.5 19 7"
                       fill="none"
                       stroke="white"
@@ -169,15 +176,15 @@ export default function Contact({
                       transition={{ delay: 0.35, duration: 0.5, ease }}
                     />
                   </svg>
-                </motion.span>
+                </m.span>
                 <h3 className="mt-6 text-3xl font-semibold">{contact.success.title}</h3>
                 <p className="mt-2 text-white/75">{contact.success.body}</p>
                 <button type="button" onClick={() => setStatus("idle")} className="mt-8 text-sm font-semibold text-brand-orange">
                   Send another message
                 </button>
-              </motion.div>
+              </m.div>
             ) : (
-              <motion.form key="form" onSubmit={onSubmit} exit={{ opacity: 0, y: -10 }} className="grid gap-x-4 gap-y-2 sm:grid-cols-2" noValidate>
+              <m.form key="form" onSubmit={onSubmit} exit={{ opacity: 0, y: -10 }} className="grid gap-x-4 gap-y-2 sm:grid-cols-2" noValidate>
                 <div>
                   <label htmlFor={id("name")} className={labelClass}>
                     Name *
@@ -337,7 +344,7 @@ export default function Contact({
                     {status !== "sending" && <ButtonArrow />}
                   </button>
                 </div>
-              </motion.form>
+              </m.form>
             )}
           </AnimatePresence>
         </div>

@@ -106,9 +106,9 @@ export const serviceList: Service[] = [
       { q: "Do you also design for personal brands?", a: "Absolutely. Coaches, consultants, realtors and creators get the same strategic process as companies." },
     ],
     related: ["website-design", "social-media", "paid-ads"],
-    seoTitle: "Brand Identity & Logo Design in Concord, ON | Smart Solutions",
+    seoTitle: "Branding Agency Toronto | Brand Identity Design GTA",
     seoDescription:
-      "Brand strategy, logo systems, colour, typography and brand guidelines for GTA businesses and personal brands. Look the part with Smart Solutions.",
+      "Brand identity design for Toronto and GTA businesses: strategy, logo systems, colour, type, voice and brand guidelines, from Smart Solutions in Concord, ON.",
   },
   {
     slug: "website-design",
@@ -152,9 +152,9 @@ export const serviceList: Service[] = [
       { q: "Will I be able to update it myself?", a: "Yes. We design with editing in mind, and our development team sets you up with an easy content editor." },
     ],
     related: ["web-development", "brand-identity", "seo"],
-    seoTitle: "Website Design & UI/UX in Concord, ON | Smart Solutions",
+    seoTitle: "Web Design Company in Vaughan & Toronto | Smart Solutions",
     seoDescription:
-      "Mobile-first website design, wireframes, UX research and conversion-focused layouts for GTA businesses. Turn visitors into customers.",
+      "Conversion-focused web design in Vaughan and Toronto: UX research, mobile-first layouts and custom UI that turn visitors into calls, bookings and sales.",
   },
   {
     slug: "web-development",
@@ -198,9 +198,9 @@ export const serviceList: Service[] = [
       { q: "Do you offer ongoing maintenance?", a: "Yes. Monthly plans cover hosting, updates, backups, security monitoring and small content changes." },
     ],
     related: ["website-design", "cybersecurity", "ai-automation"],
-    seoTitle: "Custom Web Development (Next.js, WordPress, Shopify) | Smart Solutions",
+    seoTitle: "Custom Web Development Toronto | Next.js, WordPress, Shopify",
     seoDescription:
-      "Fast, secure websites and web apps for GTA businesses. Next.js, WordPress and Shopify builds with bookings, payments and CRM integrations.",
+      "Custom web development in Toronto on Next.js, WordPress and Shopify: fast sites, bookings, payments, CRM integrations, SEO-safe migrations and maintenance.",
   },
   {
     slug: "seo",
@@ -245,9 +245,9 @@ export const serviceList: Service[] = [
       { q: "Do I need to write content?", a: "No. We handle research and writing, and you approve anything before it goes live." },
     ],
     related: ["web-development", "paid-ads", "social-media"],
-    seoTitle: "SEO & Local Search Agency in Concord, ON | Smart Solutions",
+    seoTitle: "SEO Services Vaughan & Local SEO Toronto | Smart Solutions",
     seoDescription:
-      "SEO audits, keyword research, technical SEO and Google Business Profile optimisation for GTA businesses. Show up when customers search.",
+      "SEO services in Vaughan and local SEO for Toronto businesses: technical SEO, Google Business Profile, content and links that win the Maps pack and real leads.",
   },
   {
     slug: "social-media",
@@ -292,9 +292,9 @@ export const serviceList: Service[] = [
       { q: "Which platform should I focus on?", a: "The one your customers use most. For B2B that's often LinkedIn; for local and consumer brands, Instagram and TikTok." },
     ],
     related: ["brand-identity", "paid-ads", "seo"],
-    seoTitle: "Social Media Management & Content Creation | Smart Solutions",
+    seoTitle: "Social Media Management Agency Toronto | Smart Solutions",
     seoDescription:
-      "Content strategy, photo and video shoots, reels and community management on Instagram, Facebook, LinkedIn and TikTok for GTA brands.",
+      "Social media management in Toronto: strategy, content calendars, reels, captions and reporting for Instagram, Facebook, LinkedIn and TikTok. You approve all.",
   },
   {
     slug: "paid-ads",
@@ -339,9 +339,9 @@ export const serviceList: Service[] = [
       { q: "Who owns the ad accounts?", a: "You do. We work inside accounts in your name, so your data and history stay with you." },
     ],
     related: ["seo", "ai-automation", "website-design"],
-    seoTitle: "Google, Meta & TikTok Ads Management | Smart Solutions",
+    seoTitle: "Google Ads Agency Toronto & Meta Ads | Smart Solutions",
     seoDescription:
-      "Paid ads built around cost per lead. Google Search, Performance Max, Facebook, Instagram and TikTok campaigns with clear monthly reporting.",
+      "Google Ads and Meta ads management in Toronto: search, Performance Max, Facebook, Instagram and TikTok campaigns with conversion tracking and clear reporting.",
   },
   {
     slug: "ai-automation",
@@ -385,9 +385,9 @@ export const serviceList: Service[] = [
       { q: "How long does setup take?", a: "Most systems are live within 2 to 4 weeks, depending on how many workflows you need." },
     ],
     related: ["paid-ads", "web-development", "seo"],
-    seoTitle: "Lead Generation & AI Automation (GoHighLevel) | Smart Solutions",
+    seoTitle: "AI Marketing Automation Canada | GoHighLevel Agency",
     seoDescription:
-      "Instant lead replies, AI chat, follow-up sequences, booking and reminders in GoHighLevel. Reply to every lead in seconds with Smart Solutions.",
+      "AI lead follow-up and marketing automation for Canadian businesses: instant replies, booking, reminders and reviews, built on GoHighLevel by Smart Solutions.",
   },
   {
     slug: "cybersecurity",
@@ -435,9 +435,9 @@ export const serviceList: Service[] = [
       { q: "Does this help with PIPEDA?", a: "Good security practices support your PIPEDA obligations to protect personal information. We'll explain where you stand in plain terms." },
     ],
     related: ["web-development", "website-design", "ai-automation"],
-    seoTitle: "Website Security, Malware Removal & Backups | Smart Solutions",
+    seoTitle: "Website Security Services for Small Business in Toronto",
     seoDescription:
-      "Website hardening, malware clean-up, SSL, automated backups and uptime monitoring for GTA businesses. Keep your site and data safe.",
+      "Website security for Toronto small businesses: malware removal, firewall, SSL, daily off-site backups, monitoring and fast incident response for local sites.",
   },
 ];
 

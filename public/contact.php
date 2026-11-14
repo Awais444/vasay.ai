@@ -4,8 +4,8 @@
  * Set NEXT_PUBLIC_FORM_ENDPOINT=/contact.php before `npm run build`.
  * Edit the three settings below on the server (or set them as server environment variables).
  */
-$CONTACT_TO_EMAIL   = getenv('CONTACT_TO_EMAIL') ?: ''; // TODO: the inbox that receives enquiries
-$CONTACT_FROM_EMAIL = 'no-reply@vasay.ai';   // must be a mailbox on your domain
+$CONTACT_TO_EMAIL   = getenv('CONTACT_TO_EMAIL') ?: 'info@smartsolutionsinc.ca'; // inbox that receives enquiries
+$CONTACT_FROM_EMAIL = 'noreply@smartsolutionsinc.ca'; // sender on your domain (SPF/DKIM must allow this server)
 $GHL_WEBHOOK_URL    = '';                    // optional GoHighLevel inbound webhook
 
 header('Content-Type: application/json; charset=utf-8');

@@ -13,14 +13,19 @@ export default function Footer() {
         <div>
           <Logo variant="dark" className="h-20 sm:h-24" />
           <p className="mt-5 max-w-xs text-white/75">{site.tagline}</p>
-          <div className="mt-6 space-y-1 text-sm text-white/75">
+          {/* NAP: must match the JSON-LD (src/lib/schema.ts) and the Google Business Profile exactly. */}
+          <address className="mt-6 space-y-1 text-sm not-italic text-white/75">
+            <span className="block font-semibold text-white">{site.legalName}</span>
             <a href={site.phoneHref} className="block font-semibold text-white hover:text-brand-orange">
               {site.phone}
+            </a>
+            <a href={site.emailHref} className="block hover:text-white">
+              {site.email}
             </a>
             <a href={site.address.mapsHref} target="_blank" rel="noopener noreferrer" className="block hover:text-white">
               {site.address.full}
             </a>
-          </div>
+          </address>
         </div>
         <nav aria-label="Services">
           <p className={heading}>

@@ -2,12 +2,15 @@
 
 import { useEffect, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import Lenis from "lenis";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type Lenis from "lenis";
 import { getLenis, setLenis } from "@/lib/lenis";
+import { refreshScrollTriggers, updateScrollTriggers } from "@/lib/gsap-lazy";
 
-gsap.registerPlugin(ScrollTrigger);
+/** Run after the first paint, when the main thread is free. */
+const whenIdle = (cb: () => void) => {
+  if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(cb, { timeout: 2000 });
+  else setTimeout(cb, 600);
+};
 
 const NAV_OFFSET = -96;
 
@@ -24,24 +27,30 @@ function scrollToEl(el: HTMLElement) {
 
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  // No smooth scrolling inside the embedded Sanity Studio (it scrolls its own panes).
+  const studio = pathname?.startsWith("/studio") ?? false;
 
   useEffect(() => {
+    if (studio) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let lenis: Lenis | null = null;
-    let tick: ((t: number) => void) | null = null;
+    let disposed = false;
+    // Smooth scrolling is an enhancement: load Lenis after first paint, off the critical path.
     if (!reduce) {
-      lenis = new Lenis({ duration: 1.15, easing: (t) => 1 - Math.pow(2, -10 * t) });
-      setLenis(lenis);
-      lenis.on("scroll", ScrollTrigger.update);
-      tick = (time: number) => lenis?.raf(time * 1000);
-      gsap.ticker.add(tick);
-      gsap.ticker.lagSmoothing(0);
+      whenIdle(() => {
+        import("lenis").then(({ default: L }) => {
+          if (disposed) return;
+          lenis = new L({ duration: 1.15, easing: (t) => 1 - Math.pow(2, -10 * t), autoRaf: true });
+          setLenis(lenis);
+          lenis.on("scroll", updateScrollTriggers);
+        });
+      });
     }
 
     // Web fonts change text heights, so re-measure every ScrollTrigger once they're in.
-    document.fonts?.ready.then(() => ScrollTrigger.refresh());
+    document.fonts?.ready.then(refreshScrollTriggers);
     // Images change heights too: refresh once everything has loaded.
-    const onLoad = () => ScrollTrigger.refresh();
+    const onLoad = () => refreshScrollTriggers();
     if (document.readyState === "complete") onLoad();
     else window.addEventListener("load", onLoad, { once: true });
 
@@ -63,11 +72,11 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
 
     return () => {
       document.removeEventListener("click", onClick, true);
-      if (tick) gsap.ticker.remove(tick);
+      disposed = true;
       lenis?.destroy();
       setLenis(null);
     };
-  }, []);
+  }, [studio]);
 
   // After a route change: start at the top (or the hash target) and re-measure triggers.
   useEffect(() => {
@@ -75,7 +84,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     getLenis()?.scrollTo(0, { immediate: true, force: true });
     // Wait for the new page's ScrollTriggers (pin spacers change page height) before measuring.
     const id = window.setTimeout(() => {
-      ScrollTrigger.refresh();
+      refreshScrollTriggers();
       const el = hash ? document.querySelector<HTMLElement>(hash) : null;
       if (el) {
         const l = getLenis();

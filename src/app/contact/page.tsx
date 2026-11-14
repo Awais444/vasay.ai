@@ -1,4 +1,6 @@
-import { site } from "@/lib/content";
+import { faqs, site } from "@/lib/content";
+import JsonLd from "@/components/JsonLd";
+import { breadcrumbs, faqPage, ORG_ID, webPage } from "@/lib/schema";
 import { MapPin } from "lucide-react";
 import ButtonArrow, { arrowLink } from "@/components/ButtonArrow";
 import { pageMetadata } from "@/lib/seo";
@@ -6,9 +8,8 @@ import Contact from "@/components/Contact";
 import { Faq } from "@/components/Sections";
 
 export const metadata = pageMetadata({
-  title: "Contact Smart Solutions | Concord, ON Marketing Agency",
-  description:
-    "Call (647) 559-3900 or send us a message. Smart Solutions is at 3300 Hwy 7, Floor 6, Concord, ON. We reply within one business day.",
+  title: "Contact Us | Digital Marketing Agency in Concord, ON",
+  description: `Contact Smart Solutions, a digital marketing agency in Concord, ON. Call ${site.phone} or visit 3300 Hwy 7, Floor 6. We reply within one business day.`,
   path: "/contact",
 });
 
@@ -69,6 +70,16 @@ function Details() {
 export default function ContactPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          webPage({ type: "ContactPage", path: "/contact", name: "Contact Us | Digital Marketing Agency in Concord, ON", description: `Contact Smart Solutions, a digital marketing agency in Concord, ON. Call ${site.phone} or visit 3300 Hwy 7, Floor 6. We reply within one business day.`, about: { "@id": ORG_ID } }),
+          breadcrumbs("/contact", [
+            { name: "Home", path: "/" },
+            { name: "Contact", path: "/contact" },
+          ]),
+          faqPage("/contact", faqs),
+        ]}
+      />
       <Contact asPage aside={<Details />} />
       <Faq overlap />
     </>

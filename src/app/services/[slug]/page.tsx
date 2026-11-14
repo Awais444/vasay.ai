@@ -1,13 +1,16 @@
 import { notFound } from "next/navigation";
 import { getService, serviceList } from "@/lib/services";
-import { site } from "@/lib/content";
-import { pageMetadata, provider } from "@/lib/seo";
+import { getGuide } from "@/lib/serviceGuides";
+import { pageMetadata } from "@/lib/seo";
+import { breadcrumbs, faqPage, service as serviceSchema, webPage } from "@/lib/schema";
 import PageHero from "@/components/PageHero";
 import ServiceVisual from "@/components/ServiceVisual";
+import ServiceGuide from "@/components/ServiceGuide";
 import { Problems, Included, Deliverables, Timeline, Related } from "@/components/ServiceSections";
 import { WhyUs, Faq } from "@/components/Sections";
 import Contact from "@/components/Contact";
 import JsonLd from "@/components/JsonLd";
+import LatestInsights from "@/components/blog/LatestInsights";
 
 export function generateStaticParams() {
   return serviceList.map((s) => ({ slug: s.slug }));
@@ -27,48 +30,30 @@ export const instant = false;
 export default async function ServicePage({ params }: PageProps<"/services/[slug]">) {
   const { slug } = await params;
   const s = getService(slug);
-  if (!s) notFound();
+  const guide = getGuide(slug);
+  if (!s || !guide) notFound();
 
   const related = s.related.map((r) => getService(r)).filter((r) => r !== undefined);
-  const url = `${site.url}/services/${s.slug}`;
+  const path = `/services/${s.slug}`;
+  const faqs = [...s.faqs, ...guide.moreFaqs];
 
   return (
     <>
       <JsonLd
         data={[
-          {
-            "@context": "https://schema.org",
-            "@type": "Service",
-            name: s.title,
-            serviceType: s.title,
-            description: s.seoDescription,
-            url,
-            provider,
-            areaServed: { "@type": "Place", name: "Greater Toronto Area" },
-          },
-          {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: s.faqs.map((f) => ({
-              "@type": "Question",
-              name: f.q,
-              acceptedAnswer: { "@type": "Answer", text: f.a },
-            })),
-          },
-          {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: site.url },
-              { "@type": "ListItem", position: 2, name: "Services", item: `${site.url}/services` },
-              { "@type": "ListItem", position: 3, name: s.title, item: url },
-            ],
-          },
+          webPage({ path, name: s.seoTitle, description: s.seoDescription, dateModified: guide.updated, about: { "@id": `${path}#service` } }),
+          breadcrumbs(path, [
+            { name: "Home", path: "/" },
+            { name: "Services", path: "/services" },
+            { name: s.title, path },
+          ]),
+          serviceSchema(s, guide.definition.a),
+          faqPage(path, faqs),
         ]}
       />
       <PageHero
         crumbs={[{ label: "Home", href: "/" }, { label: "Services", href: "/services" }, { label: s.title }]}
-        eyebrow={s.tag}
+        h1Lead={guide.h1Keyword}
         icon={s.icon}
         title={s.heroTitle}
         accent={s.heroAccent}
@@ -78,11 +63,13 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         visual={<ServiceVisual slug={s.slug} />}
       />
       <Problems items={s.problems} />
+      <ServiceGuide guide={guide} title={s.title} />
       <Included items={s.included} title={s.title} />
       <Deliverables service={s} />
       <Timeline steps={s.process} />
       <WhyUs />
-      <Faq items={s.faqs} heading={{ eyebrow: "FAQ", title: "Good", accent: "questions." }} />
+      <LatestInsights categorySlug={s.slug} topic={s.title} />
+      <Faq items={faqs} heading={{ eyebrow: "FAQ", title: "Good", accent: "questions." }} />
       <Related items={related} />
       <Contact defaultService={s.title} />
     </>

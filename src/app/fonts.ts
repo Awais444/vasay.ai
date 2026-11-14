@@ -9,16 +9,9 @@ export const heading = localFont({
 });
 
 export const body = localFont({
-  src: [
-    {
-      path: "../../node_modules/@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2",
-      style: "normal",
-    },
-    {
-      path: "../../node_modules/@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-italic.woff2",
-      style: "italic",
-    },
-  ],
+  // Latin subset, upright only (italics are rare; the browser slants the upright face).
+  // Keeps the preload list to the two fonts the first screen needs.
+  src: "../../node_modules/@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2",
   variable: "--font-body",
   weight: "200 800",
   display: "swap",

@@ -2,8 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { loadGsap, refreshScrollTriggers } from "@/lib/gsap-lazy";
 import { getLenis } from "@/lib/lenis";
 import { PAGE_NAVIGATE, PAGE_READY } from "@/lib/transition";
 
@@ -67,7 +66,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
     html.removeAttribute("data-vt");
     html.removeAttribute("data-direction");
     busy.current = false;
-    ScrollTrigger.refresh();
+    refreshScrollTriggers();
     document.getElementById("main")?.focus({ preventScroll: true });
     window.dispatchEvent(new Event(PAGE_READY));
   }, []);
@@ -162,6 +161,8 @@ async function gsapFallback(
     scrollTopNow();
     return;
   }
+  // GSAP only loads for this fallback (browsers without View Transitions).
+  const { gsap } = await loadGsap();
   const k = isMobile() ? 0.56 : 1;
   const sign = direction === "back" ? -1 : 1;
   gsap.set(el, { transformOrigin: "50% 50vh", overflow: "hidden", willChange: "transform, opacity" });

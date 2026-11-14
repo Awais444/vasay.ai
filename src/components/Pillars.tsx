@@ -1,7 +1,7 @@
 "use client";
 
 import ButtonArrow from "@/components/ButtonArrow";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { MonitorSmartphone, Target, Zap, type LucideIcon } from "lucide-react";
 import Link from "@/components/TransitionLink";
 import { pillars } from "@/lib/content";
@@ -41,7 +41,7 @@ export default function Pillars() {
         </div>
 
         {/* Pillars: dividers only, no cards */}
-        <motion.ul
+        <m.ul
           variants={list}
           initial="hidden"
           whileInView="show"
@@ -51,7 +51,7 @@ export default function Pillars() {
           {pillars.items.map((p, i) => {
             const Icon = ICONS[p.icon];
             return (
-              <motion.li
+              <m.li
                 key={p.title}
                 variants={item}
                 className={`relative ${
@@ -92,10 +92,10 @@ export default function Pillars() {
                     <ButtonArrow size={16} />
                   </span>
                 </Link>
-              </motion.li>
+              </m.li>
             );
           })}
-        </motion.ul>
+        </m.ul>
       </div>
     </section>
   );

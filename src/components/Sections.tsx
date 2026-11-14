@@ -4,10 +4,8 @@ import ButtonArrow, { arrowLink } from "@/components/ButtonArrow";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "@/components/TransitionLink";
-import { AnimatePresence, motion } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
+import { m } from "framer-motion";
+import { useLazyGsap } from "@/lib/gsap-lazy";
 import {
   stats,
   manifesto,
@@ -27,8 +25,8 @@ import {
 } from "@/lib/content";
 import { Star } from "./Logo";
 import { ServiceIconBox } from "./ServiceIcon";
+import RichText from "./RichText";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const MOTION_OK = "(prefers-reduced-motion: no-preference)";
@@ -78,8 +76,8 @@ export function Stats({
   overlapHero?: boolean;
 }) {
   const root = useRef<HTMLElement>(null);
-  useGSAP(
-    () => {
+  useLazyGsap(
+    (gsap) => {
       gsap.utils.toArray<HTMLElement>(".count").forEach((el) => {
         const end = Number(el.dataset.end);
         const obj = { v: 0 };
@@ -106,7 +104,7 @@ export function Stats({
         );
       });
     },
-    { scope: root },
+    root,
   );
 
   return (
@@ -191,32 +189,30 @@ export function Services() {
                     </svg>
                   </span>
                 </button>
-                <AnimatePresence initial={false}>
-                  {on && (
-                    <motion.div
-                      id={`svc-${i}`}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.5, ease }}
-                      className="overflow-hidden"
-                    >
+                {/* Always rendered (crawlable); collapsed visually with grid rows. */}
+                <div
+                  id={`svc-${i}`}
+                  inert={!on}
+                  className={`grid transition-[grid-template-rows,opacity] duration-500 ease-[var(--ease-out-expo)] ${
+                    on ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                    <div className="overflow-hidden">
                       <div className="flex flex-col gap-4 pb-8 pl-12 sm:flex-row sm:items-end sm:justify-between sm:pl-16">
                         <p className="max-w-xl text-ink-2 sm:text-lg">{s.description}</p>
                         <span className="flex shrink-0 gap-5">
                           <Link href={s.href} className={`${arrowLink} font-semibold text-accent hover:text-accent-bright`}>
-                            Learn more
+                            Learn more<span className="sr-only"> about {s.title}</span>
                             <ButtonArrow size={16} />
                           </Link>
                           <a href="#contact" className={`${arrowLink} font-semibold text-ink-2 hover:text-accent`}>
-                            Discuss this
+                            Discuss this<span className="sr-only"> service: {s.title}</span>
                             <ButtonArrow size={16} />
                           </a>
                         </span>
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    </div>
+                </div>
               </li>
             );
           })}
@@ -245,7 +241,7 @@ export function WhyUs() {
         {/* Clean, equal-height 2×2 grid (no offset cards) */}
         <div className="grid auto-rows-fr gap-4 sm:grid-cols-2">
           {whyUs.items.map((it, i) => (
-            <motion.div
+            <m.div
               key={it.title}
               {...reveal}
               transition={{ ...reveal.transition, delay: i * 0.08 }}
@@ -256,7 +252,7 @@ export function WhyUs() {
               </span>
               <h3 className="mt-8 text-2xl font-semibold">{it.title}</h3>
               <p className="mt-3 text-base text-ink-2 sm:text-[17px]">{it.body}</p>
-            </motion.div>
+            </m.div>
           ))}
         </div>
       </div>
@@ -289,7 +285,7 @@ function Chips({ items }: { items: string[] }) {
   return (
     <ul className="mt-6 flex flex-wrap gap-2">
       {items.map((c) => (
-        <li key={c} className="rounded-full bg-white/15 px-3.5 py-1.5 text-sm font-medium ring-1 ring-white/25 backdrop-blur">
+        <li key={c} className="rounded-full bg-white/15 px-3.5 py-1.5 text-sm font-medium ring-1 ring-white/25">
           {c}
         </li>
       ))}
@@ -353,13 +349,13 @@ export function Process() {
   return (
     <section id="process" ref={root} className="bg-brand-black text-white section-y">
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
-        <motion.div {...reveal}>
+        <m.div {...reveal}>
           <Heading eyebrow={process.eyebrow} title={process.title} accent={process.accent} dark />
-        </motion.div>
+        </m.div>
 
         {/* Desktop: expanding panels */}
-        <motion.div
-          role="tablist"
+        <m.div
+          role="group"
           aria-label="Our process"
           variants={panelStagger}
           initial="hidden"
@@ -377,7 +373,7 @@ export function Process() {
           {steps.map((s, i) => {
             const on = i === active;
             return (
-              <motion.div
+              <m.div
                 key={s.num}
                 variants={panelItem}
                 style={{ flexGrow: on ? 3.2 : 1 }}
@@ -405,7 +401,7 @@ export function Process() {
                 {/* Expanded content. The min-width stops text reflowing while the panel grows. */}
                 <div
                   id={`process-panel-${i}`}
-                  role="tabpanel"
+                  role="region"
                   aria-labelledby={`process-tab-${i}`}
                   aria-hidden={!on}
                   className="pointer-events-none absolute inset-0 min-w-[420px] p-9"
@@ -431,11 +427,9 @@ export function Process() {
                     tabs.current[i] = el;
                   }}
                   type="button"
-                  role="tab"
                   id={`process-tab-${i}`}
-                  aria-selected={on}
+                  aria-expanded={on}
                   aria-controls={`process-panel-${i}`}
-                  tabIndex={on ? 0 : -1}
                   onClick={() => choose(i)}
                   className="absolute inset-0 rounded-[28px] focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-white"
                 >
@@ -446,7 +440,7 @@ export function Process() {
 
                 {/* Auto-play progress */}
                 {on && running && (
-                  <motion.span
+                  <m.span
                     key={`progress-${active}`}
                     aria-hidden="true"
                     initial={{ scaleX: 0 }}
@@ -455,10 +449,10 @@ export function Process() {
                     className="pointer-events-none absolute inset-x-0 bottom-0 h-[3px] origin-left bg-brand-orange"
                   />
                 )}
-              </motion.div>
+              </m.div>
             );
           })}
-        </motion.div>
+        </m.div>
 
         {/* Mobile and tablet: accordion (no auto-play) */}
         <ul className="mt-12 space-y-3 lg:hidden">
@@ -525,8 +519,8 @@ export function Process() {
 /* ---------- 5. Work ---------- */
 function WorkCard({ item, index }: { item: (typeof work)[number]; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  useGSAP(
-    () => {
+  useLazyGsap(
+    (gsap) => {
       const mm = gsap.matchMedia();
       mm.add(MOTION_OK, () => {
         gsap.fromTo(
@@ -536,10 +530,10 @@ function WorkCard({ item, index }: { item: (typeof work)[number]; index: number 
         );
       });
     },
-    { scope: ref },
+    ref,
   );
   return (
-    <motion.div ref={ref} {...reveal} className={index % 2 ? "md:mt-24" : ""}>
+    <m.div ref={ref} {...reveal} className={index % 2 ? "md:mt-24" : ""}>
       <Link href={item.href} className="group block">
         <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)]">
           <div className={`parallax absolute -inset-y-[10%] inset-x-0 bg-gradient-to-br ${item.gradient} transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105`}>
@@ -563,7 +557,7 @@ function WorkCard({ item, index }: { item: (typeof work)[number]; index: number 
         {/* Only real, verified results belong here (see TODO in content.ts). */}
         {item.result && <p className="mt-2 text-sm font-semibold text-accent">{item.result}</p>}
       </Link>
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -630,24 +624,24 @@ export function Team() {
     <section id="team" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <Heading {...teamSection} />
       <ul className="mt-16 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-        {team.map((m, i) => (
-          <motion.li key={m.slug} {...reveal} transition={{ ...reveal.transition, delay: i * 0.07 }} className="group">
+        {team.map((member, i) => (
+          <m.li key={member.slug} {...reveal} transition={{ ...reveal.transition, delay: i * 0.07 }} className="group">
             <div
               className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-card)]"
-              style={{ background: m.tint }}
+              style={{ background: member.tint }}
             >
               {/* TODO: replace with real team photos */}
               <Image
-                src={`/team/${m.slug}.svg`}
-                alt={`Illustrated portrait of ${m.name}`}
+                src={`/team/${member.slug}.svg`}
+                alt={`Illustrated portrait of ${member.name}`}
                 fill
                 unoptimized
                 className="object-contain object-bottom p-3 transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105"
               />
             </div>
-            <h3 className="mt-4 text-lg font-semibold">{m.name}</h3>
-            <p className="text-sm text-ink-2">{m.role}</p>
-          </motion.li>
+            <h3 className="mt-4 text-lg font-semibold">{member.name}</h3>
+            <p className="text-sm text-ink-2">{member.role}</p>
+          </m.li>
         ))}
       </ul>
     </section>
@@ -756,20 +750,20 @@ export function Faq({
                     </span>
                   </button>
                 </h3>
-                <AnimatePresence initial={false}>
-                  {on && (
-                    <motion.div
-                      id={`${id}-${i}`}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.45, ease }}
-                      className="overflow-hidden"
-                    >
-                      <p className="max-w-2xl pb-6 text-base text-ink-2 sm:text-[17px]">{f.a}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {/* Always rendered (crawlable, matches FAQPage schema); collapsed visually with grid rows. */}
+                <div
+                  id={`${id}-${i}`}
+                  inert={!on}
+                  className={`grid transition-[grid-template-rows,opacity] duration-[450ms] ease-[var(--ease-out-expo)] ${
+                    on ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <p className="max-w-2xl pb-6 text-base text-ink-2 sm:text-[17px]">
+                      <RichText text={f.a} />
+                    </p>
+                  </div>
+                </div>
               </li>
             );
           })}

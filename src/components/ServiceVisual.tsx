@@ -1,7 +1,7 @@
 "use client";
 
 import ButtonArrow from "@/components/ButtonArrow";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Star } from "./Logo";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -18,7 +18,7 @@ const grow = (i: number) => ({
 
 function Panel({ children, label }: { children: React.ReactNode; label: string }) {
   return (
-    <div className="relative rounded-[28px] bg-brand-black/85 p-6 shadow-[0_40px_120px_rgb(10_10_40/0.5)] ring-1 ring-white/10 backdrop-blur">
+    <div className="relative rounded-[28px] bg-brand-black/85 p-6 shadow-[0_40px_120px_rgb(10_10_40/0.5)] ring-1 ring-white/10">
       <div className="mb-5 flex items-center justify-between text-[13px] text-white/75">
         <span className="flex gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
@@ -36,12 +36,12 @@ function Brand() {
   const sw = ["var(--accent)", "var(--brand-orange)", "var(--accent-deep)", "var(--brand-silver)", "var(--brand-red)", "var(--brand-black)"];
   return (
     <Panel label="Brand system">
-      <motion.p {...pop(0)} className="font-display text-6xl font-semibold tracking-[-0.05em] text-white">
+      <m.p {...pop(0)} className="font-display text-6xl font-semibold tracking-[-0.05em] text-white">
         Aa<span className="text-brand-orange">.</span>
-      </motion.p>
+      </m.p>
       <div className="mt-8 grid grid-cols-3 gap-3">
         {sw.map((c, i) => (
-          <motion.span
+          <m.span
             key={c}
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -58,14 +58,14 @@ function Brand() {
 function WebDesign() {
   return (
     <Panel label="yourbrand.ca">
-      <motion.div {...pop(0)} className="h-6 w-2/3 rounded-lg bg-white/80" />
-      <motion.div {...pop(1)} className="mt-3 h-3 w-1/2 rounded bg-white/25" />
-      <motion.div {...pop(2)} className="mt-6 inline-block rounded-full bg-brand-orange px-4 py-2 text-[13px] font-semibold text-white">
+      <m.div {...pop(0)} className="h-6 w-2/3 rounded-lg bg-white/80" />
+      <m.div {...pop(1)} className="mt-3 h-3 w-1/2 rounded bg-white/25" />
+      <m.div {...pop(2)} className="mt-6 inline-block rounded-full bg-brand-orange px-4 py-2 text-[13px] font-semibold text-white">
         Book now
-      </motion.div>
+      </m.div>
       <div className="mt-8 grid grid-cols-3 gap-3">
         {[0, 1, 2].map((i) => (
-          <motion.div key={i} {...pop(3 + i)} className="h-24 rounded-2xl bg-white/[0.07] ring-1 ring-white/10" />
+          <m.div key={i} {...pop(3 + i)} className="h-24 rounded-2xl bg-white/[0.07] ring-1 ring-white/10" />
         ))}
       </div>
     </Panel>
@@ -78,13 +78,13 @@ function WebDev() {
     <Panel label="build · deploy">
       <div className="space-y-3 font-mono text-[13px]">
         {lines.map((w, i) => (
-          <motion.div key={i} {...pop(i)} className="flex items-center gap-3">
+          <m.div key={i} {...pop(i)} className="flex items-center gap-3">
             <span className="text-white/75">{i + 1}</span>
             <span className={`h-2.5 rounded ${w} ${i === 2 ? "bg-brand-orange/80" : "bg-white/25"}`} />
-          </motion.div>
+          </m.div>
         ))}
       </div>
-      <motion.div {...pop(6)} className="mt-8 flex items-center gap-5 rounded-2xl bg-white/[0.06] p-4 ring-1 ring-white/10">
+      <m.div {...pop(6)} className="mt-8 flex items-center gap-5 rounded-2xl bg-white/[0.06] p-4 ring-1 ring-white/10">
         <span className="flex h-16 w-16 items-center justify-center rounded-full font-display text-2xl font-semibold text-emerald-400 ring-4 ring-emerald-400/70">
           98
         </span>
@@ -92,7 +92,7 @@ function WebDev() {
           <span className="block font-semibold text-white">Performance</span>
           Illustrative score
         </span>
-      </motion.div>
+      </m.div>
     </Panel>
   );
 }
@@ -101,7 +101,7 @@ function Seo() {
   const rows = ["Competitor A", "Competitor B", "Competitor C"];
   return (
     <Panel label="Google · local results">
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 1, ease }}
@@ -115,12 +115,12 @@ function Seo() {
         <span className="inline-flex items-center gap-1 text-[13px] font-semibold text-emerald-600">
           <ButtonArrow dir="up" size={14} nudge={false} />7
         </span>
-      </motion.div>
+      </m.div>
       {rows.map((r, i) => (
-        <motion.div key={r} {...pop(i)} className="mt-3 flex items-center gap-3 rounded-2xl bg-white/[0.06] p-4 text-white/75 ring-1 ring-white/10">
+        <m.div key={r} {...pop(i)} className="mt-3 flex items-center gap-3 rounded-2xl bg-white/[0.06] p-4 text-white/75 ring-1 ring-white/10">
           <span className="font-display text-xl font-semibold">#{i + 2}</span>
           {r}
-        </motion.div>
+        </m.div>
       ))}
     </Panel>
   );
@@ -131,7 +131,7 @@ function Social() {
     <Panel label="This month's grid">
       <div className="grid grid-cols-3 gap-2">
         {Array.from({ length: 9 }).map((_, i) => (
-          <motion.div
+          <m.div
             key={i}
             {...pop(i * 0.5)}
             className={`aspect-square rounded-xl ${
@@ -140,9 +140,9 @@ function Social() {
           />
         ))}
       </div>
-      <motion.p {...pop(6)} className="mt-5 flex items-center gap-2 text-sm text-white/75">
+      <m.p {...pop(6)} className="mt-5 flex items-center gap-2 text-sm text-white/75">
         <span className="text-brand-orange">♥</span> 2,418 · <span>💬 136</span> · <span className="text-white/75">Illustrative</span>
-      </motion.p>
+      </m.p>
     </Panel>
   );
 }
@@ -151,14 +151,14 @@ function PaidAds() {
   const bars = [100, 82, 70, 58, 50, 41];
   return (
     <Panel label="Cost per lead">
-      <motion.p {...pop(0)} className="flex items-center gap-2 font-display text-5xl font-semibold tracking-tight text-white">
+      <m.p {...pop(0)} className="flex items-center gap-2 font-display text-5xl font-semibold tracking-tight text-white">
         <ButtonArrow dir="down" size={40} nudge={false} />
         41%
-      </motion.p>
+      </m.p>
       <p className="mt-1 text-sm text-white/75">Illustrative · 6 months</p>
       <div className="mt-8 flex h-40 items-end gap-3">
         {bars.map((h, i) => (
-          <motion.span
+          <m.span
             key={i}
             {...grow(i)}
             style={{ height: `${h}%`, transformOrigin: "bottom" }}
@@ -180,18 +180,18 @@ function Automation() {
   return (
     <Panel label="AI assistant · replied in 8s">
       <div className="flex flex-col gap-3">
-        {chat.map((m, i) => (
-          <motion.p
+        {chat.map((msg, i) => (
+          <m.p
             key={i}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 + i * 0.8, duration: 0.5, ease }}
             className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
-              m.ai ? "self-end rounded-br-md bg-accent text-white" : "self-start rounded-bl-md bg-white/10 text-white/90"
+              msg.ai ? "self-end rounded-br-md bg-accent text-white" : "self-start rounded-bl-md bg-white/10 text-white/90"
             }`}
           >
-            {m.t}
-          </motion.p>
+            {msg.t}
+          </m.p>
         ))}
       </div>
     </Panel>
@@ -203,9 +203,9 @@ function Security() {
   return (
     <Panel label="Security status">
       <div className="flex items-center gap-5">
-        <motion.svg {...pop(0)} viewBox="0 0 48 56" className="h-20 w-20 shrink-0" aria-hidden="true">
+        <m.svg {...pop(0)} viewBox="0 0 48 56" className="h-20 w-20 shrink-0" aria-hidden="true">
           <path d="M24 2 44 10v16c0 13-8.6 23.5-20 28C12.6 49.5 4 39 4 26V10L24 2Z" fill="var(--accent)" stroke="white" strokeOpacity=".3" />
-          <motion.path
+          <m.path
             d="M15 28l6.5 6.5L34 22"
             fill="none"
             stroke="var(--brand-orange)"
@@ -216,7 +216,7 @@ function Security() {
             animate={{ pathLength: 1 }}
             transition={{ delay: 1, duration: 0.7, ease }}
           />
-        </motion.svg>
+        </m.svg>
         <p className="text-white">
           <span className="block font-display text-2xl font-semibold">Protected</span>
           <span className="text-sm text-white/75">Monitored 24/7</span>
@@ -224,10 +224,10 @@ function Security() {
       </div>
       <ul className="mt-7 space-y-2.5">
         {checks.map((c, i) => (
-          <motion.li key={c} {...pop(i + 1)} className="flex items-center gap-3 rounded-xl bg-white/[0.06] px-4 py-3 text-sm text-white/85 ring-1 ring-white/10">
+          <m.li key={c} {...pop(i + 1)} className="flex items-center gap-3 rounded-xl bg-white/[0.06] px-4 py-3 text-sm text-white/85 ring-1 ring-white/10">
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400 text-[13px] font-bold text-brand-black">✓</span>
             {c}
-          </motion.li>
+          </m.li>
         ))}
       </ul>
     </Panel>

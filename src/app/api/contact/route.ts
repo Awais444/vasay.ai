@@ -53,7 +53,8 @@ export async function POST(request: Request) {
     tasks.push(
       resend.emails
         .send({
-          from: process.env.CONTACT_FROM_EMAIL || "Smart Solutions <onboarding@resend.dev>",
+          // Sender must be on a Resend-verified domain (smartsolutionsinc.ca: SPF + DKIM). Replies go to the visitor.
+          from: process.env.CONTACT_FROM_EMAIL || "Smart Solutions <noreply@smartsolutionsinc.ca>",
           to,
           replyTo: d.email,
           subject: `New lead: ${d.name}${d.service ? ` — ${d.service}` : ""}`,

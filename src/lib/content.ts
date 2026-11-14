@@ -1,4 +1,4 @@
-import { isDev } from "./env";
+import { isDev, siteUrl } from "./env";
 
 import { serviceList } from "./services";
 
@@ -12,12 +12,19 @@ export const site = {
   poweredBy: "Powered by VASAY.AI",
   legalName: "Smart Solutions Inc.",
   domain: "vasay.ai",
-  url: "https://vasay.ai",
+  url: siteUrl, // NEXT_PUBLIC_SITE_URL (src/lib/env.ts)
   tagline: "Smarter marketing. Real business growth.",
   description:
     "Smart Solutions, powered by VASAY.AI, is a full-service digital marketing agency in Concord, Ontario. Brand, websites, SEO, paid ads, content and AI automation, built to work together.",
+  // Contact details: the only place they're defined. Everything else reads from here.
   phone: "(647) 559-3900",
+  /** E.164, for tel: links */
+  phoneE164: "+16475593900",
   phoneHref: "tel:+16475593900",
+  /** International format for structured data */
+  phoneSchema: "+1-647-559-3900",
+  email: "info@smartsolutionsinc.ca",
+  emailHref: "mailto:info@smartsolutionsinc.ca",
   address: {
     street: "3300 Hwy 7, Floor 6",
     city: "Concord",
@@ -46,12 +53,14 @@ export const nav = {
     { label: "Work", href: "/#work" },
     { label: "Process", href: "/#process" },
     { label: "About", href: "/about" },
+    { label: "Insights", href: "/insights" },
     { label: "Contact", href: "/contact" },
   ],
   /** Mobile menu only: shown after the main links in a smaller style. */
   mobileExtra: [{ label: "FAQ", href: "/#faq" }],
   footer: [
     { label: "About", href: "/about" },
+    { label: "Insights", href: "/insights" },
     { label: "Work", href: "/#work" },
     { label: "Process", href: "/#process" },
     { label: "FAQ", href: "/#faq" },

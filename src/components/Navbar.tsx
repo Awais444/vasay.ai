@@ -4,7 +4,7 @@ import ButtonArrow, { arrowLink } from "@/components/ButtonArrow";
 import { useEffect, useRef, useState } from "react";
 import Link from "@/components/TransitionLink";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { AnimatePresence, m, useMotionValueEvent, useScroll } from "framer-motion";
 import Logo, { Star } from "./Logo";
 import { ServiceIconBox } from "./ServiceIcon";
 import { nav, services, site } from "@/lib/content";
@@ -49,7 +49,8 @@ function useActiveSection(enabled: boolean) {
 
 export default function Navbar() {
   const pathname = usePathname();
-  const lightHero = LIGHT_HERO_ROUTES.includes(pathname);
+  const lightHero =
+    LIGHT_HERO_ROUTES.includes(pathname) || /^\/insights\/(?!category\/|author\/|page\/)[^/]+$/.test(pathname);
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -119,7 +120,7 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.header
+      <m.header
         initial={false}
         animate={{ y: hidden ? -120 : 0 }}
         transition={{ duration: 0.5, ease }}
@@ -128,7 +129,7 @@ export default function Navbar() {
         <div
           className={`relative mx-auto flex max-w-7xl items-center justify-between rounded-full py-2 pl-4 pr-2 lg:py-1 transition-[background-color,box-shadow,color] duration-300 sm:pl-5 ${
             solid
-              ? "bg-white/[0.96] text-brand-black shadow-[0_6px_24px_rgb(20_19_23/0.10)] ring-1 ring-brand-black/[0.06] backdrop-blur-[16px]"
+              ? "bg-white/[0.96] text-brand-black shadow-[0_6px_24px_rgb(20_19_23/0.10)] ring-1 ring-brand-black/[0.06] sm:backdrop-blur-[16px]"
               : "bg-transparent text-white ring-1 ring-transparent"
           }`}
           onMouseLeave={closeMega}
@@ -204,7 +205,7 @@ export default function Navbar() {
           {/* Services mega menu */}
           <AnimatePresence>
             {mega && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, y: 8, filter: "blur(4px)" }}
@@ -220,7 +221,7 @@ export default function Navbar() {
                       {services.map((s, i) => {
                         const current = pathname === s.href;
                         return (
-                          <motion.li
+                          <m.li
                             key={s.slug}
                             initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -240,7 +241,7 @@ export default function Navbar() {
                                 <span className="mt-0.5 block text-[13.5px] leading-snug text-[#5D5F6B]">{s.tag}</span>
                               </span>
                             </Link>
-                          </motion.li>
+                          </m.li>
                         );
                       })}
                     </ul>
@@ -276,16 +277,16 @@ export default function Navbar() {
                     </span>
                   </Link>
                 </div>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         </div>
-      </motion.header>
+      </m.header>
 
       {/* Mobile full-screen menu */}
       <AnimatePresence>
         {mobile && (
-          <motion.div
+          <m.div
             role="dialog"
             aria-modal="true"
             aria-label="Menu"
@@ -313,7 +314,7 @@ export default function Navbar() {
               <ul className="space-y-1">
                 {nav.links.map((l, i) => (
                   <li key={l.href} className="overflow-hidden">
-                    <motion.div
+                    <m.div
                       initial={{ y: "110%" }}
                       animate={{ y: 0 }}
                       transition={{ delay: 0.25 + i * 0.06, duration: 0.7, ease }}
@@ -329,11 +330,11 @@ export default function Navbar() {
                         <span className="text-sm font-medium text-brand-orange">{String(i + 1).padStart(2, "0")}</span>
                         {l.label}
                       </Link>
-                    </motion.div>
+                    </m.div>
                   </li>
                 ))}
               </ul>
-              <motion.ul
+              <m.ul
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 + nav.links.length * 0.06, duration: 0.6, ease }}
@@ -351,9 +352,9 @@ export default function Navbar() {
                     </Link>
                   </li>
                 ))}
-              </motion.ul>
+              </m.ul>
             </nav>
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.6, ease }}
@@ -362,11 +363,14 @@ export default function Navbar() {
               <a href={site.phoneHref} className="block text-lg font-semibold text-white">
                 {site.phone}
               </a>
+              <a href={site.emailHref} className="block py-1 text-white">
+                {site.email}
+              </a>
               <a href={site.address.mapsHref} target="_blank" rel="noopener noreferrer" className="block">
                 {site.address.full}
               </a>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

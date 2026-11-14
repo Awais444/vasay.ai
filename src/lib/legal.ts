@@ -8,8 +8,7 @@ export type LegalDoc = {
   sections: { id: string; title: string; body: string[] }[];
 };
 
-const CONTACT_LINE =
-  "Smart Solutions Inc., 3300 Hwy 7, Floor 6, Concord, ON L4K 4M3. Phone: (647) 559-3900.";
+const CONTACT_LINE = `${site.legalName}, ${site.address.full}. Phone: ${site.phone}. Email: ${site.email}.`;
 
 export const privacy: LegalDoc = {
   title: "Privacy Policy",
@@ -172,3 +171,4 @@ export const terms: LegalDoc = {
     },
   ],
 };
+import { site } from "./content";

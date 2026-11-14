@@ -1,14 +1,18 @@
-import { about, site } from "@/lib/content";
+import { about } from "@/lib/content";
+import { breadcrumbs, ORG_ID, webPage } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
 import { Heading, Stats, Team } from "@/components/Sections";
 import Contact from "@/components/Contact";
 import JsonLd from "@/components/JsonLd";
 
+const ABOUT_D =
+  "Meet Smart Solutions, powered by VASAY.AI: a Concord, Ontario digital marketing agency with 15+ years of experience in branding, websites, ads and automation.";
+const ABOUT_T = "About Smart Solutions | Marketing Agency in Concord, ON";
+
 export const metadata = pageMetadata({
-  title: "About Smart Solutions | Digital Marketing Agency in Concord, ON",
-  description:
-    "Meet Smart Solutions, powered by VASAY.AI: a Concord, Ontario digital marketing agency with 15+ years of experience in branding, websites, ads and AI automation.",
+  title: ABOUT_T,
+  description: ABOUT_D,
   path: "/about",
 });
 
@@ -16,25 +20,13 @@ export default function AboutPage() {
   return (
     <>
       <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: site.legalName,
-          alternateName: "Smart Solutions — Powered by VASAY.AI",
-          url: site.url,
-          logo: `${site.url}/brand/logo.webp`,
-          telephone: "+1-647-559-3900",
-          description: site.description,
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: site.address.street,
-            addressLocality: site.address.city,
-            addressRegion: site.address.region,
-            postalCode: site.address.postalCode,
-            addressCountry: site.address.country,
-          },
-          sameAs: site.socials.map((s) => s.href),
-        }}
+        data={[
+          webPage({ type: "AboutPage", path: "/about", name: ABOUT_T, description: ABOUT_D, about: { "@id": ORG_ID } }),
+          breadcrumbs("/about", [
+            { name: "Home", path: "/" },
+            { name: "About", path: "/about" },
+          ]),
+        ]}
       />
       <PageHero
         crumbs={[{ label: "Home", href: "/" }, { label: "About" }]}

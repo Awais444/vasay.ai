@@ -4,7 +4,7 @@ import HeroBackground from "@/components/HeroBackground";
 
 export const metadata = {
   title: "Page not found | Smart Solutions",
-  robots: { index: false },
+  robots: { index: false, follow: true },
 };
 
 export default function NotFound() {

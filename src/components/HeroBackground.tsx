@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { m, useMotionTemplate, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Star } from "./Logo";
 
 const spring = { stiffness: 60, damping: 20, mass: 0.6 };
@@ -39,12 +39,21 @@ export default function HeroBackground({ ringsClassName = "top-[330px] sm:top-[3
     return () => parent.removeEventListener("mousemove", onMove);
   }, [mx, my, px, py]);
 
+  // Pause looping animations (mesh, rings, chips, marquee) while the hero is off-screen.
+  useEffect(() => {
+    const section = ref.current?.parentElement;
+    if (!section) return;
+    const io = new IntersectionObserver(([e]) => section.toggleAttribute("data-offscreen", !e.isIntersecting));
+    io.observe(section);
+    return () => io.disconnect();
+  }, [mx, my, px, py]);
+
   return (
     <div ref={ref} aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
       <div className="hero-mesh absolute -inset-[20%] opacity-90" />
       <div className="dot-grid absolute inset-0" />
-      <motion.div style={{ x: lx, y: ly }} className="absolute -left-40 top-20 h-[520px] w-[520px] rounded-full bg-accent-deep blur-[120px]" />
-      <motion.div style={{ x: rx, y: ry }} className="absolute -right-32 top-40 h-[420px] w-[420px] rounded-full bg-brand-orange/40 blur-[120px]" />
+      <m.div style={{ x: lx, y: ly }} className="absolute -left-[280px] -top-[40px] h-[760px] w-[760px] bg-[radial-gradient(closest-side,var(--accent-deep)_35%,transparent)]" />
+      <m.div style={{ x: rx, y: ry }} className="absolute -right-[248px] top-[40px] h-[660px] w-[660px] bg-[radial-gradient(closest-side,rgb(255_112_1/0.4)_35%,transparent)]" />
       <div className={`absolute left-1/2 -translate-x-1/2 -translate-y-1/2 ${ringsClassName}`}>
         <div className="absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 sm:h-[560px] sm:w-[560px]" />
         <div className="absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/15 sm:h-[820px] sm:w-[820px]" />
@@ -57,7 +66,7 @@ export default function HeroBackground({ ringsClassName = "top-[330px] sm:top-[3
           <span className="absolute bottom-0 left-1/2 h-2 w-2 -translate-x-1/2 translate-y-1/2 rounded-full bg-white shadow-[0_0_10px_white]" />
         </div>
       </div>
-      <motion.div style={{ background: spot }} className="absolute inset-0 hidden md:block" />
+      <m.div style={{ background: spot }} className="absolute inset-0 hidden md:block" />
       <div className="grain absolute inset-0" />
     </div>
   );

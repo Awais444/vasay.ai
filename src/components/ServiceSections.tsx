@@ -3,10 +3,8 @@
 import ButtonArrow, { arrowLink } from "@/components/ButtonArrow";
 import { useRef } from "react";
 import Link from "@/components/TransitionLink";
-import { motion } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
+import { m } from "framer-motion";
+import { useLazyGsap } from "@/lib/gsap-lazy";
 import {
   History,
   Copy,
@@ -37,7 +35,6 @@ import {
 import type { ProblemIconName, Service } from "@/lib/services";
 import { Heading, reveal } from "./Sections";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -88,7 +85,7 @@ export function Problems({ items }: { items: Service["problems"] }) {
       <Heading eyebrow="The problem" title="Sound" accent="familiar?" />
       <div className="mt-14 grid gap-4 md:grid-cols-3">
         {items.map((p, i) => (
-          <motion.div
+          <m.div
             key={p.title}
             {...reveal}
             transition={{ ...reveal.transition, delay: i * 0.08 }}
@@ -106,7 +103,7 @@ export function Problems({ items }: { items: Service["problems"] }) {
                 <ButtonArrow size={16} />
               </a>
             </div>
-          </motion.div>
+          </m.div>
         ))}
       </div>
     </section>
@@ -120,7 +117,7 @@ export function Included({ items, title }: { items: Service["included"]; title: 
         <Heading eyebrow={title} title="What's" accent="included." />
         <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((it, i) => (
-            <motion.li
+            <m.li
               key={it.title}
               {...reveal}
               transition={{ ...reveal.transition, delay: (i % 3) * 0.08 }}
@@ -131,7 +128,7 @@ export function Included({ items, title }: { items: Service["included"]; title: 
               </span>
               <h3 className="mt-6 text-xl font-semibold">{it.title}</h3>
               <p className="mt-2 text-base text-ink-2 sm:text-[17px]">{it.body}</p>
-            </motion.li>
+            </m.li>
           ))}
         </ul>
       </div>
@@ -191,8 +188,8 @@ export function Deliverables({ service }: { service: Service }) {
 
 export function Timeline({ steps }: { steps: Service["process"] }) {
   const root = useRef<HTMLElement>(null);
-  useGSAP(
-    () => {
+  useLazyGsap(
+    (gsap) => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         gsap.fromTo(
@@ -205,7 +202,7 @@ export function Timeline({ steps }: { steps: Service["process"] }) {
         });
       });
     },
-    { scope: root },
+    root,
   );
   return (
     <section ref={root} aria-label="How it works" className="bg-accent-deep text-white section-y">

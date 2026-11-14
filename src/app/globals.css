@@ -143,6 +143,8 @@ blockquote {
   letter-spacing: 0.08em;
 }
 .hero-marquee .marquee-track { animation-duration: 55s; }
+/* Heroes scrolled out of view: stop their looping animations (set by HeroBackground). */
+[data-offscreen] :is(.hero-mesh, .orbit, .orbit-rev, .float, .marquee-track, .scroll-cue-line) { animation-play-state: paused; }
 
 @keyframes ping-soft {
   75%, 100% { transform: scale(2.2); opacity: 0; }
@@ -295,6 +297,37 @@ main:focus { outline: none; }
 }
 /* /contact: tighter bottom, plus room for the FAQ's 40px rounded overlap. */
 .contact-page-end { padding-bottom: calc(clamp(64px, 7vw, 96px) + 40px); }
+
+/* Compact inner-page hero (blog): not full screen */
+.page-hero-compact {
+  --ph-gap: clamp(12px, 2.4vh, 24px);
+  padding-top: calc(var(--nav-h) + clamp(32px, 6vh, 64px));
+  padding-bottom: clamp(56px, 8vh, 96px);
+}
+.ph-h1-compact { font-size: clamp(36px, min(5.4vw, 8vh), 76px); line-height: 0.98; text-wrap: balance; }
+.ph-h1-compact > span { max-width: 18ch; margin-inline: auto; }
+
+/* ---- Hero intros (homepage + inner pages): CSS only, transform/opacity, start at first paint ----
+   No JavaScript on the critical path. The LCP text (.hero-rise/.ph-rise) only moves, never fades.
+   While a page transition runs (html[data-vt]) the intro waits, then plays when the new page is shown.
+   --i is the stagger index. */
+:root { --ease-intro: cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes intro-line { from { transform: translateY(110%); } }
+@keyframes intro-rise { from { transform: translateY(24px); } }
+@keyframes intro-fade { from { opacity: 0; transform: translateY(24px); } }
+@keyframes intro-visual { from { opacity: 0; transform: translateY(40px); } }
+@keyframes intro-cue { from { opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-line, .ph-line { animation: intro-line 1.3s var(--ease-intro) both; animation-delay: calc(0.15s + var(--i, 0) * 0.12s); }
+  .ph-line { animation-delay: calc(0.1s + var(--i, 0) * 0.12s); }
+  .hero-rise { animation: intro-rise 1.1s var(--ease-intro) 0.45s both; }
+  .ph-rise { animation: intro-rise 1.1s var(--ease-intro) 0.35s both; }
+  .hero-fade { animation: intro-fade 1.1s var(--ease-intro) both; animation-delay: calc(0.45s + var(--i, 0) * 0.08s); }
+  .ph-fade { animation: intro-fade 1.1s var(--ease-intro) both; animation-delay: calc(0.35s + var(--i, 0) * 0.08s); }
+  .ph-visual { animation: intro-visual 1.4s var(--ease-intro) 0.5s both; }
+  .hero-cue { animation: intro-cue 1s ease 1.1s both; }
+  html[data-vt] :is(.hero-line, .ph-line, .hero-rise, .ph-rise, .hero-fade, .ph-fade, .ph-visual, .hero-cue) { animation-play-state: paused; }
+}
 
 /* ---- Phones ---- */
 @media (max-width: 639px) {
