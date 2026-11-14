@@ -3,7 +3,8 @@ import JsonLd from "@/components/JsonLd";
 import { breadcrumbs, webPage } from "@/lib/schema";
 import PageHero from "@/components/PageHero";
 import InsightsSearch from "./InsightsSearch";
-import { FeaturedPostCard } from "./PostCard";
+import PostCard, { FeaturedPostCard } from "./PostCard";
+import InsightsResults from "./InsightsResults";
 import { CategoryPills, EmptyState, Pagination, PostGrid } from "./Listing";
 import { getCategories, getPosts, PER_PAGE } from "@/sanity/data";
 
@@ -41,15 +42,18 @@ export default async function InsightsIndex({ page }: { page: number }) {
         accent={insightsHero.accent}
         sub={insightsHero.sub}
       >
-        <InsightsSearch items={posts.map((p) => ({ slug: p.slug, title: p.title, excerpt: p.excerpt, category: p.category?.title }))} />
+        <InsightsSearch enabled={posts.length > 0} />
       </PageHero>
 
-      <section aria-label="Articles" className="section-y tone-light">
+      <section aria-label="Articles" className="insights-sheet">
         <div className="mx-auto max-w-7xl px-5 sm:px-6">
           {posts.length === 0 ? (
             <EmptyState />
           ) : (
-            <>
+            <InsightsResults
+              texts={posts.map((p) => `${p.title} ${p.excerpt} ${p.category?.title ?? ""}`)}
+              cards={posts.map((p) => <PostCard key={p._id} post={p} />)}
+            >
               <CategoryPills categories={usedCategories} />
               {page === 1 && featured && (
                 <div className="mt-10">
@@ -62,7 +66,7 @@ export default async function InsightsIndex({ page }: { page: number }) {
                 </div>
               )}
               <Pagination page={page} pages={pages} />
-            </>
+            </InsightsResults>
           )}
         </div>
       </section>

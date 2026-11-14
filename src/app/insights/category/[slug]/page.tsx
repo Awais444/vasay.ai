@@ -53,7 +53,7 @@ export default async function CategoryPage({ params }: PageProps<"/insights/cate
         title={cat.title}
         sub={cat.description}
       />
-      <section aria-label={`${cat.title} articles`} className="section-y tone-light">
+      <section aria-label={`${cat.title} articles`} className="insights-sheet">
         <div className="mx-auto max-w-7xl px-5 sm:px-6">
           {inCat.length === 0 ? (
             <EmptyState title="Articles coming soon" text={`We haven't published anything on ${cat.title} yet. In the meantime, see how we can help.`} />

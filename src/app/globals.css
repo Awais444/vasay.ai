@@ -308,7 +308,8 @@ main:focus { outline: none; }
 .page-hero-compact {
   --ph-gap: clamp(12px, 2.4vh, 24px);
   padding-top: calc(var(--nav-h) + clamp(32px, 6vh, 64px));
-  padding-bottom: clamp(56px, 8vh, 96px);
+  /* + 40px: the light section below overlaps the hero's bottom edge (.insights-sheet). */
+  padding-bottom: calc(clamp(56px, 8vh, 96px) + 40px);
 }
 .ph-h1-compact { font-size: clamp(36px, min(5.4vw, 8vh), 76px); line-height: 0.98; text-wrap: balance; }
 .ph-h1-compact > span { max-width: 18ch; margin-inline: auto; }
@@ -361,3 +362,64 @@ main:focus { outline: none; }
   html.js [data-reveal]:not(.revealed) { opacity: 0; }
   html.js [data-reveal].revealed { animation: reveal-in 0.9s var(--ease-out-expo) var(--d, 0s) backwards; }
 }
+
+/* ---- Insights ---- */
+/* Light sheet that overlaps the compact hero with rounded corners (same hand-off as the homepage). */
+.insights-sheet {
+  position: relative;
+  z-index: 10;
+  margin-top: -40px;
+  border-radius: 40px 40px 0 0;
+  background: var(--brand-bg);
+  padding-block: clamp(56px, 6vw, 88px);
+}
+@media (max-width: 639px) { .insights-sheet { margin-top: -28px; border-radius: 28px 28px 0 0; } }
+
+/* Search pill: the input is invisible inside it; focus is shown on the pill only. */
+.search-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  padding-inline: 20px 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #fff;
+  color: var(--brand-black);
+  border: 2px solid transparent;
+  box-shadow: 0 10px 40px rgb(0 0 0 / 0.15);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-pill:focus-within {
+  border-color: var(--brand-orange);
+  box-shadow: 0 0 0 3px rgb(255 112 1 / 0.35), 0 10px 40px rgb(0 0 0 / 0.15);
+}
+.search-input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.search-input::placeholder { color: var(--ink-2); opacity: 1; }
+.search-input:focus,
+.search-input:focus-visible { outline: none; box-shadow: none; border-radius: 0; }
+.search-input::-webkit-search-cancel-button { display: none; }
+.search-clear {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: var(--ink-2);
+}
+.search-clear:hover { background: var(--brand-bg); color: var(--brand-black); }
+.search-clear:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; box-shadow: none; }

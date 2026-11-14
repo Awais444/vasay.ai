@@ -1,4 +1,5 @@
 import Link from "@/components/TransitionLink";
+import { PenLine } from "lucide-react";
 import ButtonArrow, { arrowLink } from "@/components/ButtonArrow";
 import PostCard from "./PostCard";
 import type { Category, PostCard as Post } from "@/sanity/data";
@@ -76,10 +77,19 @@ export function Pagination({ page, pages }: { page: number; pages: number }) {
   );
 }
 
+const EMPTY_CHIPS = [
+  { label: "SEO", href: "/services/seo" },
+  { label: "Paid Ads", href: "/services/paid-ads" },
+  { label: "AI Automation", href: "/services/ai-automation" },
+];
+
 export function EmptyState({ title = "First articles coming soon", text }: { title?: string; text?: string }) {
   return (
-    <div className="rounded-[28px] border border-dashed border-brand-silver bg-white px-6 py-16 text-center">
-      <h2 className="font-display text-3xl font-semibold tracking-tight">{title}</h2>
+    <div className="rounded-[28px] border border-dashed border-brand-silver bg-white px-6 py-12 text-center sm:py-14">
+      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F1F0FB] text-accent">
+        <PenLine size={24} strokeWidth={1.8} aria-hidden="true" />
+      </span>
+      <h2 className="mt-6 font-display text-3xl font-semibold tracking-tight">{title}</h2>
       <p className="mx-auto mt-3 max-w-md text-ink-2">
         {text ?? "We're writing practical guides on branding, websites, SEO, ads and automation. In the meantime, see how we can help."}
       </p>
@@ -90,6 +100,18 @@ export function EmptyState({ title = "First articles coming soon", text }: { tit
         Explore our services
         <ButtonArrow />
       </Link>
+      <ul aria-label="Popular services" className="mt-8 flex flex-wrap justify-center gap-2">
+        {EMPTY_CHIPS.map((c) => (
+          <li key={c.href}>
+            <Link
+              href={c.href}
+              className="inline-flex min-h-11 items-center rounded-full bg-brand-bg px-4 text-sm font-semibold text-brand-black ring-1 ring-brand-silver transition-colors hover:text-accent hover:ring-accent"
+            >
+              {c.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

@@ -60,7 +60,7 @@ export default async function AuthorPage({ params }: PageProps<"/insights/author
         title={author.name}
         sub={author.role}
       />
-      <section aria-label={`About ${author.name}`} className="section-pt tone-light">
+      <section aria-label={`About ${author.name}`} className="insights-sheet !pb-0">
         <div className="mx-auto max-w-3xl px-5 sm:px-6">
           <AuthorBox author={author} />
         </div>
