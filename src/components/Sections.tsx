@@ -27,10 +27,13 @@ const MOTION_OK = "(prefers-reduced-motion: no-preference)";
 export function Stats({
   withManifesto = true,
   overlapHero = false,
+  tightTop = false,
 }: {
   withManifesto?: boolean;
   /** Homepage: pull up 40px over the hero (below its marquee) with rounded top corners. */
   overlapHero?: boolean;
+  /** Homepage: shorter top padding after the Pillars section. */
+  tightTop?: boolean;
 }) {
   const root = useRef<HTMLElement>(null);
   useLazyGsap(
@@ -72,7 +75,7 @@ export function Stats({
       className={
         overlapHero
           ? "relative z-10 -mt-10 rounded-t-[40px] bg-brand-bg pb-[var(--section-y)] pt-[clamp(80px,9vw,120px)] tone-light"
-          : "section-y tone-light"
+          : `section-y tone-light ${tightTop ? "!pt-[var(--section-y-tight)]" : ""}`
       }
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
@@ -113,7 +116,7 @@ export function Services() {
           <Heading {...servicesSection} />
           <p className="text-lg text-ink-2">{servicesSection.intro}</p>
         </div>
-        <ul className="mt-16 border-t border-brand-silver">
+        <ul className="mt-[var(--head-gap)] border-t border-brand-silver">
           {services.map((s, i) => {
             const on = open === i;
             return (
@@ -287,7 +290,7 @@ export function Process() {
           onBlur={(e) => {
             if (!e.currentTarget.contains(e.relatedTarget as Node)) setFocused(false);
           }}
-          className="mt-14 hidden h-[520px] gap-3 lg:flex"
+          className="mt-[var(--head-gap)] hidden h-[520px] gap-3 lg:flex"
         >
           {steps.map((s, i) => {
             const on = i === active;
@@ -374,7 +377,7 @@ export function Process() {
         </m.div>
 
         {/* Mobile and tablet: accordion (no auto-play) */}
-        <ul className="mt-12 space-y-3 lg:hidden">
+        <ul className="mt-[var(--head-gap)] space-y-3 lg:hidden">
           {steps.map((s, i) => {
             const on = i === active;
             return (

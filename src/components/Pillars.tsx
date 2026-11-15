@@ -13,7 +13,7 @@ export default function Pillars() {
     <section
       id="intro"
       aria-labelledby="pillars-title"
-      className="relative z-10 -mt-7 rounded-t-[28px] bg-white sm:-mt-10 sm:rounded-t-[40px] py-[clamp(90px,10vw,120px)] tone-white"
+      className="relative z-10 -mt-7 rounded-t-[28px] bg-white sm:-mt-10 sm:rounded-t-[40px] pt-[var(--section-y)] pb-[var(--section-y-tight)] tone-white"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
         {/* Header: heading left, supporting text bottom-right */}
@@ -32,7 +32,7 @@ export default function Pillars() {
 
         {/* Pillars: dividers only, no cards */}
         <ul
-          className="mt-[70px] grid border-t border-brand-silver min-[860px]:grid-cols-3"
+          className="mt-[var(--head-gap)] grid border-t border-brand-silver min-[860px]:grid-cols-3"
         >
           {pillars.items.map((p, i) => {
             const Icon = ICONS[p.icon];
@@ -46,7 +46,7 @@ export default function Pillars() {
               >
                 <Link
                   href={p.href}
-                  className={`group relative block h-full py-[30px] min-[860px]:py-12 ${
+                  className={`group relative block h-full pb-8 pt-[30px] min-[860px]:pt-12 ${
                     i === 0 ? "min-[860px]:pr-10" : i === pillars.items.length - 1 ? "min-[860px]:pl-10" : "min-[860px]:px-10"
                   }`}
                 >
@@ -72,7 +72,7 @@ export default function Pillars() {
                     ))}
                   </ul>
                   <span
-                    className={`mt-7 inline-flex items-center gap-2 text-sm font-semibold text-accent opacity-0 transition-[opacity,transform] duration-300 ${smooth} -translate-x-1 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100`}
+                    className="mt-7 inline-flex items-center gap-2 text-[15px] font-semibold text-accent"
                   >
                     {pillars.linkLabel}
                     <ButtonArrow size={16} />

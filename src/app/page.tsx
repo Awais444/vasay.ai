@@ -25,7 +25,7 @@ export default function Home() {
       <Hero />
       {/* Overlaps the hero's bottom edge with rounded top corners */}
       <Pillars />
-      <Stats />
+      <Stats tightTop />
       <Services />
       <WhyUs />
       <Process />

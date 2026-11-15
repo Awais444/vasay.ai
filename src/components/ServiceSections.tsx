@@ -81,7 +81,7 @@ export function Problems({ items }: { items: Service["problems"] }) {
   return (
     <section aria-labelledby="problems" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <Heading eyebrow="The problem" title="Sound" accent="familiar?" />
-      <div className="mt-14 grid gap-4 md:grid-cols-3">
+      <div className="mt-[var(--head-gap)] grid gap-4 md:grid-cols-3">
         {items.map((p, i) => (
           <div
             key={p.title}
@@ -112,7 +112,7 @@ export function Included({ items, title }: { items: Service["included"]; title: 
     <section id="included" className="bg-white section-y tone-white">
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
         <Heading eyebrow={title} title="What's" accent="included." />
-        <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-[var(--head-gap)] grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((it, i) => (
             <li
               key={it.title}
@@ -192,7 +192,7 @@ export function Related({ items }: { items: Pick<Service, "slug" | "title" | "ta
           <ButtonArrow size={16} />
         </Link>
       </div>
-      <div className="mt-14 grid gap-4 md:grid-cols-3">
+      <div className="mt-[var(--head-gap)] grid gap-4 md:grid-cols-3">
         {items.map((s) => (
           <Link
             key={s.slug}

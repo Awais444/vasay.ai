@@ -72,7 +72,7 @@ export function Work() {
   return (
     <section id="work" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <Heading {...workSection} />
-      <div className="mt-16 grid gap-x-8 gap-y-14 md:grid-cols-2">
+      <div className="mt-[var(--head-gap)] grid gap-x-8 gap-y-14 md:grid-cols-2">
         {work.map((w, i) => (
           <WorkCard key={w.category} item={w} index={i} />
         ))}
@@ -117,7 +117,7 @@ export function Testimonials() {
   return (
     <section aria-label="Testimonials" className="bg-brand-black text-white section-y">
       <Heading {...testimonialsSection} dark className="mx-auto max-w-7xl px-5 sm:px-6" />
-      <div className="mt-16 space-y-4">
+      <div className="mt-[var(--head-gap)] space-y-4">
         <TRow items={visibleTestimonials.slice(0, half)} />
         <TRow items={visibleTestimonials.slice(half)} reverse />
       </div>
@@ -130,7 +130,7 @@ export function Team() {
   return (
     <section id="team" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <Heading {...teamSection} />
-      <ul className="mt-16 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+      <ul className="mt-[var(--head-gap)] grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         {team.map((member, i) => (
           <li key={member.slug} {...revealProps(i * 0.07)} className="group">
             <div

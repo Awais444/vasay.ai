@@ -25,8 +25,13 @@
   --accent-deep: #12057f;
   /* Secondary text on light backgrounds (WCAG AA on white and #F7F8F9) */
   --ink-2: #4b4d57;
-  /* Vertical rhythm for every section */
-  --section-y: clamp(80px, 10vw, 140px);
+  /* Vertical rhythm for every section. Max 100px per side, so two sections never sit more than
+     ~200px apart; min 72px (phones override below). */
+  --section-y: clamp(72px, 7vw, 100px);
+  /* Between a section heading and its content */
+  --head-gap: clamp(40px, 5vw, 64px);
+  /* Tighter hand-off between Pillars and Stats */
+  --section-y-tight: clamp(56px, 5vw, 76px);
   --radius-card: 22px;
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
   --nav-offset: 96px;
@@ -338,7 +343,7 @@ main:focus { outline: none; }
 
 /* ---- Phones ---- */
 @media (max-width: 639px) {
-  :root { --section-y: clamp(56px, 14vw, 80px); }
+  :root { --section-y: clamp(56px, 14vw, 80px); --section-y-tight: 44px; }
   .hero-h1 { font-size: clamp(36px, 11vw, 52px); line-height: 0.95; }
   .hero-sub { font-size: 16px; line-height: 1.55; max-width: 100%; }
   .hero-screen { padding-bottom: 28px; }
