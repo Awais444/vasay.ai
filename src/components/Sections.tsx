@@ -5,18 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import Link from "@/components/TransitionLink";
 import { m } from "framer-motion";
 import { useLazyGsap } from "@/lib/gsap-lazy";
-import {
-  stats,
-  manifesto,
-  servicesSection,
-  services,
-  process,
-  faqSection,
-  faqs,
-} from "@/lib/content";
+import type { Faq as FaqItem, Home, Link as CmsLink, Rich } from "@/cms/types";
+import type { ServiceIconName } from "@/lib/services";
 import { ServiceIconBox } from "./ServiceIcon";
 import RichText from "./RichText";
-import { Heading } from "./StaticSections";
+import { Heading } from "./Heading";
 import { revealProps } from "@/lib/reveal";
 
 
@@ -25,16 +18,21 @@ const MOTION_OK = "(prefers-reduced-motion: no-preference)";
 
 /* ---------- 1. Stats + manifesto ---------- */
 export function Stats({
-  withManifesto = true,
+  data,
+  withManifesto: wantManifesto = true,
   overlapHero = false,
   tightTop = false,
 }: {
+  data: Home["stats"];
   withManifesto?: boolean;
   /** Homepage: pull up 40px over the hero (below its marquee) with rounded top corners. */
   overlapHero?: boolean;
   /** Homepage: shorter top padding after the Pillars section. */
   tightTop?: boolean;
 }) {
+  const stats = data.items;
+  const manifesto = data.manifesto;
+  const withManifesto = wantManifesto && data.manifestoShow && !!manifesto;
   const root = useRef<HTMLElement>(null);
   useLazyGsap(
     (gsap) => {
@@ -107,7 +105,9 @@ export function Stats({
 }
 
 /* ---------- 2. Services ---------- */
-export function Services() {
+type ServiceRow = { slug: string; icon: ServiceIconName; title: string; tag: string; description: string; href: string };
+
+export function Services({ head: servicesSection, services }: { head: Home["services"]; services: ServiceRow[] }) {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <section id="services" className="bg-white section-y tone-white">
@@ -221,7 +221,7 @@ const panelItem = {
   show: { opacity: 1, y: 0, transition: { duration: 0.8, ease } },
 };
 
-export function Process() {
+export function Process({ data: process }: { data: Home["process"] }) {
   const steps = process.steps;
   const root = useRef<HTMLElement>(null);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -272,7 +272,7 @@ export function Process() {
     <section id="process" ref={root} className="bg-brand-black text-white section-y">
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
         <div {...revealProps()}>
-          <Heading eyebrow={process.eyebrow} title={process.title} accent={process.accent} dark />
+          <Heading eyebrow={process.eyebrow} title={process.title} dark />
         </div>
 
         {/* Desktop: expanding panels */}
@@ -440,13 +440,13 @@ export function Process() {
 
 /* ---------- 8. FAQ: pinned left column (CSS sticky) ---------- */
 export function Faq({
-  items = faqs,
-  heading = faqSection,
+  items,
+  heading,
   id = "faq",
   overlap = false,
 }: {
-  items?: { q: string; a: string }[];
-  heading?: { eyebrow: string; title: string; accent: string; intro?: string };
+  items: FaqItem[];
+  heading: { eyebrow: string; title: Rich; intro?: string; cta?: CmsLink };
   id?: string;
   /** Pull up 40px over a dark section above, with rounded top corners (like the hero hand-off). */
   overlap?: boolean;
@@ -454,7 +454,8 @@ export function Faq({
   const [open, setOpen] = useState<number | null>(0);
   const [current, setCurrent] = useState(0);
   const listRef = useRef<HTMLUListElement>(null);
-  const intro = heading.intro ?? faqSection.intro;
+  const intro = heading.intro;
+  const cta = heading.cta;
 
   // Progress: the question crossing the middle of the viewport. An IntersectionObserver on a
   // 1px band at the centre: no layout reads on scroll (avoids forced reflow).
@@ -482,7 +483,7 @@ export function Faq({
       <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:items-start">
         {/* Left column: sticky on desktop. The pin ends naturally where the grid (the questions) ends. */}
         <div className="lg:sticky lg:top-[calc(var(--nav-h)+40px)]">
-          <Heading eyebrow={heading.eyebrow} title={heading.title} accent={heading.accent} />
+          <Heading eyebrow={heading.eyebrow} title={heading.title} />
           {intro && <p className="mt-6 max-w-md text-base text-ink-2 sm:text-[17px]">{intro}</p>}
 
           <div className="mt-8 hidden max-w-xs lg:block" aria-hidden="true">
@@ -497,12 +498,14 @@ export function Faq({
             </div>
           </div>
 
+          {cta?.label && (
           <a
-            href={faqSection.cta.href}
+            href={cta.href}
             className="mt-8 inline-flex rounded-full bg-accent px-6 py-4 font-semibold text-white transition-[background-color,transform] duration-300 hover:-translate-y-0.5 hover:bg-accent-bright"
           >
-            {faqSection.cta.label}
+            {cta.label}
           </a>
+          )}
         </div>
 
         <ul ref={listRef} className="divide-y divide-brand-silver border-y border-brand-silver">

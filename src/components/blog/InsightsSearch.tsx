@@ -8,7 +8,7 @@ import { setSearchQuery } from "@/lib/search-store";
  * Search box in the Insights hero. No dropdown: the (debounced, 200ms) query filters the article
  * grid below in place (InsightsResults). Enter writes ?q= to the URL so a search can be shared.
  */
-export default function InsightsSearch({ enabled = true }: { enabled?: boolean }) {
+export default function InsightsSearch({ enabled = true, placeholder = "Search articles" }: { enabled?: boolean; placeholder?: string }) {
   const id = useId();
   const [value, setValue] = useState("");
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -78,7 +78,7 @@ export default function InsightsSearch({ enabled = true }: { enabled?: boolean }
           enterKeyHint="search"
           value={value}
           onChange={(e) => update(e.target.value)}
-          placeholder="Search articles, e.g. Google Maps"
+          placeholder={placeholder}
           autoComplete="off"
           className="search-input"
         />

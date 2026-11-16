@@ -1,5 +1,6 @@
 import Link from "@/components/TransitionLink";
-import type { LegalDoc } from "@/lib/legal";
+import { PortableText } from "@portabletext/react";
+import type { LegalDoc } from "@/cms/types";
 import { Star } from "./Logo";
 
 /** Readable legal layout (~720px measure) with a table of contents. */
@@ -44,9 +45,13 @@ export default function LegalPage({ doc }: { doc: LegalDoc }) {
               {s.title}
             </h2>
             <div className="mt-4 space-y-4 text-[17px] leading-[1.75] text-ink-2">
-              {s.body.map((p) => (
-                <p key={p.slice(0, 32)}>{p}</p>
-              ))}
+              <PortableText
+                value={s.body}
+                components={{
+                  block: { normal: ({ children }) => <p>{children}</p> },
+                  list: { bullet: ({ children }) => <ul className="list-disc space-y-2 pl-6 marker:text-brand-orange">{children}</ul> },
+                }}
+              />
             </div>
           </section>
         ))}

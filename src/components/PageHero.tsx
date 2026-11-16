@@ -5,6 +5,8 @@ import HeroBackground from "./HeroBackground";
 import { Star } from "./Logo";
 import { ServiceIcon } from "./ServiceIcon";
 import type { ServiceIconName } from "@/lib/services";
+import type { Rich } from "@/cms/types";
+import AccentText from "./AccentText";
 
 
 type Crumb = { label: string; href?: string };
@@ -15,6 +17,7 @@ export default function PageHero({
   eyebrow,
   icon,
   title,
+  lines,
   accent,
   accentLead,
   sub,
@@ -29,7 +32,9 @@ export default function PageHero({
   eyebrow?: string;
   /** Service icon shown in the eyebrow pill (service pages). */
   icon?: ServiceIconName;
-  title: string;
+  title?: string;
+  /** CMS headline: one entry per line, with editor-marked orange words. Replaces title/accent. */
+  lines?: Rich[];
   /** Orange second line (optional). */
   accent?: string;
   /** Optional white text before the orange accent on line 2. */
@@ -91,12 +96,22 @@ export default function PageHero({
                 </span>
               </span>
             )}
-            <span className="block overflow-hidden pb-[0.06em]">
-              <span style={{ "--i": 0 } as CSSProperties} className="ph-line block">
-                {title}
+            {lines ? (
+              lines.map((line, i) => (
+                <span key={i} className="block overflow-hidden pb-[0.06em]">
+                  <span style={{ "--i": i } as CSSProperties} className="ph-line block">
+                    <AccentText text={line} />
+                  </span>
+                </span>
+              ))
+            ) : (
+              <span className="block overflow-hidden pb-[0.06em]">
+                <span style={{ "--i": 0 } as CSSProperties} className="ph-line block">
+                  {title}
+                </span>
               </span>
-            </span>
-            {accent && (
+            )}
+            {!lines && accent && (
               <span className="block overflow-hidden pb-[0.06em]">
                 <span style={{ "--i": 1 } as CSSProperties} className="ph-line block">
                   {accentLead && <>{accentLead} </>}
@@ -106,9 +121,9 @@ export default function PageHero({
             )}
           </h1>
           {sub && <p className={`ph-rise ph-gap ph-sub text-white/80 ${visual ? "" : "mx-auto"}`}>{sub}</p>}
-          {(primary || secondary) && (
+          {(primary?.label || secondary?.label) && (
             <div style={{ "--i": 2 } as CSSProperties} className={`ph-fade ph-gap-lg flex flex-col gap-3 sm:flex-row ${visual ? "" : "justify-center"}`}>
-              {primary && (
+              {primary?.label && (
                 <a
                   href={primary.href}
                   className="group inline-flex items-center justify-center gap-3 rounded-full bg-white py-2 pl-6 pr-2 font-semibold text-accent shadow-[0_10px_40px_rgb(0_0_0/0.15)] transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-0.5"
@@ -119,7 +134,7 @@ export default function PageHero({
                   </span>
                 </a>
               )}
-              {secondary && (
+              {secondary?.label && (
                 <a
                   href={secondary.href}
                   className={`${arrowLink} justify-center rounded-full px-6 py-4 font-semibold ring-1 ring-white/40 transition-colors duration-300 hover:bg-white/10`}

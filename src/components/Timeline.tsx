@@ -2,13 +2,14 @@
 
 import { useRef } from "react";
 import { useLazyGsap } from "@/lib/gsap-lazy";
-import type { Service } from "@/lib/services";
-import { Heading } from "./StaticSections";
+import type { Service } from "@/cms/types";
+import { Heading } from "./Heading";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /** Service process timeline: the line draws in on scroll (GSAP, loaded lazily). */
 export default function Timeline({ steps }: { steps: Service["process"] }) {
+  const hasSteps = steps.length > 0;
   const root = useRef<HTMLElement>(null);
   useLazyGsap(
     (gsap) => {
@@ -26,6 +27,7 @@ export default function Timeline({ steps }: { steps: Service["process"] }) {
     },
     root,
   );
+  if (!hasSteps) return null;
   return (
     <section ref={root} aria-label="How it works" className="bg-accent-deep text-white section-y">
       <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-6 lg:grid-cols-[1fr_1.3fr]">

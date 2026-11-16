@@ -5,7 +5,8 @@ import { track } from "@/lib/track";
 import ButtonArrow, { arrowLink } from "@/components/ButtonArrow";
 import { useId, useState, type ReactNode } from "react";
 import { AnimatePresence, m } from "framer-motion";
-import { contact, site } from "@/lib/content";
+import type { ContactPage, Settings } from "@/cms/types";
+import AccentText from "./AccentText";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const ENDPOINT = process.env.NEXT_PUBLIC_FORM_ENDPOINT || "/api/contact";
@@ -41,10 +42,14 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 }
 
 export default function Contact({
+  contact,
+  settings: site,
   defaultService = "",
   asPage = false,
   aside,
 }: {
+  contact: ContactPage;
+  settings: Settings;
   /** Pre-selects this service title in the dropdown. */
   defaultService?: string;
   /** Use as the top of a page: renders an h1 and leaves room for the navbar. */
@@ -55,7 +60,7 @@ export default function Contact({
   const H = asPage ? "h1" : "h2";
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
-  const [budget, setBudget] = useState(contact.budgets[1]);
+  const [budget, setBudget] = useState(contact.budgets[1] ?? contact.budgets[0] ?? "");
   const [service, setService] = useState(defaultService);
   const [errors, setErrors] = useState<Errors>({});
   const uid = useId();
@@ -120,9 +125,11 @@ export default function Contact({
         <div className={aside ? "" : "contact-pin"}>
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-white/75">{contact.eyebrow}</p>
           <H className="mt-4 font-display text-[clamp(3rem,8vw,6.5rem)] font-semibold leading-[0.92]">
-            <span className="block">{contact.lines[0]}</span>
-            <span className="block text-brand-orange">{contact.lines[1]}</span>
-            <span className="block">{contact.lines[2]}</span>
+            {contact.lines.map((line, i) => (
+              <span key={i} className="block">
+                <AccentText text={line} />
+              </span>
+            ))}
           </H>
           <p className="mt-6 max-w-md text-lg text-white/75">{contact.intro}</p>
           <div className="mt-10 space-y-3">
@@ -135,7 +142,7 @@ export default function Contact({
             </a>
             {/* /contact shows the address in its location card instead. */}
             {!aside && (
-              <a href={site.address.mapsHref} target="_blank" rel="noopener noreferrer" className="block text-white/75 hover:text-white">
+              <a href={site.mapsHref} target="_blank" rel="noopener noreferrer" className="block text-white/75 hover:text-white">
                 {site.address.full}
               </a>
             )}
@@ -273,7 +280,7 @@ export default function Contact({
                       <option value="" disabled className="text-brand-black">
                         Select a service
                       </option>
-                      {contact.services.map((sv) => (
+                      {contact.serviceOptions.map((sv) => (
                         <option key={sv} value={sv} className="text-brand-black">
                           {sv}
                         </option>

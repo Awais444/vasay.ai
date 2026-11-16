@@ -1,8 +1,8 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { site } from "@/lib/content";
-import { getService } from "@/lib/services";
+import { siteUrl } from "@/lib/env";
+import { getContent } from "@/cms/content";
 import Link from "@/components/TransitionLink";
 import ButtonArrow, { arrowLink } from "@/components/ButtonArrow";
 import { ServiceIconBox } from "@/components/ServiceIcon";
@@ -40,12 +40,12 @@ export async function generateMetadata({ params }: PageProps<"/insights/[slug]">
       type: "article",
       title,
       description,
-      url: `${site.url}${path}`,
+      url: `${siteUrl}${path}`,
       siteName: "Smart Solutions — Powered by VASAY.AI",
       locale: "en_CA",
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt || post.publishedAt,
-      authors: post.author ? [`${site.url}/insights/author/${post.author.slug}`] : undefined,
+      authors: post.author ? [`${siteUrl}/insights/author/${post.author.slug}`] : undefined,
       section: post.category?.title,
     },
     twitter: { card: "summary_large_image", title, description },
@@ -59,19 +59,20 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
   const [post, all] = await Promise.all([getPost(slug), getPosts()]);
   if (!post) notFound();
 
-  const url = `${site.url}/insights/${post.slug}`;
+  const url = `${siteUrl}/insights/${post.slug}`;
   const headings = getHeadings(post.body);
   const faqs = getFaqs(post.body);
-  const service = post.category ? getService(post.category.slug) : undefined;
+  const cms = await getContent();
+  const service = post.category ? cms.services.find((s) => s.slug === post.category!.slug) : undefined;
   const cover = imageUrl(post.coverImage, 1600, 900);
   const sameCat = all.filter((p) => p._id !== post._id && p.category?.slug === post.category?.slug);
   const related = [...sameCat, ...all.filter((p) => p._id !== post._id && !sameCat.includes(p))].slice(0, 3);
   const updated = post.updatedAt && post.updatedAt.slice(0, 10) !== post.publishedAt.slice(0, 10) ? post.updatedAt : undefined;
 
   const crumbs = [
-    { name: "Home", item: site.url },
-    { name: "Insights", item: `${site.url}/insights` },
-    ...(post.category ? [{ name: post.category.title, item: `${site.url}/insights/category/${post.category.slug}` }] : []),
+    { name: "Home", item: siteUrl },
+    { name: "Insights", item: `${siteUrl}/insights` },
+    ...(post.category ? [{ name: post.category.title, item: `${siteUrl}/insights/category/${post.category.slug}` }] : []),
     { name: post.title, item: url },
   ];
 
@@ -88,9 +89,9 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
             datePublished: post.publishedAt,
             dateModified: post.updatedAt || post.publishedAt,
             author: post.author
-              ? { "@type": "Person", name: post.author.name, jobTitle: post.author.role, url: `${site.url}/insights/author/${post.author.slug}` }
+              ? { "@type": "Person", name: post.author.name, jobTitle: post.author.role, url: `${siteUrl}/insights/author/${post.author.slug}` }
               : undefined,
-            publisher: { "@id": `${site.url}/#organization` },
+            publisher: { "@id": `${siteUrl}/#organization` },
             mainEntityOfPage: { "@type": "WebPage", "@id": url },
             articleSection: post.category?.title,
             wordCount: post.words,
@@ -263,7 +264,7 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
           </div>
         </section>
       )}
-      <Contact />
+      <Contact contact={cms.contact} settings={cms.settings} />
     </>
   );
 }

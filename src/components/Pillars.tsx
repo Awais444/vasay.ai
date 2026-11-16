@@ -2,13 +2,15 @@ import ButtonArrow from "@/components/ButtonArrow";
 import { revealProps } from "@/lib/reveal";
 import { MonitorSmartphone, Target, Zap, type LucideIcon } from "lucide-react";
 import Link from "@/components/TransitionLink";
-import { pillars } from "@/lib/content";
+import type { Home, Pillar } from "@/cms/types";
+import AccentText from "./AccentText";
 
-const ICONS: Record<(typeof pillars.items)[number]["icon"], LucideIcon> = { Target, MonitorSmartphone, Zap };
+const ICONS: Record<Pillar["icon"], LucideIcon> = { Target, MonitorSmartphone, Zap };
 const smooth = "ease-[cubic-bezier(0.22,1,0.36,1)]";
 
 /** "Three Pillars": Attract · Convert · Automate. White sheet that overlaps the hero's bottom edge. */
-export default function Pillars() {
+export default function Pillars({ data: pillars }: { data: Home["pillars"] }) {
+  if (!pillars.show || !pillars.items.length) return null;
   return (
     <section
       id="intro"
@@ -24,7 +26,7 @@ export default function Pillars() {
               id="pillars-title"
               className="mt-4 font-display text-[clamp(36px,4.6vw,62px)] font-medium leading-none tracking-[-0.04em] [text-wrap:balance]"
             >
-              {pillars.title} <span className="text-brand-orange">{pillars.accent}</span>
+              <AccentText text={pillars.title} />
             </h2>
           </div>
           <p className="max-w-[440px] text-lg leading-[1.6] text-[#5D5F6B] min-[860px]:justify-self-end">{pillars.intro}</p>
@@ -35,7 +37,7 @@ export default function Pillars() {
           className="mt-[var(--head-gap)] grid border-t border-brand-silver min-[860px]:grid-cols-3"
         >
           {pillars.items.map((p, i) => {
-            const Icon = ICONS[p.icon];
+            const Icon = ICONS[p.icon] ?? Target;
             return (
               <li
                 key={p.title}

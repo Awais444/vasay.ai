@@ -47,6 +47,10 @@ The form posts to `src/app/api/contact/route.ts`, which emails through Resend an
 
 `contact.php` validates input, checks the honeypot, sends with PHP `mail()` and forwards to the GHL webhook with cURL.
 
+## Content management (Sanity)
+
+The whole site (pages, services, team, testimonials, FAQs, navigation, settings, SEO) is edited in Sanity at **/studio**. See **[CMS-GUIDE.md](CMS-GUIDE.md)** for the team guide, environment variables, setup steps and the content migration (`npm run sanity:migrate`).
+
 ## Blog: Insights (Sanity CMS)
 
 Articles live in Sanity (free plan) and are edited in the Studio at **/studio** (Sanity login; only project members can sign in).

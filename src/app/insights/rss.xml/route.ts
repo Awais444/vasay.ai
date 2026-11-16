@@ -1,4 +1,4 @@
-import { site } from "@/lib/content";
+import { siteUrl } from "@/lib/env";
 import { getPosts } from "@/sanity/data";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -8,7 +8,7 @@ export async function GET() {
   const posts = (await getPosts()).slice(0, 50);
   const items = posts
     .map((p) => {
-      const url = `${site.url}/insights/${p.slug}`;
+      const url = `${siteUrl}/insights/${p.slug}`;
       return `    <item>
       <title>${esc(p.title)}</title>
       <link>${url}</link>
@@ -25,10 +25,10 @@ export async function GET() {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>Smart Solutions Insights</title>
-    <link>${site.url}/insights</link>
+    <link>${siteUrl}/insights</link>
     <description>Practical guides on branding, websites, SEO, ads and AI automation.</description>
     <language>en-ca</language>
-    <atom:link href="${site.url}/insights/rss.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="${siteUrl}/insights/rss.xml" rel="self" type="application/rss+xml" />
 ${items}
   </channel>
 </rss>`;

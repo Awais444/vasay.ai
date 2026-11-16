@@ -6,12 +6,13 @@ import Link from "@/components/TransitionLink";
 import ButtonArrow from "@/components/ButtonArrow";
 import { useLazyGsap } from "@/lib/gsap-lazy";
 import { revealProps } from "@/lib/reveal";
-import type { work } from "@/lib/content";
+import type { WorkItem } from "@/cms/types";
 
 const MOTION_OK = "(prefers-reduced-motion: no-preference)";
 
 /** Work card with a scroll parallax image (GSAP, loaded lazily). */
-export default function WorkCard({ item, index }: { item: (typeof work)[number]; index: number }) {
+/** `src` is resolved on the server (keeps the Sanity client out of the browser bundle). */
+export default function WorkCard({ item, index, src }: { item: WorkItem; index: number; src?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   useLazyGsap(
     (gsap) => {
@@ -31,8 +32,8 @@ export default function WorkCard({ item, index }: { item: (typeof work)[number];
       <Link href={item.href} className="group block">
         <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)]">
           <div className={`parallax absolute -inset-y-[10%] inset-x-0 bg-gradient-to-br ${item.gradient} transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105`}>
-            {item.image ? (
-              <Image src={item.image} alt={item.title} fill className="object-cover" sizes="(min-width: 768px) 50vw, 100vw" />
+            {src ? (
+              <Image src={src} alt={item.image?.alt ?? item.title} fill className="object-cover" sizes="(min-width: 768px) 50vw, 100vw" />
             ) : (
               <span className="absolute inset-0 flex items-center justify-center font-display text-[12vw] font-semibold tracking-tighter text-white/15 md:text-[6vw]" aria-hidden="true">
                 {item.category.split(/[ &+]/)[0]}

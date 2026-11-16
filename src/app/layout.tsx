@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { HideOnStudio } from "@/components/SiteChrome";
 import { heading, body } from "./fonts";
-import { site } from "@/lib/content";
+import { getContent } from "@/cms/content";
+import { siteUrl } from "@/lib/env";
 import SmoothScroll from "@/components/SmoothScroll";
 import MotionProvider from "@/components/MotionProvider";
 import RevealObserver from "@/components/RevealObserver";
@@ -10,16 +11,20 @@ import TransitionProvider, { PAGE_ROOT_ID } from "@/components/TransitionProvide
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Analytics from "@/components/Analytics";
+import PreviewTools from "@/components/PreviewTools";
+import { Suspense } from "react";
 import { isIndexable, SITE_NAME } from "@/lib/seo";
 import { organization, website } from "@/lib/schema";
 import "./globals.css";
 
 const title = "Digital Marketing Agency in Vaughan & GTA | Smart Solutions";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await getContent();
+  return {
+  metadataBase: new URL(siteUrl),
   title: { default: title, template: "%s" },
-  description: site.description,
+  description: settings.defaultSeo.description || settings.description,
   applicationName: SITE_NAME,
   // Only the production deployment is indexable (see src/lib/seo.ts).
   robots: isIndexable ? { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } : { index: false, follow: false },
@@ -29,14 +34,16 @@ export const metadata: Metadata = {
   },
   openGraph: { siteName: SITE_NAME, locale: "en_CA", type: "website" },
   twitter: { card: "summary_large_image" },
-};
+  };
+}
 
 export const viewport: Viewport = { themeColor: "#1B08B7" };
 
-// Site-wide entities; every page's WebPage/Service/BlogPosting links to these @ids.
-const jsonLd = [organization(), website()];
-
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const c = await getContent();
+  const navServices = c.services.map((s) => ({ slug: s.slug, icon: s.icon, title: s.title, tag: s.tag, href: `/services/${s.slug}` }));
+  // Site-wide entities; every page's WebPage/Service/BlogPosting links to these @ids.
+  const jsonLd = [organization(c.settings), website()];
   return (
     <html lang="en-CA" suppressHydrationWarning className={`${heading.variable} ${body.variable} antialiased`}>
       <body>
@@ -50,24 +57,28 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         <JsonLd data={jsonLd} />
         <RevealObserver />
-        <Analytics />
+        <Analytics ga4Id={c.settings.ga4Id} gtmId={c.settings.gtmId} />
         <MotionProvider>
         <SmoothScroll>
           <TransitionProvider>
             <HideOnStudio>
-              <Navbar />
+              <Navbar nav={c.nav} services={navServices} settings={c.settings} />
             </HideOnStudio>
             <div id={PAGE_ROOT_ID}>
               <main id="main" tabIndex={-1}>
                 {children}
               </main>
               <HideOnStudio>
-                <Footer />
+                <Footer nav={c.nav} services={navServices} settings={c.settings} />
               </HideOnStudio>
             </div>
           </TransitionProvider>
         </SmoothScroll>
         </MotionProvider>
+        {/* Studio preview only (Draft Mode); nothing for normal visitors */}
+        <Suspense fallback={null}>
+          <PreviewTools />
+        </Suspense>
       </body>
     </html>
   );

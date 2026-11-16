@@ -7,7 +7,10 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, m, useMotionValueEvent, useScroll } from "framer-motion";
 import Logo, { Star } from "./Logo";
 import { ServiceIconBox } from "./ServiceIcon";
-import { nav, services, site } from "@/lib/content";
+import type { Navigation, Settings } from "@/cms/types";
+import type { ServiceIconName } from "@/lib/services";
+
+export type NavService = { slug: string; icon: ServiceIconName; title: string; tag: string; href: string };
 import { getLenis } from "@/lib/lenis";
 import { PAGE_NAVIGATE } from "@/lib/transition";
 
@@ -16,11 +19,9 @@ const ease = [0.22, 1, 0.36, 1] as const;
 /** Pages whose hero is light, so the navbar starts in its solid (dark text) state. */
 const LIGHT_HERO_ROUTES = ["/privacy-policy", "/terms"];
 
-/** Homepage section ids that have a navbar link ("/#work" → "work"). */
-const SECTION_IDS = [...nav.links, ...nav.mobileExtra].filter((l) => l.href.startsWith("/#")).map((l) => l.href.slice(2));
-
 /** Which linked homepage section is in the middle band of the viewport (null when none). */
-function useActiveSection(enabled: boolean) {
+function useActiveSection(enabled: boolean, ids: string[]) {
+  const key = ids.join(",");
   const [active, setActive] = useState<string | null>(null);
   useEffect(() => {
     if (!enabled) return;
@@ -31,11 +32,11 @@ function useActiveSection(enabled: boolean) {
           if (e.isIntersecting) visible.add(e.target.id);
           else visible.delete(e.target.id);
         }
-        setActive(SECTION_IDS.find((id) => visible.has(id)) ?? null);
+        setActive(ids.find((id) => visible.has(id)) ?? null);
       },
       { rootMargin: "-45% 0px -50% 0px" },
     );
-    SECTION_IDS.forEach((id) => {
+    ids.forEach((id) => {
       const el = document.getElementById(id);
       if (el) io.observe(el);
     });
@@ -43,12 +44,16 @@ function useActiveSection(enabled: boolean) {
       io.disconnect();
       setActive(null);
     };
-  }, [enabled]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled, key]);
   return enabled ? active : null;
 }
 
-export default function Navbar() {
+export default function Navbar({ nav, services, settings }: { nav: Navigation; services: NavService[]; settings: Settings }) {
+  const site = settings;
   const pathname = usePathname();
+  // Homepage section ids that have a navbar link ("/#work" → "work")
+  const sectionIds = [...nav.links, ...nav.mobileExtra].filter((l) => l.href.startsWith("/#")).map((l) => l.href.slice(2));
   const lightHero =
     LIGHT_HERO_ROUTES.includes(pathname) || /^\/insights\/(?!category\/|author\/|page\/)[^/]+$/.test(pathname);
   const { scrollY } = useScroll();
@@ -112,7 +117,7 @@ export default function Navbar() {
   const closeMega = () => {
     closeTimer.current = setTimeout(() => setMega(false), 120);
   };
-  const section = useActiveSection(pathname === "/");
+  const section = useActiveSection(pathname === "/", sectionIds);
   const isActive = (href: string) =>
     href.startsWith("/#")
       ? pathname === "/" && section === href.slice(2)
@@ -126,6 +131,17 @@ export default function Navbar() {
         transition={{ duration: 0.5, ease }}
         className="vt-navbar fixed inset-x-0 top-3 z-50 px-3 sm:top-4 sm:px-6"
       >
+        {settings.announcement.show && settings.announcement.text && (
+          <p className="mx-auto mb-2 flex max-w-7xl justify-center px-2 text-center text-[13px] font-medium">
+            {settings.announcement.href ? (
+              <Link href={settings.announcement.href} className="rounded-full bg-brand-black/85 px-4 py-1.5 text-white hover:bg-brand-black">
+                {settings.announcement.text}
+              </Link>
+            ) : (
+              <span className="rounded-full bg-brand-black/85 px-4 py-1.5 text-white">{settings.announcement.text}</span>
+            )}
+          </p>
+        )}
         <div
           className={`relative mx-auto flex max-w-7xl items-center justify-between rounded-full py-2 pl-4 pr-2 lg:py-1 transition-[background-color,box-shadow,color] duration-300 sm:pl-5 ${
             solid
@@ -167,6 +183,7 @@ export default function Navbar() {
           </nav>
 
           <div className="flex items-center gap-2">
+            {settings.status.show && settings.status.text && (
             <span
               className={`hidden items-center gap-2 rounded-full px-3 py-1.5 text-[13px] font-medium ring-1 transition-colors duration-300 xl:flex ${
                 solid ? "bg-brand-bg text-brand-black ring-brand-silver" : "bg-white/10 text-white ring-white/25"
@@ -176,8 +193,9 @@ export default function Navbar() {
                 <span className="ping absolute inline-flex h-full w-full rounded-full bg-emerald-400" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
               </span>
-              {nav.status}
+              {settings.status.text}
             </span>
+            )}
             <Link
               href={nav.cta.href}
               className={`hidden rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-300 sm:inline-flex ${
@@ -366,7 +384,7 @@ export default function Navbar() {
               <a href={site.emailHref} className="block py-1 text-white">
                 {site.email}
               </a>
-              <a href={site.address.mapsHref} target="_blank" rel="noopener noreferrer" className="block">
+              <a href={site.mapsHref} target="_blank" rel="noopener noreferrer" className="block">
                 {site.address.full}
               </a>
             </m.div>

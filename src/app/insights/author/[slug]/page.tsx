@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { site } from "@/lib/content";
+import { siteUrl } from "@/lib/env";
 import { pageMetadata } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
 import JsonLd from "@/components/JsonLd";
@@ -33,7 +33,7 @@ export default async function AuthorPage({ params }: PageProps<"/insights/author
   const author = authors.find((a) => a.slug === slug);
   if (!author) notFound();
   const mine = posts.filter((p) => p.author?.slug === slug);
-  const url = `${site.url}/insights/author/${author.slug}`;
+  const url = `${siteUrl}/insights/author/${author.slug}`;
 
   return (
     <>
@@ -49,7 +49,7 @@ export default async function AuthorPage({ params }: PageProps<"/insights/author
             image: imageUrl(author.photo, 400, 400) ?? undefined,
             url,
             sameAs: author.socials?.map((s) => s.url),
-            worksFor: { "@id": `${site.url}/#organization` },
+            worksFor: { "@id": `${siteUrl}/#organization` },
           },
         }}
       />

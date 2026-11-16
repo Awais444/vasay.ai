@@ -1,45 +1,22 @@
 // Server Components: static sections with CSS scroll-reveal (no client JavaScript of their own).
 import Image from "next/image";
-import { whyUs, workSection, work, testimonialsSection, visibleTestimonials, showPlaceholderLabel, teamSection, team } from "@/lib/content";
+import type { Home, TeamMember, Testimonial, WorkItem } from "@/cms/types";
+import { imageUrl } from "@/sanity/client";
 import { revealProps } from "@/lib/reveal";
-import { Star } from "./Logo";
 import WorkCard from "./WorkCard";
 
-/* ---------- Shared heading ---------- */
-export function Heading({
-  eyebrow,
-  title,
-  accent,
-  dark = false,
-  className = "",
-}: {
-  eyebrow: string;
-  title: string;
-  accent: string;
-  dark?: boolean;
-  className?: string;
-}) {
-  return (
-    <div className={className}>
-      <p className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] ${dark ? "text-white/75" : "text-accent"}`}>
-        <Star size={10} className="text-brand-orange" />
-        {eyebrow}
-      </p>
-      <h2 className={`mt-4 font-display text-[clamp(2.3rem,5.5vw,4.5rem)] font-semibold leading-[1] ${dark ? "text-white" : ""}`}>
-        {title} <span className="text-brand-orange">{accent}</span>
-      </h2>
-    </div>
-  );
-}
+export { Heading } from "./Heading";
+import { Heading } from "./Heading";
 
 /* ---------- 3. Why us ---------- */
 const whyIcons = ["◎", "▤", "$", "✦"];
-export function WhyUs() {
+export function WhyUs({ data: whyUs }: { data: Home["whyUs"] }) {
+  if (!whyUs.show) return null;
   return (
     <section aria-labelledby="why" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <div className="grid gap-12 lg:grid-cols-[1fr_1.3fr]">
         <div className="lg:sticky lg:top-32 lg:self-start">
-          <Heading eyebrow={whyUs.eyebrow} title={whyUs.title} accent={whyUs.accent} />
+          <Heading eyebrow={whyUs.eyebrow} title={whyUs.title} />
           <p className="mt-6 max-w-md text-lg text-ink-2">{whyUs.intro}</p>
           <a
             href={whyUs.cta.href}
@@ -68,13 +45,14 @@ export function WhyUs() {
 }
 
 /* ---------- 5. Work ---------- */
-export function Work() {
+export function Work({ head: workSection, items: work }: { head: Home["work"]; items: WorkItem[] }) {
+  if (!workSection.show || !work.length) return null;
   return (
     <section id="work" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <Heading {...workSection} />
       <div className="mt-[var(--head-gap)] grid gap-x-8 gap-y-14 md:grid-cols-2">
         {work.map((w, i) => (
-          <WorkCard key={w.category} item={w} index={i} />
+          <WorkCard key={w.title} item={w} index={i} src={(w.image ? imageUrl(w.image, 1200, 900) : w.imageSrc) ?? undefined} />
         ))}
       </div>
     </section>
@@ -82,7 +60,7 @@ export function Work() {
 }
 
 /* ---------- 6. Testimonials (visibility rules: showTestimonials in content.ts) ---------- */
-function TRow({ items, reverse }: { items: typeof visibleTestimonials; reverse?: boolean }) {
+function TRow({ items, reverse, showPlaceholderLabel }: { items: Testimonial[]; reverse?: boolean; showPlaceholderLabel: boolean }) {
   return (
     <div className="marquee overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]">
       <div className={`marquee-track flex w-max gap-4 ${reverse ? "reverse" : ""}`}>
@@ -112,21 +90,31 @@ function TRow({ items, reverse }: { items: typeof visibleTestimonials; reverse?:
   );
 }
 
-export function Testimonials() {
+export function Testimonials({
+  head: testimonialsSection,
+  items: visibleTestimonials,
+  showLabel,
+}: {
+  head: Home["testimonials"];
+  items: Testimonial[];
+  showLabel: boolean;
+}) {
+  if (!testimonialsSection.show || !visibleTestimonials.length) return null;
   const half = Math.ceil(visibleTestimonials.length / 2);
   return (
     <section aria-label="Testimonials" className="bg-brand-black text-white section-y">
       <Heading {...testimonialsSection} dark className="mx-auto max-w-7xl px-5 sm:px-6" />
       <div className="mt-[var(--head-gap)] space-y-4">
-        <TRow items={visibleTestimonials.slice(0, half)} />
-        <TRow items={visibleTestimonials.slice(half)} reverse />
+        <TRow items={visibleTestimonials.slice(0, half)} showPlaceholderLabel={showLabel} />
+        <TRow items={visibleTestimonials.slice(half)} reverse showPlaceholderLabel={showLabel} />
       </div>
     </section>
   );
 }
 
 /* ---------- 7. Team ---------- */
-export function Team() {
+export function Team({ head: teamSection, members: team }: { head: Home["team"]; members: TeamMember[] }) {
+  if (!teamSection.show || !team.length) return null;
   return (
     <section id="team" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <Heading {...teamSection} />
@@ -137,14 +125,24 @@ export function Team() {
               className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-card)]"
               style={{ background: member.tint }}
             >
-              {/* TODO: replace with real team photos */}
-              <Image
-                src={`/team/${member.slug}.svg`}
-                alt={`Illustrated portrait of ${member.name}`}
-                fill
-                unoptimized
-                className="object-contain object-bottom p-3 transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105"
-              />
+              {member.photo ? (
+                <Image
+                  src={imageUrl(member.photo, 600, 750) ?? ""}
+                  alt={member.photo.alt ?? member.name}
+                  fill
+                  sizes="(min-width: 1024px) 240px, 50vw"
+                  className="object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105"
+                />
+              ) : member.photoSrc ? (
+                // Illustrated placeholder avatar (until a real photo is added in the CMS)
+                <Image
+                  src={member.photoSrc}
+                  alt={`Illustrated portrait of ${member.name}`}
+                  fill
+                  unoptimized
+                  className="object-contain object-bottom p-3 transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105"
+                />
+              ) : null}
             </div>
             <h3 className="mt-4 text-lg font-semibold">{member.name}</h3>
             <p className="text-sm text-ink-2">{member.role}</p>

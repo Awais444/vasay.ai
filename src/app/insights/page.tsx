@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, withSeo } from "@/lib/seo";
+import { getContent } from "@/cms/content";
 import InsightsIndex from "@/components/blog/InsightsIndex";
 
 const base = pageMetadata({
@@ -9,10 +10,11 @@ const base = pageMetadata({
   path: "/insights",
 });
 
-export const metadata: Metadata = {
-  ...base,
-  alternates: { ...base.alternates, types: { "application/rss+xml": "/insights/rss.xml" } },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { insightsPage } = await getContent();
+  const m = withSeo(base, insightsPage.seo);
+  return { ...m, alternates: { ...m.alternates, types: { "application/rss+xml": "/insights/rss.xml" } } };
+}
 
 export default function InsightsPage() {
   return <InsightsIndex page={1} />;

@@ -1,6 +1,6 @@
 // TODO: have this reviewed by a lawyer before launch.
-import { terms } from "@/lib/legal";
-import { pageMetadata } from "@/lib/seo";
+import { getContent } from "@/cms/content";
+import { pageMetadata, withSeo } from "@/lib/seo";
 import { breadcrumbs, webPage } from "@/lib/schema";
 import LegalPage from "@/components/LegalPage";
 import JsonLd from "@/components/JsonLd";
@@ -11,9 +11,13 @@ const meta = {
     "The terms that govern use of the Smart Solutions (VASAY.AI) website, including content, intellectual property, liability and governing law in Ontario.",
   path: "/terms",
 };
-export const metadata = pageMetadata(meta);
+export async function generateMetadata() {
+  const { legal } = await getContent();
+  return withSeo(pageMetadata(meta), legal.terms.seo);
+}
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  const { legal } = await getContent();
   return (
     <>
       <JsonLd
@@ -25,7 +29,7 @@ export default function TermsPage() {
           ]),
         ]}
       />
-      <LegalPage doc={terms} />
+      <LegalPage doc={legal.terms} />
     </>
   );
 }

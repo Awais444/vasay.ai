@@ -1,71 +1,66 @@
-/** Plain-markdown summaries for AI tools (/llms.txt and /llms-full.txt), generated from the site content. */
-import { faqs, site } from "./content";
-import { serviceList } from "./services";
-import { serviceGuides } from "./serviceGuides";
+/** Plain-markdown summaries for AI tools (/llms.txt and /llms-full.txt), generated from the CMS content. */
+import type { CmsContent } from "@/cms/types";
+import { siteUrl } from "./env";
 import { plain } from "./schema";
 
 const AREA = "Vaughan, Concord, Toronto, Mississauga, Brampton, Markham, Richmond Hill and the Greater Toronto Area (GTA), Ontario, Canada";
 
-const header = () => `# Smart Solutions, Powered by VASAY.AI
+const header = (c: CmsContent) => {
+  const s = c.settings;
+  return `# Smart Solutions, Powered by VASAY.AI
 
-> ${site.description}
+> ${s.description}
 
 ## Key facts
-- Legal name: ${site.legalName} (brand: Smart Solutions, Powered by VASAY.AI)
-- Website: ${site.url}
-- Phone: ${site.phone} (${site.phoneSchema})
-- Email: ${site.email}
-- Address: ${site.address.full}, Canada
+- Legal name: ${s.legalName} (brand: Smart Solutions, Powered by VASAY.AI)
+- Website: ${siteUrl}
+- Phone: ${s.phone} (${s.phoneSchema})
+- Email: ${s.email}
+- Address: ${s.address.full}, Canada
 - Service area: ${AREA}
 - Experience: 15+ years in digital marketing
-- Free 30-minute strategy call: ${site.url}/contact
+- Free 30-minute strategy call: ${siteUrl}/contact
 `;
+};
 
-export function llmsTxt() {
-  return `${header()}
+export function llmsTxt(c: CmsContent) {
+  return `${header(c)}
 ## Services
-${serviceList.map((s) => `- [${s.title}](${site.url}/services/${s.slug}): ${s.description}`).join("\n")}
+${c.services.map((s) => `- [${s.title}](${siteUrl}/services/${s.slug}): ${s.description}`).join("\n")}
 
 ## Pages
-- [Home](${site.url}): overview, process and FAQs
-- [All services](${site.url}/services)
-- [About](${site.url}/about)
-- [Contact](${site.url}/contact)
-- [Insights (blog)](${site.url}/insights)
+- [Home](${siteUrl}): overview, process and FAQs
+- [All services](${siteUrl}/services)
+- [About](${siteUrl}/about)
+- [Contact](${siteUrl}/contact)
+- [Insights (blog)](${siteUrl}/insights)
 
 ## Full text
-- [llms-full.txt](${site.url}/llms-full.txt): full content of every service page
+- [llms-full.txt](${siteUrl}/llms-full.txt): full content of every service page
 `;
 }
 
-export function llmsFullTxt() {
-  const services = serviceList
+export function llmsFullTxt(c: CmsContent) {
+  const services = c.services
     .map((s) => {
-      const g = serviceGuides[s.slug];
-      const lines = [
-        `## ${s.title}`,
-        `URL: ${site.url}/services/${s.slug}`,
-        "",
-        s.sub,
-      ];
-      if (g) {
-        lines.push("", `### ${g.definition.q}`, g.definition.a, "", "### Who it's for", ...g.forWho.map((w) => `- ${w}`));
-        for (const sec of g.guide) lines.push("", `### ${sec.q}`, ...sec.a.map(plain));
-        if (g.comparison) {
-          lines.push("", `### ${g.comparison.title}`, g.comparison.intro, "", `| ${g.comparison.head.join(" | ")} |`, `| --- | --- | --- |`, ...g.comparison.rows.map((r) => `| ${r.join(" | ")} |`));
-        }
+      const lines = [`## ${s.title}`, `URL: ${siteUrl}/services/${s.slug}`, "", s.sub];
+      if (s.definition.a) lines.push("", `### ${s.definition.q}`, s.definition.a);
+      if (s.forWho.length) lines.push("", "### Who it's for", ...s.forWho.map((w) => `- ${w}`));
+      for (const sec of s.guide) lines.push("", `### ${sec.q}`, ...sec.a.map(plain));
+      if (s.comparison) {
+        lines.push("", `### ${s.comparison.title}`, s.comparison.intro, "", `| ${s.comparison.head.join(" | ")} |`, `| --- | --- | --- |`, ...s.comparison.rows.map((r) => `| ${r.join(" | ")} |`));
       }
-      lines.push("", "### What's included", ...s.included.map((i) => `- ${i.title}: ${i.body}`));
-      lines.push("", "### Deliverables", ...s.deliverables.map((d) => `- ${d}`));
-      lines.push("", "### Process", ...s.process.map((p, i) => `${i + 1}. ${p.title}: ${p.body}`));
+      if (s.included.length) lines.push("", "### What's included", ...s.included.map((i) => `- ${i.title}: ${i.body}`));
+      if (s.deliverables.length) lines.push("", "### Deliverables", ...s.deliverables.map((d) => `- ${d}`));
+      if (s.process.length) lines.push("", "### Process", ...s.process.map((p, i) => `${i + 1}. ${p.title}: ${p.body}`));
       if (s.note) lines.push("", s.note);
-      lines.push("", "### FAQ", ...[...s.faqs, ...(g?.moreFaqs ?? [])].flatMap((f) => [`**${plain(f.q)}**`, plain(f.a), ""]));
-      if (g) lines.push(`Last updated: ${g.updated}`);
+      if (s.faqs.length) lines.push("", "### FAQ", ...s.faqs.flatMap((f) => [`**${plain(f.q)}**`, plain(f.a), ""]));
+      if (s.updated) lines.push(`Last updated: ${s.updated}`);
       return lines.join("\n");
     })
     .join("\n\n---\n\n");
 
-  return `${header()}
+  return `${header(c)}
 # Services
 
 ${services}
@@ -74,6 +69,6 @@ ${services}
 
 # General FAQ
 
-${faqs.map((f) => `**${plain(f.q)}**\n${plain(f.a)}`).join("\n\n")}
+${c.faqs.home.map((f) => `**${plain(f.q)}**\n${plain(f.a)}`).join("\n\n")}
 `;
 }

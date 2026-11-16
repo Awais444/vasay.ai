@@ -1,6 +1,6 @@
 // TODO: have this reviewed by a lawyer before launch.
-import { privacy } from "@/lib/legal";
-import { pageMetadata } from "@/lib/seo";
+import { getContent } from "@/cms/content";
+import { pageMetadata, withSeo } from "@/lib/seo";
 import { breadcrumbs, webPage } from "@/lib/schema";
 import LegalPage from "@/components/LegalPage";
 import JsonLd from "@/components/JsonLd";
@@ -11,9 +11,13 @@ const meta = {
     "How Smart Solutions Inc. collects, uses, stores and protects your personal information under PIPEDA, and how to contact us about your privacy rights.",
   path: "/privacy-policy",
 };
-export const metadata = pageMetadata(meta);
+export async function generateMetadata() {
+  const { legal } = await getContent();
+  return withSeo(pageMetadata(meta), legal.privacy.seo);
+}
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const { legal } = await getContent();
   return (
     <>
       <JsonLd
@@ -25,7 +29,7 @@ export default function PrivacyPage() {
           ]),
         ]}
       />
-      <LegalPage doc={privacy} />
+      <LegalPage doc={legal.privacy} />
     </>
   );
 }

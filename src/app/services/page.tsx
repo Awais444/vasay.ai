@@ -2,9 +2,8 @@ import Link from "@/components/TransitionLink";
 import JsonLd from "@/components/JsonLd";
 import { abs, breadcrumbs, offerCatalog, ORG_ID, webPage } from "@/lib/schema";
 import ButtonArrow from "@/components/ButtonArrow";
-import { serviceList } from "@/lib/services";
-import { servicesSection } from "@/lib/content";
-import { pageMetadata } from "@/lib/seo";
+import { getContent } from "@/cms/content";
+import { pageMetadata, withSeo } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
 import { ServiceIconBox } from "@/components/ServiceIcon";
 import { Process } from "@/components/Sections";
@@ -16,9 +15,15 @@ const meta = {
     "Brand identity, website design and development, SEO, social media, paid ads, AI automation and cybersecurity, all under one roof in Concord, Ontario.",
   path: "/services",
 };
-export const metadata = pageMetadata(meta);
+export async function generateMetadata() {
+  const { servicesPage } = await getContent();
+  return withSeo(pageMetadata(meta), servicesPage.seo);
+}
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const c = await getContent();
+  const p = c.servicesPage;
+  const serviceList = c.services;
   return (
     <>
       <JsonLd
@@ -28,17 +33,16 @@ export default function ServicesPage() {
             { name: "Home", path: "/" },
             { name: "Services", path: "/services" },
           ]),
-          { ...offerCatalog(), provider: { "@id": ORG_ID } },
+          { ...offerCatalog(serviceList), provider: { "@id": ORG_ID } },
         ]}
       />
       <PageHero
         crumbs={[{ label: "Home", href: "/" }, { label: "Services" }]}
-        eyebrow="Services"
-        title={servicesSection.title}
-        accent={servicesSection.accent}
-        sub={servicesSection.intro}
-        primary={{ label: "Book a free strategy call", href: "#contact" }}
-        secondary={{ label: "Browse services", href: "#all-services", icon: "down" }}
+        eyebrow={p.eyebrow}
+        lines={p.lines}
+        sub={p.sub}
+        primary={p.primaryCta}
+        secondary={{ ...p.secondaryCta, icon: p.secondaryCta.href.startsWith("#") ? "down" : "right" }}
       />
       <section id="all-services" aria-label="All services" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
         <ul className="grid gap-4 md:grid-cols-2">
@@ -69,8 +73,8 @@ export default function ServicesPage() {
           ))}
         </ul>
       </section>
-      <Process />
-      <Contact />
+      {p.showProcess && c.home.process.steps.length > 0 && <Process data={{ ...c.home.process, show: true }} />}
+      <Contact contact={c.contact} settings={c.settings} />
     </>
   );
 }
