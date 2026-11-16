@@ -27,3 +27,6 @@ const THEMES: Record<string, CoverTheme> = {
 const DEFAULT_THEME: CoverTheme = { from: KLEIN, to: VIBRANT, icon: PenLine };
 
 export const coverTheme = (categorySlug?: string) => (categorySlug && THEMES[categorySlug]) || DEFAULT_THEME;
+
+/** `sizes` of the cover on the article page; cards preload it with exactly this value. */
+export const ARTICLE_COVER_SIZES = "(min-width: 1200px) 1112px, calc(100vw - 40px)";

@@ -52,3 +52,10 @@ export function useLazyGsap(setup: (gsap: Gsap, ScrollTrigger: typeof ST) => voi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }
+
+/** Like refreshScrollTriggers, but resolves once the refresh has run (right away if GSAP isn't loaded). */
+export async function refreshScrollTriggersNow() {
+  if (!loading) return;
+  const { ScrollTrigger } = await loading;
+  ScrollTrigger.refresh();
+}

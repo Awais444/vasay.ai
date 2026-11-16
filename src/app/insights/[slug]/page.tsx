@@ -14,6 +14,7 @@ import ShareButtons from "@/components/blog/ShareButtons";
 import AuthorBox, { AuthorAvatar } from "@/components/blog/AuthorBox";
 import { CategoryChip } from "@/components/blog/PostCard";
 import CoverImage from "@/components/blog/CoverImage";
+import { ARTICLE_COVER_SIZES } from "@/lib/covers";
 import { PostGrid } from "@/components/blog/Listing";
 import { formatDate, getPost, getPosts, readMinutes } from "@/sanity/data";
 import { imageUrl } from "@/sanity/client";
@@ -178,7 +179,7 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
             image={post.coverImage}
             category={post.category}
             priority
-            sizes="(min-width: 1200px) 1112px, calc(100vw - 40px)"
+            sizes={ARTICLE_COVER_SIZES}
           />
         </div>
 

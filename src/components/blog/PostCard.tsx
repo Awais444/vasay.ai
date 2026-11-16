@@ -3,6 +3,13 @@ import ButtonArrow from "@/components/ButtonArrow";
 import { formatDate, readMinutes, type PostCard as Post } from "@/sanity/data";
 import { AuthorAvatar } from "./AuthorBox";
 import CoverImage from "./CoverImage";
+import { imageBase } from "@/sanity/client";
+
+/** Lets TransitionProvider preload the article cover on hover/touch (and on idle for the featured card). */
+const preloadAttrs = (post: Post, idle = false) => {
+  const src = imageBase(post.coverImage, 16 / 9);
+  return src ? { "data-cover-preload": src, ...(idle ? { "data-cover-preload-idle": "" } : {}) } : {};
+};
 
 /** Author avatar + name, then date and read time. */
 function Meta({ post }: { post: Post }) {
@@ -57,6 +64,7 @@ export default function PostCard({ post, priority }: { post: Post; priority?: bo
   return (
     <Link
       href={`/insights/${post.slug}`}
+      {...preloadAttrs(post)}
       className="group flex h-full flex-col transition-transform duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-1 motion-reduce:hover:translate-y-0"
     >
       <CoverImage
@@ -91,6 +99,7 @@ export function FeaturedPostCard({ post, priority = false }: { post: Post; prior
   return (
     <Link
       href={`/insights/${post.slug}`}
+      {...preloadAttrs(post, true)}
       className="group grid items-center gap-8 rounded-[28px] border border-brand-silver bg-white p-4 sm:p-5 lg:grid-cols-[1.2fr_1fr] lg:gap-12"
     >
       <CoverImage image={post.coverImage} category={post.category} priority={priority} zoom sizes="(min-width: 1280px) 680px, (min-width: 1024px) 54vw, 100vw" />

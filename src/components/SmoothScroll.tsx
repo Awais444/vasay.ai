@@ -4,7 +4,8 @@ import { useEffect, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import type Lenis from "lenis";
 import { getLenis, setLenis } from "@/lib/lenis";
-import { refreshScrollTriggers, updateScrollTriggers } from "@/lib/gsap-lazy";
+import { refreshScrollTriggers, refreshScrollTriggersNow, updateScrollTriggers } from "@/lib/gsap-lazy";
+import { anchorY, isTransitioning, NAV_OFFSET, settleLayout, tlog } from "@/lib/transition";
 
 /** Run after the first paint, when the main thread is free. */
 const whenIdle = (cb: () => void) => {
@@ -12,16 +13,14 @@ const whenIdle = (cb: () => void) => {
   else setTimeout(cb, 600);
 };
 
-const NAV_OFFSET = -96;
-
 function scrollToEl(el: HTMLElement) {
   const l = getLenis();
   if (l) {
-    l.scrollTo(el, { offset: NAV_OFFSET, duration: 1.3 });
+    l.scrollTo(el, { offset: -NAV_OFFSET, duration: 1.3 });
     return;
   }
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const y = el.getBoundingClientRect().top + window.scrollY + NAV_OFFSET;
+  const y = anchorY(el);
   window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
 }
 
@@ -78,21 +77,30 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     };
   }, [studio]);
 
-  // After a route change: start at the top (or the hash target) and re-measure triggers.
+  // Route changes without the page transition (first load, plain links): start at the top, or at the
+  // hash target once the layout has settled. Transitions position the page themselves (TransitionProvider),
+  // before the new page is shown, so nothing scrolls after they end.
   useEffect(() => {
+    if (isTransitioning()) return;
     const hash = window.location.hash;
-    getLenis()?.scrollTo(0, { immediate: true, force: true });
-    // Wait for the new page's ScrollTriggers (pin spacers change page height) before measuring.
-    const id = window.setTimeout(() => {
-      refreshScrollTriggers();
-      const el = hash ? document.querySelector<HTMLElement>(hash) : null;
-      if (el) {
-        const l = getLenis();
-        if (l) l.scrollTo(el, { offset: NAV_OFFSET, immediate: true, force: true });
-        else scrollToEl(el);
-      }
-    }, 250);
-    return () => window.clearTimeout(id);
+    let cancelled = false;
+    if (!hash) {
+      getLenis()?.scrollTo(0, { immediate: true, force: true });
+      return;
+    }
+    settleLayout(300)
+      .then(refreshScrollTriggersNow)
+      .then(() => {
+        const el = document.getElementById(decodeURIComponent(hash.slice(1)));
+        if (cancelled || !el) return;
+        const y = anchorY(el);
+        getLenis()?.scrollTo(y, { immediate: true, force: true });
+        window.scrollTo(0, y);
+        tlog("direct load: scroll set", { hash, y }, true);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [pathname]);
 
   return <>{children}</>;

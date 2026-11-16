@@ -2,6 +2,7 @@
 
 import ButtonArrow, { arrowLink } from "@/components/ButtonArrow";
 import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import Link from "@/components/TransitionLink";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, m, useMotionValueEvent, useScroll } from "framer-motion";
@@ -12,7 +13,7 @@ import type { ServiceIconName } from "@/lib/services";
 
 export type NavService = { slug: string; icon: ServiceIconName; title: string; tag: string; href: string };
 import { getLenis } from "@/lib/lenis";
-import { PAGE_NAVIGATE } from "@/lib/transition";
+import { isTransitioning, PAGE_NAVIGATE, PAGE_POSITIONED } from "@/lib/transition";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -92,7 +93,19 @@ export default function Navbar({ nav, services, settings }: { nav: Navigation; s
     return () => window.removeEventListener("scroll", onScroll);
   }, [mega]);
 
+  // During a page transition the new page is placed programmatically: its state is set once, below.
+  useEffect(() => {
+    const onPositioned = () =>
+      flushSync(() => {
+        setScrolled(window.scrollY > 20);
+        setHidden(false);
+      });
+    window.addEventListener(PAGE_POSITIONED, onPositioned);
+    return () => window.removeEventListener(PAGE_POSITIONED, onPositioned);
+  }, []);
+
   useMotionValueEvent(scrollY, "change", (y) => {
+    if (isTransitioning()) return;
     const prev = scrollY.getPrevious() ?? 0;
     setScrolled(y > 20);
     setHidden(y > prev && y > 160 && !mega && !mobile);
@@ -128,7 +141,8 @@ export default function Navbar({ nav, services, settings }: { nav: Navigation; s
       <m.header
         initial={false}
         animate={{ y: hidden ? -120 : 0 }}
-        transition={{ duration: 0.5, ease }}
+        // Instant while a page transition runs, so the new page never shows the bar sliding back in.
+        transition={{ duration: isTransitioning() ? 0 : 0.5, ease }}
         className="vt-navbar fixed inset-x-0 top-3 z-50 px-3 sm:top-4 sm:px-6"
       >
         {settings.announcement.show && settings.announcement.text && (
