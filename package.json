@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "avatars": "node scripts/gen-avatars.mjs",
     "prebuild": "node scripts/gen-avatars.mjs",
     "sanity:seed": "node --env-file=.env.local scripts/sanity-seed.mjs",
-    "sanity:migrate": "tsx --env-file=.env.local --tsconfig tsconfig.json scripts/sanity-migrate.ts"
+    "sanity:migrate": "tsx --env-file=.env.local --tsconfig tsconfig.json scripts/sanity-migrate.ts",
+    "dev:turbo": "next dev"
   },
   "dependencies": {
     "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
