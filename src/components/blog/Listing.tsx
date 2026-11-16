@@ -38,9 +38,9 @@ export function CategoryPills({ categories, active }: { categories: Category[]; 
 export function PostGrid({ posts }: { posts: Post[] }) {
   return (
     <ul className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-      {posts.map((p, i) => (
+      {posts.map((p) => (
         <li key={p._id}>
-          <PostCard post={p} priority={i < 3} />
+          <PostCard post={p} />
         </li>
       ))}
     </ul>

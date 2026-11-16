@@ -10,7 +10,7 @@ import { client } from "./client";
  * Only published documents are read, and only articles whose publish date has passed.
  */
 
-export type SanityImage = { asset?: { _ref?: string; _id?: string }; alt?: string; hotspot?: unknown; crop?: unknown; caption?: string };
+export type SanityImage = { asset?: { _ref?: string; _id?: string }; alt?: string; hotspot?: unknown; crop?: unknown; caption?: string; lqip?: string };
 export type CategoryRef = { title: string; slug: string };
 export type AuthorRef = { name: string; slug: string; role?: string; photo?: SanityImage };
 
@@ -42,10 +42,19 @@ export type Post = PostCard & {
 export type Category = CategoryRef & { description?: string };
 
 const live = `_type == "post" && defined(slug.current) && defined(publishedAt) && publishedAt <= now()`;
-const card = `_id, title, "slug": slug.current, excerpt, publishedAt, updatedAt, coverImage,
+const card = `_id, title, "slug": slug.current, excerpt, publishedAt, updatedAt, coverImage{..., "lqip": asset->metadata.lqip},
   "category": category->{title, "slug": slug.current},
   "author": author->{name, "slug": slug.current, role, photo},
-  "words": length(string::split(pt::text(body), " ")),
+  // Every word a reader sees: paragraphs, headings and lists, plus takeaways, FAQ, tables, callouts and CTA text.
+  "words": length(string::split(array::join([
+    pt::text(body),
+    array::join(coalesce(keyTakeaways, []), " "),
+    array::join(coalesce(body[_type == "faqBlock"].items[].question, []), " "),
+    array::join(coalesce(body[_type == "faqBlock"].items[].answer, []), " "),
+    array::join(coalesce(body[_type == "table"].rows[].cells[], []), " "),
+    array::join(coalesce(body[_type == "callout"].text, []), " "),
+    array::join(coalesce(body[_type == "ctaBlock"].text, []), " ")
+  ], " "), " ")[@ != ""]),
   "noindex": seo.noindex`;
 
 const POSTS = defineQuery(`*[${live}] | order(publishedAt desc) { ${card} }`);
@@ -93,7 +102,8 @@ export async function getAuthors(): Promise<Author[]> {
 export const PER_PAGE = 12;
 
 /** Reading time at ~220 words a minute, at least 1 minute. */
-export const readMinutes = (words: number) => Math.max(1, Math.round((words || 0) / 220));
+/** Reading time at 200 words per minute, rounded up. */
+export const readMinutes = (words: number) => Math.max(1, Math.ceil((words || 0) / 200));
 
 export const formatDate = (iso?: string) =>
   iso ? new Date(iso).toLocaleDateString("en-CA", { year: "numeric", month: "long", day: "numeric", timeZone: "America/Toronto" }) : "";

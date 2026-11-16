@@ -4,6 +4,7 @@
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
+import { unsplashImageAsset } from "sanity-plugin-asset-source-unsplash";
 import { presentationTool } from "sanity/presentation";
 import { resolve } from "./src/sanity/presentation";
 import { apiVersion, dataset, projectId } from "./src/sanity/env";
@@ -31,5 +32,7 @@ export default defineConfig({
     // Live preview of the real site with click-to-edit (Draft Mode via /api/draft-mode/enable).
     presentationTool({ resolve, previewUrl: { previewMode: { enable: "/api/draft-mode/enable" } } }),
     visionTool({ defaultApiVersion: apiVersion }),
+    // Search and pick free Unsplash photos inside any image field (uploads still work).
+    unsplashImageAsset(),
   ],
 });

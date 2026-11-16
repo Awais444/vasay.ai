@@ -16,3 +16,13 @@ export function imageUrl(source: SanityImageSource | undefined, width: number, h
   if (height) b = b.height(height);
   return b.url();
 }
+
+/**
+ * Base URL for <SanityImg>: cropped to `ratio` around the hotspot (honouring the editor's crop).
+ * The loader then sets the real width per breakpoint; `ar` tells it the ratio for the height.
+ */
+export function imageBase(source: SanityImageSource | undefined, ratio: number) {
+  if (!builder || !source || !(source as { asset?: unknown }).asset) return null;
+  const url = builder.image(source).width(1600).height(Math.round(1600 / ratio)).fit("crop").auto("format").url();
+  return `${url}&ar=${ratio}`;
+}

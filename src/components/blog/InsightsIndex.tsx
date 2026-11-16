@@ -5,6 +5,7 @@ import PageHero from "@/components/PageHero";
 import InsightsSearch from "./InsightsSearch";
 import PostCard, { FeaturedPostCard } from "./PostCard";
 import InsightsResults from "./InsightsResults";
+import { AskBand, TopicsRow } from "./TopicsRow";
 import { CategoryPills, EmptyState, Pagination, PostGrid } from "./Listing";
 import { getContent } from "@/cms/content";
 import { getCategories, getPosts, PER_PAGE } from "@/sanity/data";
@@ -52,7 +53,7 @@ export default async function InsightsIndex({ page }: { page: number }) {
               <CategoryPills categories={usedCategories} />
               {page === 1 && featured && (
                 <div className="mt-10">
-                  <FeaturedPostCard post={featured} />
+                  <FeaturedPostCard post={featured} priority />
                 </div>
               )}
               {slice.length > 0 && (
@@ -61,6 +62,13 @@ export default async function InsightsIndex({ page }: { page: number }) {
                 </div>
               )}
               <Pagination page={page} pages={pages} />
+              {/* While the blog is young (fewer than 4 articles), show the topics and an invitation instead of an empty grid. */}
+              {page === 1 && posts.length < 4 && (
+                <>
+                  <TopicsRow services={cms.services} posts={posts} />
+                  <AskBand />
+                </>
+              )}
             </InsightsResults>
           )}
         </div>

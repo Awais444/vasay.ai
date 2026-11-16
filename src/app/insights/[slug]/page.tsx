@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { siteUrl } from "@/lib/env";
@@ -14,6 +13,7 @@ import ReadingProgress from "@/components/blog/ReadingProgress";
 import ShareButtons from "@/components/blog/ShareButtons";
 import AuthorBox, { AuthorAvatar } from "@/components/blog/AuthorBox";
 import { CategoryChip } from "@/components/blog/PostCard";
+import CoverImage from "@/components/blog/CoverImage";
 import { PostGrid } from "@/components/blog/Listing";
 import { formatDate, getPost, getPosts, readMinutes } from "@/sanity/data";
 import { imageUrl } from "@/sanity/client";
@@ -69,7 +69,10 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
   const cover = imageUrl(post.coverImage, 1600, 900);
   const sameCat = all.filter((p) => p._id !== post._id && p.category?.slug === post.category?.slug);
   const related = [...sameCat, ...all.filter((p) => p._id !== post._id && !sameCat.includes(p))].slice(0, 3);
-  const updated = post.updatedAt && post.updatedAt.slice(0, 10) !== post.publishedAt.slice(0, 10) ? post.updatedAt : undefined;
+  const updated = post.updatedAt && post.updatedAt > post.publishedAt ? post.updatedAt : post.publishedAt;
+  // "Next article": the next older one, or the newest other article when this is the oldest.
+  const index = all.findIndex((p) => p._id === post._id);
+  const next = all[index + 1] ?? all.find((p) => p._id !== post._id);
 
   const crumbs = [
     { name: "Home", item: siteUrl },
@@ -163,28 +166,21 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
             <span>
               Published <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
             </span>
-            {updated && (
-              <span>
-                Updated <time dateTime={updated}>{formatDate(updated)}</time>
-              </span>
-            )}
+            <span>
+              Last updated <time dateTime={updated}>{formatDate(updated)}</time>
+            </span>
             <span>{readMinutes(post.words)} min read</span>
           </div>
         </header>
 
-        {cover && (
-          <div className="mx-auto max-w-[1160px] px-5 sm:px-6">
-            <Image
-              src={cover}
-              alt={post.coverImage?.alt ?? ""}
-              width={1600}
-              height={900}
-              priority
-              sizes="(min-width: 1200px) 1112px, 100vw"
-              className="h-auto w-full rounded-[28px]"
-            />
-          </div>
-        )}
+        <div className="mx-auto max-w-[1160px] px-5 sm:px-6">
+          <CoverImage
+            image={post.coverImage}
+            category={post.category}
+            priority
+            sizes="(min-width: 1200px) 1112px, calc(100vw - 40px)"
+          />
+        </div>
 
         <div className="mx-auto grid max-w-[1160px] gap-12 px-5 pb-[var(--section-y)] pt-12 sm:px-6 lg:grid-cols-[minmax(0,720px)_260px] lg:justify-between lg:pt-16">
           <div id="article-body" className="min-w-0">
@@ -235,6 +231,20 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
             <div className="mt-12 border-t border-brand-silver pt-8">
               <ShareButtons url={url} title={post.title} />
             </div>
+            {next && (
+              <Link
+                href={`/insights/${next.slug}`}
+                className="group mt-10 flex items-center justify-between gap-6 rounded-[20px] border border-brand-silver bg-white p-5 transition-colors hover:border-accent sm:p-6"
+              >
+                <span>
+                  <span className="block text-[13px] font-semibold uppercase tracking-[0.14em] text-ink-2">Next article</span>
+                  <span className="mt-1 block font-display text-xl font-semibold leading-snug tracking-tight transition-colors group-hover:text-accent">
+                    {next.title}
+                  </span>
+                </span>
+                <ButtonArrow />
+              </Link>
+            )}
             {post.author && (
               <div className="mt-10">
                 <AuthorBox author={post.author} />

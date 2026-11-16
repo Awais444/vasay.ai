@@ -83,7 +83,7 @@ export const post = defineType({
         ),
     }),
     defineField({ name: "excerpt", type: "text", rows: 3, group: "content", validation: (r) => r.required().max(220) }),
-    { ...imageWithAlt("coverImage", "Cover image", true), group: "content" },
+    { ...imageWithAlt("coverImage", "Cover image"), group: "content", description: "Landscape stock photo (Unsplash/Pexels) or your own. Shown at 16:9; set the hotspot on the subject. Without one, a brand gradient with the category icon is shown." },
     defineField({
       name: "keyTakeaways",
       title: "Key takeaways",

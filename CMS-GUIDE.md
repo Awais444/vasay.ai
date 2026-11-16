@@ -43,6 +43,18 @@ New services get a simple "what's included" mockup next to the hero; the 8 origi
 2. **Insights → Articles → + Create**: title, slug, excerpt, cover image (with alt text), key takeaways, body, category, author, **Published at**.
 3. Publish. A future "Published at" date schedules it.
 
+### Cover photos
+
+- **Picking a photo:** in the cover image field, click **Select → Unsplash** to search free stock photos, or upload your own. The photographer credit is saved with the photo automatically.
+- **Use Unsplash or Pexels photos only** (both are free for commercial use). Never use images from Google search or other websites.
+- **No recognisable brand logos** in the photo (phones, laptops, shop signs, clothing).
+- **Never present stock-photo people as our team or our clients.** Captions and text must not suggest they are.
+- **Always write alt text** that describes what is in the photo, e.g. "Woman replying to a text message on her phone at a café table".
+- **Prefer calm, bright photos with space** around the subject. The site shows every cover at 16:9 with a light blue tint, so busy or very dark photos look out of place.
+- **Set the hotspot** (the crop icon on the image) on the subject, so it stays in frame on cards, the article page and social shares.
+- No text in the image: the title is added automatically on social share images.
+- No photo? The site shows a brand gradient with the category icon instead, so the article still looks finished.
+
 ## 7. SEO for any page
 Every page and service has an **SEO** tab:
 - **Meta title** (50–60 characters) and **meta description** (140–160).
