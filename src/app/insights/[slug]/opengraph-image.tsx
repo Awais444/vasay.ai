@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getPost, getPosts } from "@/sanity/data";
 import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { imageUrl } from "@/sanity/client";
 
 export const size = { width: 1200, height: 630 };
@@ -34,7 +35,7 @@ export default async function OgImage({ params }: { params: Promise<{ slug: stri
 
   const title = post?.title ?? "Insights";
   // Space Grotesk Bold (static .woff: the image renderer can't read woff2).
-  const font = await readFile(new URL("../../../../node_modules/@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff", import.meta.url));
+  const font = await readFile(join(process.cwd(), "node_modules/@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff"));
   const photo = post?.coverImage?.asset ? imageUrl(post.coverImage, 1200, 630)?.replace("auto=format", "fm=jpg") : null;
 
   return new ImageResponse(

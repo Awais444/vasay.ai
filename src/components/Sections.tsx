@@ -221,8 +221,8 @@ const panelItem = {
   show: { opacity: 1, y: 0, transition: { duration: 0.8, ease } },
 };
 
-export function Process({ data: process }: { data: Home["process"] }) {
-  const steps = process.steps;
+export function Process({ data }: { data: Home["process"] }) {
+  const steps = data.steps;
   const root = useRef<HTMLElement>(null);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const [active, setActive] = useState(0);
@@ -272,7 +272,7 @@ export function Process({ data: process }: { data: Home["process"] }) {
     <section id="process" ref={root} className="bg-brand-black text-white section-y">
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
         <div {...revealProps()}>
-          <Heading eyebrow={process.eyebrow} title={process.title} dark />
+          <Heading eyebrow={data.eyebrow} title={data.title} dark />
         </div>
 
         {/* Desktop: expanding panels */}
@@ -426,10 +426,10 @@ export function Process({ data: process }: { data: Home["process"] }) {
 
         <div className="mt-12 flex justify-center">
           <a
-            href={process.cta.href}
+            href={data.cta.href}
             className={`${arrowLink} rounded-full bg-[var(--orange-strong)] px-7 py-4 font-semibold text-white transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-0.5`}
           >
-            {process.cta.label}
+            {data.cta.label}
             <ButtonArrow />
           </a>
         </div>
