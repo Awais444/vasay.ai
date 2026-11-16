@@ -25,7 +25,7 @@ export type Settings = {
   tagline: string;
   description: string;
   phone: string;
-  /** E.164 (+14375640199), for tel: links */
+  /** E.164 (+14375640199) */
   phoneE164: string;
   phoneHref: string;
   /** +1-437-564-0199, for structured data */

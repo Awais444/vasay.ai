@@ -25,7 +25,8 @@ export function finishSettings(s: Omit<Settings, "phoneE164" | "phoneHref" | "ph
   return {
     ...s,
     phoneE164: e164,
-    phoneHref: `tel:${e164}`,
+    // Clicking the number opens a WhatsApp chat.
+    phoneHref: `https://wa.me/1${national}`,
     phoneSchema: `+1-${national.slice(0, 3)}-${national.slice(3, 6)}-${national.slice(6)}`,
     emailHref: `mailto:${s.email}`,
     address: { ...a, full: `${a.street}, ${a.city}, ${a.region} ${a.postalCode}` },

@@ -11,7 +11,7 @@ export default function AnalyticsEvents() {
       if (!a) return;
       const href = a.getAttribute("href") ?? "";
       const label = (a.textContent ?? "").trim().slice(0, 80);
-      if (href.startsWith("tel:")) track("phone_click", { link_text: label });
+      if (href.startsWith("tel:") || href.startsWith("https://wa.me/")) track("phone_click", { link_text: label });
       else if (href.startsWith("mailto:")) track("email_click", { link_text: label });
       else if (/strategy call/i.test(label)) track("book_call_click", { link_text: label, link_url: href });
     };

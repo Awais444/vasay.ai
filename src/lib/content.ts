@@ -20,7 +20,7 @@ export const site = {
   phone: "(437) 564-0199",
   /** E.164, for tel: links */
   phoneE164: "+14375640199",
-  phoneHref: "tel:+14375640199",
+  phoneHref: "https://wa.me/14375640199",
   /** International format for structured data */
   phoneSchema: "+1-437-564-0199",
   email: "info@smartsolutionsinc.ca",
