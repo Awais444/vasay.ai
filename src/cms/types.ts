@@ -3,6 +3,7 @@
  * files (src/cms/seed.ts) when Sanity is unavailable. Components only ever see this shape.
  */
 import type { PortableTextBlock } from "@portabletext/react";
+import { SHOWCASE_ICONS, SHOWCASE_VISUALS } from "./showcase-options";
 import type { ProblemIconName, ServiceIconName } from "@/lib/services";
 import type { SanityImage } from "@/sanity/data";
 
@@ -88,8 +89,31 @@ export type GuideSection = { q: string; a: string[] };
 export type Comparison = { title: string; intro: string; head: [string, string, string]; rows: [string, string, string][] };
 export type Faq = { q: string; a: string };
 
+export { SHOWCASE_ICONS, SHOWCASE_VISUALS };
+export type ShowcaseIcon = (typeof SHOWCASE_ICONS)[number];
+export type ShowcaseVisual = (typeof SHOWCASE_VISUALS)[number];
+
+/** One automation in the "System showcase" app window. */
+export type ShowcaseItem = {
+  name: string;
+  icon: ShowcaseIcon;
+  tag: string;
+  description: string;
+  miniTags: string[];
+  bullets: string[];
+  connects: string[];
+  /** Terminal lines; the part after the last ": " is the success text */
+  activity: string[];
+  steps: string[];
+  visual: ShowcaseVisual;
+};
+
+/** Optional interactive "app window" block on a service page (right after the hero). */
+export type SystemShowcase = { eyebrow: string; title: string; accent: string; sub: string; /** Button in the panel, scrolls to "What's included" */ cta: string; items: ShowcaseItem[] };
+
 export type Service = {
   slug: string;
+  showcase?: SystemShowcase;
   icon: ServiceIconName;
   title: string;
   tag: string;

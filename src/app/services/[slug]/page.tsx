@@ -5,6 +5,7 @@ import { breadcrumbs, faqPage, service as serviceSchema, webPage } from "@/lib/s
 import PageHero from "@/components/PageHero";
 import ServiceVisual from "@/components/ServiceVisual";
 import ServiceGuide from "@/components/ServiceGuide";
+import SystemShowcase from "@/components/SystemShowcase";
 import { Problems, Included, Deliverables, Timeline, Related } from "@/components/ServiceSections";
 import { Faq } from "@/components/Sections";
 import { WhyUs } from "@/components/StaticSections";
@@ -64,6 +65,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         secondary={s.included.length ? { label: "See what's included", href: "#included" } : undefined}
         visual={<ServiceVisual slug={s.slug} fallback={{ label: s.title, items: s.included.map((i) => i.title) }} />}
       />
+      {s.showcase && <SystemShowcase data={s.showcase} />}
       <Problems items={s.problems} />
       <ServiceGuide guide={s} title={s.title} />
       <Included items={s.included} title={s.title} />

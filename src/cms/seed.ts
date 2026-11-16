@@ -6,6 +6,7 @@
 import type { PortableTextBlock } from "@portabletext/react";
 import * as c from "@/lib/content";
 import { serviceList } from "@/lib/services";
+import { showcases } from "@/lib/systemShowcase";
 import { serviceGuides } from "@/lib/serviceGuides";
 import { privacy, terms } from "@/lib/legal";
 import type { CmsContent, LegalDoc, Rich, Settings } from "./types";
@@ -98,6 +99,7 @@ export function seedContent(): CmsContent {
       const g = serviceGuides[sv.slug];
       return {
         slug: sv.slug,
+        showcase: showcases[sv.slug],
         icon: sv.icon,
         title: sv.title,
         tag: sv.tag,

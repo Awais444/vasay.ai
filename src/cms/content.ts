@@ -5,7 +5,8 @@ import { createClient, type FilterDefault } from "next-sanity";
 import type { PortableTextBlock } from "@portabletext/react";
 import { apiVersion, dataset, isSanityConfigured, projectId } from "@/sanity/env";
 import { seedContent, finishSettings } from "./seed";
-import type { CmsContent, Faq, Link, Rich, Seo } from "./types";
+import type { CmsContent, Faq, Link, Rich, Seo, SystemShowcase } from "./types";
+import { SHOWCASE_ICONS, SHOWCASE_VISUALS } from "./showcase-options";
 
 /*
  * ALL editable site content, from Sanity. Cached (tag "cms"); /api/revalidate refreshes it on publish.
@@ -53,6 +54,31 @@ export const toLines = (blocks?: PortableTextBlock[] | null): Rich[] =>
 const toRich = (blocks?: PortableTextBlock[] | null): Rich => toLines(blocks)[0] ?? [];
 const L = (l?: Raw | null): Link => ({ label: l?.label ?? "", href: l?.href ?? "" });
 const arr = <T = any,>(a?: T[] | null): T[] => (Array.isArray(a) ? a : []);
+
+/** Service "System showcase" block: hidden (undefined) when it has no automations. */
+function showcase(sc: Raw | undefined): SystemShowcase | undefined {
+  const items = arr(sc?.items).filter((i: Raw) => i?.name);
+  if (!sc || !items.length) return undefined;
+  return {
+    eyebrow: sc.eyebrow ?? "",
+    title: sc.title ?? "",
+    accent: sc.accent ?? "",
+    sub: sc.sub ?? "",
+    cta: sc.cta || "See what's included",
+    items: items.map((i: Raw) => ({
+      name: i.name,
+      icon: (SHOWCASE_ICONS as readonly string[]).includes(i.icon) ? i.icon : "Zap",
+      visual: (SHOWCASE_VISUALS as readonly string[]).includes(i.visual) ? i.visual : "reply",
+      tag: i.tag ?? "",
+      description: i.description ?? "",
+      miniTags: arr(i.miniTags),
+      bullets: arr(i.bullets),
+      connects: arr(i.connects),
+      activity: arr(i.activity),
+      steps: arr(i.steps),
+    })),
+  };
+}
 const head = (h?: Raw | null) => ({ eyebrow: h?.eyebrow ?? "", title: toRich(h?.title), intro: h?.intro ?? undefined });
 const seo = (s?: Raw | null): Seo => s ?? {};
 
@@ -205,6 +231,7 @@ function build(raw: Raw, seed: CmsContent): CmsContent {
   const faqFor = (pred: (f: Raw) => boolean): Faq[] => faqDocs.filter(pred).map((f) => ({ q: f.q ?? "", a: f.a ?? "" }));
   const services = arr(raw.services).map((s: Raw) => ({
     slug: s.slug,
+    showcase: showcase(s.showcase),
     icon: s.icon ?? "Search",
     title: s.title ?? "",
     tag: s.tag ?? "",

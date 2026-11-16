@@ -1,5 +1,6 @@
 import { defineArrayMember, defineField, defineType, type FieldDefinition } from "sanity";
 import { accentText, imageField, link, PILLAR_ICONS, PROBLEM_ICONS, sectionHead, seoField, SERVICE_ICONS, show, str, stringList } from "./fields";
+import { SHOWCASE_ICONS, SHOWCASE_VISUALS } from "../../cms/showcase-options";
 
 const groups = [
   { name: "content", title: "Content", default: true },
@@ -364,6 +365,45 @@ export const service = defineType({
     defineField({ ...str("heroTitle", "Hero headline", { max: 40 }), group: "content" }),
     defineField({ ...str("heroAccent", "Hero headline: orange part", { max: 24 }), group: "content" }),
     defineField({ ...str("sub", "Hero text", { rows: 3, max: 240 }), group: "content" }),
+    defineField({
+      name: "showcase",
+      title: "System showcase (optional)",
+      description: "Interactive app window shown right after the hero. Leave the list empty to hide it.",
+      type: "object",
+      group: "content",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        str("eyebrow", "Eyebrow", { max: 30 }),
+        str("title", "Headline", { max: 40 }),
+        str("accent", "Headline: orange part", { max: 40 }),
+        str("sub", "Text under the headline", { rows: 2, max: 160 }),
+        str("cta", "Panel button (scrolls to What's included)", { max: 32 }),
+        defineField({
+          name: "items",
+          title: "Automations",
+          type: "array",
+          validation: (r) => r.max(8),
+          of: [
+            defineArrayMember({
+              type: "object",
+              fields: [
+                str("name", "Name", { required: true, max: 32 }),
+                defineField({ name: "icon", type: "string", options: { list: [...SHOWCASE_ICONS] }, validation: (r) => r.required() }),
+                defineField({ name: "visual", title: "Visual", type: "string", options: { list: [...SHOWCASE_VISUALS] }, validation: (r) => r.required() }),
+                str("tag", "Pill tag", { max: 28 }),
+                str("description", "One-sentence description", { rows: 2, max: 140 }),
+                stringList("miniTags", "Mini tags", 3, 20),
+                stringList("bullets", "What it does", 4, 50),
+                stringList("connects", "Connects with", 5, 26),
+                defineField({ ...stringList("activity", "Activity lines (3)", 3, 48), description: 'e.g. "> form: new enquiry received". The last line ends with ✓.' }),
+                stringList("steps", "Steps (e.g. CAPTURE, REPLY, BOOK, REMIND)", 5, 12),
+              ],
+              preview: { select: { title: "name", subtitle: "tag" } },
+            }),
+          ],
+        }),
+      ],
+    }),
     defineField({ name: "problems", type: "array", group: "content", validation: (r) => r.max(3), of: [defineArrayMember({ type: "object", fields: [defineField({ name: "icon", type: "string", options: { list: PROBLEM_ICONS } }), str("title", "Title", { required: true, max: 40 }), str("body", "Text", { rows: 2, max: 140 })], preview: { select: { title: "title" } } })] }),
     defineField({ name: "included", title: "What's included", type: "array", group: "content", of: [defineArrayMember({ type: "object", fields: [str("title", "Title", { required: true, max: 40 }), str("body", "Text", { rows: 2, max: 140 })], preview: { select: { title: "title" } } })] }),
     defineField({ ...stringList("deliverables", "Deliverables"), group: "content" }),
