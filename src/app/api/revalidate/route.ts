@@ -1,4 +1,4 @@
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
 
@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
       tags.push("cms");
     }
     for (const tag of tags) revalidateTag(tag, "max");
+    // The sitemap is prerendered as a whole file and does not pick up the data tags, so refresh it directly.
+    revalidatePath("/sitemap.xml");
 
     // Redirects live in next.config (build time): trigger a fresh deploy instead.
     let deploy: string | undefined;
