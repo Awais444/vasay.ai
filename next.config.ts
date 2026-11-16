@@ -28,7 +28,7 @@ async function loadRedirects(): Promise<{ from: string; to: string; permanent: b
 
 const nextConfig: NextConfig = {
   // GoDaddy Airo preview serves the dev server from this host.
-  allowedDevOrigins: ["*.airoapp.ai"],
+  allowedDevOrigins: ["*.airoapp.ai", "**.airoapp.ai"],
   async headers() {
     return [
       {
