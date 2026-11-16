@@ -7,13 +7,12 @@ import ButtonArrow from "@/components/ButtonArrow";
 import { useLazyGsap } from "@/lib/gsap-lazy";
 import { revealProps } from "@/lib/reveal";
 import type { WorkItem } from "@/cms/types";
-import { imageUrl } from "@/sanity/client";
 
 const MOTION_OK = "(prefers-reduced-motion: no-preference)";
 
 /** Work card with a scroll parallax image (GSAP, loaded lazily). */
-export default function WorkCard({ item, index }: { item: WorkItem; index: number }) {
-  const src = item.image ? imageUrl(item.image, 1200, 900) : item.imageSrc;
+/** `src` is resolved on the server (keeps the Sanity client out of the browser bundle). */
+export default function WorkCard({ item, index, src }: { item: WorkItem; index: number; src?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   useLazyGsap(
     (gsap) => {

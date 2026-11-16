@@ -11,6 +11,8 @@ import TransitionProvider, { PAGE_ROOT_ID } from "@/components/TransitionProvide
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Analytics from "@/components/Analytics";
+import PreviewTools from "@/components/PreviewTools";
+import { Suspense } from "react";
 import { isIndexable, SITE_NAME } from "@/lib/seo";
 import { organization, website } from "@/lib/schema";
 import "./globals.css";
@@ -73,6 +75,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </TransitionProvider>
         </SmoothScroll>
         </MotionProvider>
+        {/* Studio preview only (Draft Mode); nothing for normal visitors */}
+        <Suspense fallback={null}>
+          <PreviewTools />
+        </Suspense>
       </body>
     </html>
   );

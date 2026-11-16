@@ -1,46 +1,12 @@
 // Server Components: static sections with CSS scroll-reveal (no client JavaScript of their own).
 import Image from "next/image";
-import type { Home, Rich, TeamMember, Testimonial, WorkItem } from "@/cms/types";
+import type { Home, TeamMember, Testimonial, WorkItem } from "@/cms/types";
 import { imageUrl } from "@/sanity/client";
-import AccentText from "./AccentText";
 import { revealProps } from "@/lib/reveal";
-import { Star } from "./Logo";
 import WorkCard from "./WorkCard";
 
-/* ---------- Shared heading ---------- */
-export function Heading({
-  eyebrow,
-  title,
-  accent,
-  dark = false,
-  className = "",
-}: {
-  eyebrow: string;
-  /** Rich (CMS, with orange words) or plain string + `accent` */
-  title: Rich | string;
-  accent?: string;
-  dark?: boolean;
-  className?: string;
-}) {
-  if (!eyebrow && (Array.isArray(title) ? !title.length : !title)) return null;
-  return (
-    <div className={className}>
-      <p className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] ${dark ? "text-white/75" : "text-accent"}`}>
-        <Star size={10} className="text-brand-orange" />
-        {eyebrow}
-      </p>
-      <h2 className={`mt-4 font-display text-[clamp(2.3rem,5.5vw,4.5rem)] font-semibold leading-[1] ${dark ? "text-white" : ""}`}>
-        {Array.isArray(title) ? (
-          <AccentText text={title} />
-        ) : (
-          <>
-            {title} {accent && <span className="text-brand-orange">{accent}</span>}
-          </>
-        )}
-      </h2>
-    </div>
-  );
-}
+export { Heading } from "./Heading";
+import { Heading } from "./Heading";
 
 /* ---------- 3. Why us ---------- */
 const whyIcons = ["◎", "▤", "$", "✦"];
@@ -86,7 +52,7 @@ export function Work({ head: workSection, items: work }: { head: Home["work"]; i
       <Heading {...workSection} />
       <div className="mt-[var(--head-gap)] grid gap-x-8 gap-y-14 md:grid-cols-2">
         {work.map((w, i) => (
-          <WorkCard key={w.category} item={w} index={i} />
+          <WorkCard key={w.title} item={w} index={i} src={(w.image ? imageUrl(w.image, 1200, 900) : w.imageSrc) ?? undefined} />
         ))}
       </div>
     </section>

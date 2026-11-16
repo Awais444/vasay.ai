@@ -9,7 +9,7 @@ import type { Faq as FaqItem, Home, Link as CmsLink, Rich } from "@/cms/types";
 import type { ServiceIconName } from "@/lib/services";
 import { ServiceIconBox } from "./ServiceIcon";
 import RichText from "./RichText";
-import { Heading } from "./StaticSections";
+import { Heading } from "./Heading";
 import { revealProps } from "@/lib/reveal";
 
 

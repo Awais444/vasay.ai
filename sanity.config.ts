@@ -4,6 +4,8 @@
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
+import { presentationTool } from "sanity/presentation";
+import { resolve } from "./src/sanity/presentation";
 import { apiVersion, dataset, projectId } from "./src/sanity/env";
 import { schemaTypes } from "./src/sanity/schemas";
 import { structure, SINGLETON_TYPES } from "./src/sanity/structure";
@@ -26,6 +28,8 @@ export default defineConfig({
   },
   plugins: [
     structureTool({ structure }),
+    // Live preview of the real site with click-to-edit (Draft Mode via /api/draft-mode/enable).
+    presentationTool({ resolve, previewUrl: { previewMode: { enable: "/api/draft-mode/enable" } } }),
     visionTool({ defaultApiVersion: apiVersion }),
   ],
 });

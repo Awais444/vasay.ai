@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { useLazyGsap } from "@/lib/gsap-lazy";
 import type { Service } from "@/cms/types";
-import { Heading } from "./StaticSections";
+import { Heading } from "./Heading";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
