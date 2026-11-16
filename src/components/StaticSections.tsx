@@ -133,6 +133,15 @@ export function Team({ head: teamSection, members: team }: { head: Home["team"];
                   sizes="(min-width: 1024px) 240px, 50vw"
                   className="object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105"
                 />
+              ) : member.photoSrc && !member.photoSrc.endsWith(".svg") ? (
+                // Real photo shipped with the site (fallback when the CMS is not configured)
+                <Image
+                  src={member.photoSrc}
+                  alt={member.name}
+                  fill
+                  sizes="(min-width: 1024px) 240px, 50vw"
+                  className="object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105"
+                />
               ) : member.photoSrc ? (
                 // Illustrated placeholder avatar (until a real photo is added in the CMS)
                 <Image

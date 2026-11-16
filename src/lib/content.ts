@@ -360,13 +360,13 @@ export const teamSection = {
   accent: "the growth.",
 };
 
-// TODO: swap the generated avatars in /public/team/ for real team photos.
+// Fallback team (used when Sanity is not configured). Photos live in /public/team/.
 export const team = [
-  { name: "Marcus Reynolds", role: "Head of Growth Strategy", slug: "marcus-reynolds", tint: "#DCE2FF" },
-  { name: "Sophia Bennett", role: "SEO & Content Strategist", slug: "sophia-bennett", tint: "#FFE3CC" },
-  { name: "Ethan Carter", role: "Web Design & UI/UX Lead", slug: "ethan-carter", tint: "#E7EAEC" },
-  { name: "Amelia Hayes", role: "Google & Meta Ads Manager", slug: "amelia-hayes", tint: "#D9D4FA" },
-  { name: "Olivia Morgan", role: "AI Automation Specialist", slug: "olivia-morgan", tint: "#FFD9CC" },
+  { name: "Sadaqat Sheikh", role: "CEO", slug: "sadaqat-sheikh", tint: "#E7EAEC", photoSrc: "/team/sadaqat-sheikh.jpg" },
+  { name: "Fahad Bin Khalid", role: "Web Development Lead", slug: "fahad", tint: "#E7EAEC", photoSrc: "/team/fahad.jpg" },
+  { name: "Hidayatul Haq", role: "Search Engine Optimization Lead", slug: "hidayat", tint: "#E7EAEC", photoSrc: "/team/hidayat.jpg" },
+  { name: "Abdul Muneeb", role: "AWS Lead", slug: "muneeb", tint: "#E7EAEC", photoSrc: "/team/muneeb.jpg" },
+  { name: "Adnan Dar", role: "Business Development Lead", slug: "adnan-dar", tint: "#E7EAEC", photoSrc: "/team/adnan-dar.png" },
 ];
 
 export const faqSection = {

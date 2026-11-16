@@ -124,7 +124,7 @@ export function seedContent(): CmsContent {
         updated: g?.updated ?? "2026-11-14",
       };
     }),
-    team: c.team.map((t) => ({ ...t, photoSrc: `/team/${t.slug}.svg` })),
+    team: c.team.map((t) => ({ ...t, photoSrc: t.photoSrc ?? `/team/${t.slug}.svg` })),
     testimonials: c.testimonials,
     work: c.work.map(({ image, ...w }) => ({ ...w, imageSrc: image })),
     faqs: { home: c.faqs, contact: c.faqs },
