@@ -3,7 +3,7 @@
 Smart Solutions Inc. (brand: **Smart Solutions, Powered by VASAY.AI**). Canonical origin: **https://vasay.ai** (https, no www, no trailing slash).
 
 **Contact details** (single source: `site` in `src/lib/content.ts`, used by the footer, contact sections, mobile menu, legal pages, JSON-LD and llms.txt):
-- Phone: (647) 559-3900 · `tel:+16475593900` · schema `+1-647-559-3900`
+- Phone: (437) 564-0199 · `tel:+14375640199` · schema `+1-437-564-0199`
 - Email: info@smartsolutionsinc.ca
 
 **Contact form email:** sent from `Smart Solutions <noreply@smartsolutionsinc.ca>` with Reply-To set to the visitor. The **smartsolutionsinc.ca domain must be verified in Resend** (add the SPF and DKIM DNS records Resend gives you) before any email will send. For GoDaddy `contact.php`, the domain's SPF record must also allow GoDaddy's mail servers.
