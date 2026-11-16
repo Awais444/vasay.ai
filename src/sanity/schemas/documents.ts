@@ -94,6 +94,14 @@ export const post = defineType({
     }),
     defineField({ name: "body", type: "blockContent", group: "content" }),
     defineField({ name: "category", type: "reference", to: [{ type: "category" }], group: "meta", validation: (r) => r.required() }),
+    defineField({
+      name: "relatedService",
+      title: "Related service",
+      type: "reference",
+      to: [{ type: "service" }],
+      group: "meta",
+      description: "Shown in the box at the end of the article. If empty, the service with the same slug as the category is used, else a link to all services.",
+    }),
     defineField({ name: "author", type: "reference", to: [{ type: "author" }], group: "meta", validation: (r) => r.required() }),
     defineField({
       name: "publishedAt",

@@ -32,6 +32,8 @@ export type Author = AuthorRef & { bio?: string; socials?: { platform?: string; 
 
 export type Post = PostCard & {
   keyTakeaways?: string[];
+  /** Slug of the service picked in the CMS, if any. */
+  relatedService?: string;
   body?: PortableTextBlock[];
   author?: Author;
   seo?: { metaTitle?: string; metaDescription?: string; ogImage?: SanityImage; canonical?: string; noindex?: boolean };
@@ -48,7 +50,7 @@ const card = `_id, title, "slug": slug.current, excerpt, publishedAt, updatedAt,
 
 const POSTS = defineQuery(`*[${live}] | order(publishedAt desc) { ${card} }`);
 const POST = defineQuery(`*[${live} && slug.current == $slug][0] {
-  ${card}, keyTakeaways, body, seo,
+  ${card}, keyTakeaways, body, seo, "relatedService": relatedService->slug.current,
   "author": author->{name, "slug": slug.current, role, photo, bio, socials}
 }`);
 const CATEGORIES = defineQuery(`*[_type == "category" && defined(slug.current)] | order(title asc) { title, "slug": slug.current, description }`);

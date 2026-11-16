@@ -63,7 +63,9 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
   const headings = getHeadings(post.body);
   const faqs = getFaqs(post.body);
   const cms = await getContent();
-  const service = post.category ? cms.services.find((s) => s.slug === post.category!.slug) : undefined;
+  const service =
+    cms.services.find((s) => s.slug === post.relatedService) ??
+    (post.category ? cms.services.find((s) => s.slug === post.category!.slug) : undefined);
   const cover = imageUrl(post.coverImage, 1600, 900);
   const sameCat = all.filter((p) => p._id !== post._id && p.category?.slug === post.category?.slug);
   const related = [...sameCat, ...all.filter((p) => p._id !== post._id && !sameCat.includes(p))].slice(0, 3);
