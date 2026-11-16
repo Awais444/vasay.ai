@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getPost, getPosts } from "@/sanity/data";
+import { readFile } from "node:fs/promises";
 import { imageUrl } from "@/sanity/client";
 
 export const size = { width: 1200, height: 630 };
@@ -32,21 +33,26 @@ export default async function OgImage({ params }: { params: Promise<{ slug: stri
   }
 
   const title = post?.title ?? "Insights";
+  // Space Grotesk Bold (static .woff: the image renderer can't read woff2).
+  const font = await readFile(new URL("../../../../node_modules/@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff", import.meta.url));
   const photo = post?.coverImage?.asset ? imageUrl(post.coverImage, 1200, 630)?.replace("auto=format", "fm=jpg") : null;
 
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", position: "relative", color: "white", background: "#12057f" }}>
+      <div style={{ width: "100%", height: "100%", display: "flex", position: "relative", color: "white", background: "#12057f", fontFamily: "Space Grotesk" }}>
         {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={photo} alt="" width={1200} height={630} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+          <img src={photo} alt="" width={1200} height={630} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }} />
         ) : (
-          <div style={{ position: "absolute", inset: 0, display: "flex", background: "radial-gradient(circle at 85% 15%, #011efd 0%, #1b08b7 45%, #12057f 100%)" }} />
+          <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", display: "flex", background: "radial-gradient(circle at 85% 15%, #011efd 0%, #1b08b7 45%, #12057f 100%)" }} />
         )}
         <div
           style={{
             position: "absolute",
-            inset: 0,
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
             display: "flex",
             background: photo
               ? "linear-gradient(to top, rgba(10,8,30,0.92) 0%, rgba(10,8,30,0.7) 45%, rgba(10,8,30,0.1) 100%)"
@@ -67,6 +73,6 @@ export default async function OgImage({ params }: { params: Promise<{ slug: stri
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts: [{ name: "Space Grotesk", data: font, weight: 700, style: "normal" }] },
   );
 }
