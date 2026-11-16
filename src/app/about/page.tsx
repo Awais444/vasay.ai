@@ -1,6 +1,6 @@
-import { about } from "@/lib/content";
+import { getContent } from "@/cms/content";
 import { breadcrumbs, ORG_ID, webPage } from "@/lib/schema";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, withSeo } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
 import { Stats } from "@/components/Sections";
 import { Heading, Team } from "@/components/StaticSections";
@@ -11,13 +11,14 @@ const ABOUT_D =
   "Meet Smart Solutions, powered by VASAY.AI: a Concord, Ontario digital marketing agency with 15+ years of experience in branding, websites, ads and automation.";
 const ABOUT_T = "About Smart Solutions | Marketing Agency in Concord, ON";
 
-export const metadata = pageMetadata({
-  title: ABOUT_T,
-  description: ABOUT_D,
-  path: "/about",
-});
+export async function generateMetadata() {
+  const { about } = await getContent();
+  return withSeo(pageMetadata({ title: ABOUT_T, description: ABOUT_D, path: "/about" }), about.seo);
+}
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const c = await getContent();
+  const about = c.about;
   return (
     <>
       <JsonLd
@@ -32,26 +33,27 @@ export default function AboutPage() {
       <PageHero
         crumbs={[{ label: "Home", href: "/" }, { label: "About" }]}
         eyebrow={about.eyebrow}
-        title={about.title}
-        accentLead={about.accentLead}
-        accent={about.accent}
+        lines={about.lines}
         sub={about.sub}
-        primary={{ label: "Book a free strategy call", href: "#contact" }}
-        secondary={{ label: "Meet the team", href: "#team", icon: "down" }}
+        primary={about.primaryCta}
+        secondary={{ ...about.secondaryCta, icon: about.secondaryCta.href.startsWith("#") ? "down" : "right" }}
       />
 
+      {about.story.show && (
       <section aria-label="Our story" className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-6 lg:grid-cols-[1fr_1.2fr] section-y tone-light">
-        <Heading eyebrow={about.story.eyebrow} title={about.story.title} accent={about.story.accent} />
+        <Heading eyebrow={about.story.eyebrow} title={about.story.title} />
         <div className="space-y-6 text-lg leading-relaxed text-ink-2">
           {about.story.paragraphs.map((p) => (
             <p key={p.slice(0, 24)}>{p}</p>
           ))}
         </div>
       </section>
+      )}
 
+      {about.mission.show && (
       <section aria-label="Mission and values" className="bg-brand-black text-white section-y">
         <div className="mx-auto max-w-7xl px-5 sm:px-6">
-          <Heading eyebrow={about.mission.eyebrow} title={about.mission.title} accent={about.mission.accent} dark />
+          <Heading eyebrow={about.mission.eyebrow} title={about.mission.title} dark />
           <p className="mt-8 max-w-3xl font-display text-[clamp(1.4rem,2.6vw,2.2rem)] font-medium leading-snug tracking-tight text-white/90">
             {about.mission.statement}
           </p>
@@ -67,9 +69,11 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Stats withManifesto={false} />
-      <Team />
-      <Contact />
+      )}
+
+      {about.showStats && c.home.stats.items.length > 0 && <Stats data={c.home.stats} withManifesto={false} />}
+      {about.showTeam && <Team head={{ ...c.home.team, show: true }} members={c.team} />}
+      <Contact contact={c.contact} settings={c.settings} />
     </>
   );
 }

@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
-import { getService, serviceList } from "@/lib/services";
-import { getGuide } from "@/lib/serviceGuides";
-import { pageMetadata } from "@/lib/seo";
+import { getContent } from "@/cms/content";
+import { pageMetadata, withSeo } from "@/lib/seo";
 import { breadcrumbs, faqPage, service as serviceSchema, webPage } from "@/lib/schema";
 import PageHero from "@/components/PageHero";
 import ServiceVisual from "@/components/ServiceVisual";
@@ -13,15 +12,18 @@ import Contact from "@/components/Contact";
 import JsonLd from "@/components/JsonLd";
 import LatestInsights from "@/components/blog/LatestInsights";
 
-export function generateStaticParams() {
-  return serviceList.map((s) => ({ slug: s.slug }));
+/** One page per service in the CMS (a new service gets its page automatically). */
+export async function generateStaticParams() {
+  const { services } = await getContent();
+  // Cache Components needs at least one entry; "seo" simply 404s if it doesn't exist.
+  return services.length ? services.map((s) => ({ slug: s.slug })) : [{ slug: "seo" }];
 }
 
 export async function generateMetadata({ params }: PageProps<"/services/[slug]">) {
   const { slug } = await params;
-  const s = getService(slug);
+  const s = (await getContent()).services.find((x) => x.slug === slug);
   if (!s) return {};
-  return pageMetadata({ title: s.seoTitle, description: s.seoDescription, path: `/services/${s.slug}` });
+  return withSeo(pageMetadata({ title: s.seoTitle, description: s.seoDescription, path: `/services/${s.slug}` }), s.seo);
 }
 
 // Every slug is prerendered (generateStaticParams), so wait for the full page on navigation
@@ -30,49 +32,48 @@ export const instant = false;
 
 export default async function ServicePage({ params }: PageProps<"/services/[slug]">) {
   const { slug } = await params;
-  const s = getService(slug);
-  const guide = getGuide(slug);
-  if (!s || !guide) notFound();
+  const c = await getContent();
+  const s = c.services.find((x) => x.slug === slug);
+  if (!s) notFound();
 
-  const related = s.related.map((r) => getService(r)).filter((r) => r !== undefined);
+  const related = s.related.map((r) => c.services.find((x) => x.slug === r)).filter((r) => r !== undefined);
   const path = `/services/${s.slug}`;
-  const faqs = [...s.faqs, ...guide.moreFaqs];
 
   return (
     <>
       <JsonLd
         data={[
-          webPage({ path, name: s.seoTitle, description: s.seoDescription, dateModified: guide.updated, about: { "@id": `${path}#service` } }),
+          webPage({ path, name: s.seoTitle, description: s.seoDescription, dateModified: s.updated || undefined, about: { "@id": `${path}#service` } }),
           breadcrumbs(path, [
             { name: "Home", path: "/" },
             { name: "Services", path: "/services" },
             { name: s.title, path },
           ]),
-          serviceSchema(s, guide.definition.a),
-          faqPage(path, faqs),
+          serviceSchema(s, s.definition.a || s.description),
+          ...(s.faqs.length ? [faqPage(path, s.faqs)] : []),
         ]}
       />
       <PageHero
         crumbs={[{ label: "Home", href: "/" }, { label: "Services", href: "/services" }, { label: s.title }]}
-        h1Lead={guide.h1Keyword}
+        h1Lead={s.h1Keyword}
         icon={s.icon}
         title={s.heroTitle}
         accent={s.heroAccent}
         sub={s.sub}
         primary={{ label: "Book a free strategy call", href: "#contact" }}
-        secondary={{ label: "See what's included", href: "#included" }}
-        visual={<ServiceVisual slug={s.slug} />}
+        secondary={s.included.length ? { label: "See what's included", href: "#included" } : undefined}
+        visual={<ServiceVisual slug={s.slug} fallback={{ label: s.title, items: s.included.map((i) => i.title) }} />}
       />
       <Problems items={s.problems} />
-      <ServiceGuide guide={guide} title={s.title} />
+      <ServiceGuide guide={s} title={s.title} />
       <Included items={s.included} title={s.title} />
       <Deliverables service={s} />
       <Timeline steps={s.process} />
-      <WhyUs />
+      <WhyUs data={c.home.whyUs} />
       <LatestInsights categorySlug={s.slug} topic={s.title} />
-      <Faq items={faqs} heading={{ eyebrow: "FAQ", title: "Good", accent: "questions." }} />
+      {s.faqs.length > 0 && <Faq items={s.faqs} heading={c.home.faq} />}
       <Related items={related} />
-      <Contact defaultService={s.title} />
+      <Contact contact={c.contact} settings={c.settings} defaultService={s.title} />
     </>
   );
 }

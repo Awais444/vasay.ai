@@ -1,17 +1,17 @@
 import { brandOg, ogSize } from "@/lib/og";
-import { getService, serviceList } from "@/lib/services";
-import { getGuide } from "@/lib/serviceGuides";
+import { getContent } from "@/cms/content";
 
 export const size = ogSize;
 export const contentType = "image/png";
 export const alt = "Smart Solutions service";
 
-export function generateStaticParams() {
-  return serviceList.map((s) => ({ slug: s.slug }));
+export async function generateStaticParams() {
+  const { services } = await getContent();
+  return services.length ? services.map((s) => ({ slug: s.slug })) : [{ slug: "seo" }];
 }
 
 export default async function OgImage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const s = getService(slug);
-  return brandOg(getGuide(slug)?.h1Keyword ?? s?.title ?? "Services", s ? `Services · ${s.title}` : "Services");
+  const s = (await getContent()).services.find((x) => x.slug === slug);
+  return brandOg(s?.h1Keyword || s?.title || "Services", s ? `Services · ${s.title}` : "Services");
 }

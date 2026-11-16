@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
-import { site } from "@/lib/content";
-import { serviceList } from "@/lib/services";
-import { serviceGuides } from "@/lib/serviceGuides";
+import { siteUrl } from "@/lib/env";
+import { getContent } from "@/cms/content";
 import { getAuthors, getCategories, getPosts } from "@/sanity/data";
 
 /** Date the static pages' content last changed. Update it when you edit copy in content.ts. */
@@ -9,15 +8,16 @@ const CONTENT_UPDATED = "2026-11-14";
 const LEGAL_UPDATED = "2026-11-13";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const url = (path: string) => `${site.url}${path}`;
-  const [posts, categories, authors] = await Promise.all([getPosts(), getCategories(), getAuthors()]);
+  const url = (path: string) => `${siteUrl}${path}`;
+  const [posts, categories, authors, c] = await Promise.all([getPosts(), getCategories(), getAuthors(), getContent()]);
   const used = (slug: string) => posts.some((p) => p.category?.slug === slug);
   const latestPost = posts[0]?.updatedAt || posts[0]?.publishedAt;
 
   return [
-    { url: site.url, lastModified: CONTENT_UPDATED, priority: 1 },
+    { url: siteUrl, lastModified: CONTENT_UPDATED, priority: 1 },
     { url: url("/services"), lastModified: CONTENT_UPDATED, priority: 0.9 },
-    ...serviceList.map((s) => ({ url: url(`/services/${s.slug}`), lastModified: serviceGuides[s.slug]?.updated ?? CONTENT_UPDATED, priority: 0.8 })),
+    // Every service in the CMS (new ones are added automatically); noindex ones are left out
+    ...c.services.filter((s) => !s.seo.noindex).map((s) => ({ url: url(`/services/${s.slug}`), lastModified: s.updated || CONTENT_UPDATED, priority: 0.8 })),
     { url: url("/about"), lastModified: CONTENT_UPDATED, priority: 0.7 },
     { url: url("/contact"), lastModified: CONTENT_UPDATED, priority: 0.7 },
     { url: url("/insights"), lastModified: latestPost ?? CONTENT_UPDATED, priority: 0.8 },

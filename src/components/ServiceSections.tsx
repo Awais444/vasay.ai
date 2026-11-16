@@ -27,7 +27,8 @@ import {
   ShieldAlert,
   type LucideIcon,
 } from "lucide-react";
-import type { ProblemIconName, Service } from "@/lib/services";
+import type { ProblemIconName } from "@/lib/services";
+import type { Service } from "@/cms/types";
 import { Heading } from "./StaticSections";
 import { revealProps } from "@/lib/reveal";
 
@@ -64,7 +65,7 @@ const PROBLEM_ICONS: Record<ProblemIconName, LucideIcon> = {
 };
 
 function ProblemIcon({ name }: { name: ProblemIconName }) {
-  const Icon = PROBLEM_ICONS[name];
+  const Icon = PROBLEM_ICONS[name] ?? PROBLEM_ICONS.HelpCircle;
   return (
     <span className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#FFF1EB] text-brand-red transition-colors duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:bg-brand-red group-hover:text-white">
       <Icon
@@ -78,6 +79,7 @@ function ProblemIcon({ name }: { name: ProblemIconName }) {
 }
 
 export function Problems({ items }: { items: Service["problems"] }) {
+  if (!items.length) return null;
   return (
     <section aria-labelledby="problems" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <Heading eyebrow="The problem" title="Sound" accent="familiar?" />
@@ -108,6 +110,7 @@ export function Problems({ items }: { items: Service["problems"] }) {
 }
 
 export function Included({ items, title }: { items: Service["included"]; title: string }) {
+  if (!items.length) return null;
   return (
     <section id="included" className="bg-white section-y tone-white">
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
@@ -143,6 +146,7 @@ function Tick() {
 }
 
 export function Deliverables({ service }: { service: Service }) {
+  if (!service.deliverables.length && !service.note && !service.extraList) return null;
   return (
     <section aria-label="Deliverables" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr]">
@@ -183,6 +187,7 @@ export function Deliverables({ service }: { service: Service }) {
 }
 
 export function Related({ items }: { items: Pick<Service, "slug" | "title" | "tag" | "description">[] }) {
+  if (!items.length) return null;
   return (
     <section aria-label="Related services" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">

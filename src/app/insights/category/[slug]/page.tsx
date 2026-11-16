@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { site } from "@/lib/content";
+import { siteUrl } from "@/lib/env";
 import { pageMetadata } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
 import JsonLd from "@/components/JsonLd";
@@ -40,9 +40,9 @@ export default async function CategoryPage({ params }: PageProps<"/insights/cate
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: site.url },
-            { "@type": "ListItem", position: 2, name: "Insights", item: `${site.url}/insights` },
-            { "@type": "ListItem", position: 3, name: cat.title, item: `${site.url}/insights/category/${cat.slug}` },
+            { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+            { "@type": "ListItem", position: 2, name: "Insights", item: `${siteUrl}/insights` },
+            { "@type": "ListItem", position: 3, name: cat.title, item: `${siteUrl}/insights/category/${cat.slug}` },
           ],
         }}
       />

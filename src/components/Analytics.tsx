@@ -2,8 +2,6 @@ import Script from "next/script";
 import { isIndexable } from "@/lib/seo";
 import AnalyticsEvents from "./AnalyticsEvents";
 
-const GA_ID = process.env.NEXT_PUBLIC_GA4_ID;
-const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 
 /**
  * GA4 and/or Google Tag Manager, production only (same rule as indexing). The tags load after the page
@@ -12,7 +10,10 @@ const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
  * To require opt-in (e.g. for Quebec), set analytics_storage to "denied" and add a consent banner
  * that calls gtag("consent", "update", {...}).
  */
-export default function Analytics() {
+export default function Analytics({ ga4Id, gtmId }: { ga4Id?: string; gtmId?: string }) {
+  // Site settings in the CMS win; the env vars are the fallback.
+  const GA_ID = ga4Id || process.env.NEXT_PUBLIC_GA4_ID;
+  const GTM_ID = gtmId || process.env.NEXT_PUBLIC_GTM_ID;
   if (!isIndexable || (!GA_ID && !GTM_ID)) return null;
   return (
     <>

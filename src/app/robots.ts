@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { site } from "@/lib/content";
+import { siteUrl } from "@/lib/env";
 import { isIndexable } from "@/lib/seo";
 
 /** Search and AI answer-engine crawlers we explicitly welcome (they also match "*"). */
@@ -27,7 +27,7 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: CRAWLERS, allow: "/", disallow: PRIVATE },
       { userAgent: "*", allow: "/", disallow: PRIVATE },
     ],
-    sitemap: `${site.url}/sitemap.xml`,
-    host: site.url,
+    sitemap: `${siteUrl}/sitemap.xml`,
+    host: siteUrl,
   };
 }

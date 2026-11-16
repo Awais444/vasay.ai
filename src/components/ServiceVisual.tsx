@@ -245,13 +245,30 @@ const map: Record<string, () => React.ReactElement> = {
   cybersecurity: Security,
 };
 
-export default function ServiceVisual({ slug }: { slug: string }) {
-  const V = map[slug];
-  if (!V) return null;
+/** Services added in the CMS (no custom mockup yet): a checklist of what's included. */
+function Generic({ label, items }: { label: string; items: string[] }) {
+  if (!items.length) return null;
+  return (
+    <Panel label={label}>
+      <ul className="space-y-2.5">
+        {items.slice(0, 5).map((c, i) => (
+          <m.li key={c} {...pop(i)} className="flex items-center gap-3 rounded-xl bg-white/[0.06] px-4 py-3 text-sm text-white/85 ring-1 ring-white/10">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400 text-[13px] font-bold text-brand-black">✓</span>
+            {c}
+          </m.li>
+        ))}
+      </ul>
+    </Panel>
+  );
+}
+
+export default function ServiceVisual({ slug, fallback }: { slug: string; fallback?: { label: string; items: string[] } }) {
+  const Custom = map[slug];
+  if (!Custom && !fallback?.items.length) return null;
   return (
     <div aria-hidden="true" className="relative">
       <Star size={18} className="absolute -left-3 -top-3 z-10 text-brand-orange drop-shadow-[0_0_10px_rgb(255_112_1/0.9)]" />
-      <V />
+      {Custom ? <Custom /> : <Generic label={fallback!.label} items={fallback!.items} />}
     </div>
   );
 }

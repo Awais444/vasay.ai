@@ -6,17 +6,13 @@ import InsightsSearch from "./InsightsSearch";
 import PostCard, { FeaturedPostCard } from "./PostCard";
 import InsightsResults from "./InsightsResults";
 import { CategoryPills, EmptyState, Pagination, PostGrid } from "./Listing";
+import { getContent } from "@/cms/content";
 import { getCategories, getPosts, PER_PAGE } from "@/sanity/data";
-
-export const insightsHero = {
-  title: "Marketing that actually works,",
-  accent: "explained.",
-  sub: "Practical guides on branding, websites, SEO, ads and AI automation, from the team that does it every day.",
-};
 
 /** /insights and /insights/page/[n]: featured article (page 1), grid of 12, category pills, pagination. */
 export default async function InsightsIndex({ page }: { page: number }) {
-  const [posts, categories] = await Promise.all([getPosts(), getCategories()]);
+  const [posts, categories, cms] = await Promise.all([getPosts(), getCategories(), getContent()]);
+  const ip = cms.insightsPage;
   const [featured, ...rest] = posts;
   const pages = Math.max(1, Math.ceil(rest.length / PER_PAGE));
   if (page > pages) notFound();
@@ -27,7 +23,7 @@ export default async function InsightsIndex({ page }: { page: number }) {
     <>
       <JsonLd
         data={[
-          webPage({ type: "CollectionPage", path: page === 1 ? "/insights" : `/insights/page/${page}`, name: "Insights", description: insightsHero.sub }),
+          webPage({ type: "CollectionPage", path: page === 1 ? "/insights" : `/insights/page/${page}`, name: "Insights", description: ip.sub }),
           breadcrumbs(page === 1 ? "/insights" : `/insights/page/${page}`, [
             { name: "Home", path: "/" },
             { name: "Insights", path: "/insights" },
@@ -38,17 +34,16 @@ export default async function InsightsIndex({ page }: { page: number }) {
         compact
         crumbs={[{ label: "Home", href: "/" }, { label: "Insights" }]}
         eyebrow="Insights"
-        title={insightsHero.title}
-        accent={insightsHero.accent}
-        sub={insightsHero.sub}
+        lines={ip.lines}
+        sub={ip.sub}
       >
-        <InsightsSearch enabled={posts.length > 0} />
+        <InsightsSearch enabled={posts.length > 0} placeholder={ip.searchPlaceholder} />
       </PageHero>
 
       <section aria-label="Articles" className="insights-sheet">
         <div className="mx-auto max-w-7xl px-5 sm:px-6">
           {posts.length === 0 ? (
-            <EmptyState />
+            <EmptyState title={ip.empty.title} text={ip.empty.text} />
           ) : (
             <InsightsResults
               texts={posts.map((p) => `${p.title} ${p.excerpt} ${p.category?.title ?? ""}`)}

@@ -2,12 +2,12 @@
  * JSON-LD builders (schema.org). One organisation entity (@id #organization) and one website (#website);
  * every page links to them. Only real values: unknown facts are TODOs and simply left out.
  */
-import { site } from "./content";
-import { serviceList, type Service } from "./services";
+import type { Service, Settings } from "@/cms/types";
+import { siteUrl } from "./env";
 
-export const ORG_ID = `${site.url}/#organization`;
-export const WEBSITE_ID = `${site.url}/#website`;
-export const abs = (path: string) => (path.startsWith("http") ? path : `${site.url}${path === "/" ? "" : path}`);
+export const ORG_ID = `${siteUrl}/#organization`;
+export const WEBSITE_ID = `${siteUrl}/#website`;
+export const abs = (path: string) => (path.startsWith("http") ? path : `${siteUrl}${path === "/" ? "" : path}`);
 
 /** Strip the [text](/url) link markup used in content strings. */
 export const plain = (s: string) => s.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
@@ -19,18 +19,26 @@ export const areaServed = [
   { "@type": "Country", name: "Canada" },
 ];
 
-// Only real profile URLs (placeholders like https://instagram.com/ are skipped).
-const sameAs = site.socials.map((s) => s.href).filter((h) => new URL(h).pathname.length > 1);
+/** Only real profile URLs (placeholders like https://instagram.com/ are skipped). */
+const realProfiles = (links: { href: string }[]) =>
+  links.map((s) => s.href).filter((h) => {
+    try {
+      return new URL(h).pathname.length > 1;
+    } catch {
+      return false;
+    }
+  });
 
-/** Site-wide business entity. */
-export function organization() {
+/** Site-wide business entity (from Site settings in the CMS). */
+export function organization(site: Settings) {
+  const sameAs = realProfiles(site.socials);
   return {
     "@context": "https://schema.org",
     "@type": ["Organization", "ProfessionalService"],
     "@id": ORG_ID,
     name: site.legalName,
     alternateName: ["Smart Solutions", "Smart Solutions, Powered by VASAY.AI", "VASAY.AI"],
-    url: site.url,
+    url: siteUrl,
     logo: { "@type": "ImageObject", url: abs("/brand/logo.webp"), width: 900, height: 589 },
     image: abs("/opengraph-image"),
     description: site.description,
@@ -79,7 +87,7 @@ export function website() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": WEBSITE_ID,
-    url: site.url,
+    url: siteUrl,
     name: "Smart Solutions, Powered by VASAY.AI",
     inLanguage: "en-CA",
     publisher: { "@id": ORG_ID },
@@ -142,7 +150,7 @@ export function service(s: Service, description: string) {
   };
 }
 
-export function offerCatalog() {
+export function offerCatalog(serviceList: Pick<Service, "slug" | "title">[]) {
   return {
     "@context": "https://schema.org",
     "@type": "OfferCatalog",

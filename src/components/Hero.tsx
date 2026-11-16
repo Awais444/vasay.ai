@@ -3,7 +3,8 @@
 import ButtonArrow, { arrowLink } from "@/components/ButtonArrow";
 import { useEffect, useRef } from "react";
 import { m, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { hero, marquee } from "@/lib/content";
+import type { Home } from "@/cms/types";
+import AccentText from "./AccentText";
 import { Star } from "./Logo";
 import HeroBackground from "./HeroBackground";
 
@@ -38,7 +39,8 @@ function Check() {
 const chip = "float rounded-2xl bg-white/[0.14] ring-1 ring-white/20";
 
 /** Above-the-fold hero: always exactly one screen tall. */
-export default function Hero() {
+export default function Hero({ hero, marquee: marqueeData }: { hero: Home["hero"]; marquee: Home["marquee"] }) {
+  const marquee = marqueeData.show ? marqueeData.items : [];
   const root = useRef<HTMLElement>(null);
   useNavHeight();
   const mx = useMotionValue(0);
@@ -118,9 +120,9 @@ export default function Hero() {
         {/* Size follows both width and height so it fits one screen. */}
         <h1 className={`${gap} hero-h1 font-display font-semibold tracking-[-0.045em]`}>
           {hero.lines.map((line, i) => (
-            <span key={line} className="block overflow-hidden pb-[0.06em]">
-              <span style={{ "--i": i } as React.CSSProperties} className={`hero-line block ${i === hero.lines.length - 1 ? "text-brand-orange" : ""}`}>
-                {line}
+            <span key={i} className="block overflow-hidden pb-[0.06em]">
+              <span style={{ "--i": i } as React.CSSProperties} className="hero-line block">
+                <AccentText text={line} />
               </span>
             </span>
           ))}
@@ -175,6 +177,7 @@ export default function Hero() {
       </div>
 
       {/* Row 4: subtle services marquee, fully inside the hero. The 40px below it is where the next section overlaps. */}
+      {marquee.length > 0 ? (
       <div className="hero-marquee marquee relative overflow-hidden border-t border-white/15">
         <div className="marquee-track flex w-max">
           {[0, 1].map((k) => (
@@ -189,6 +192,9 @@ export default function Hero() {
           ))}
         </div>
       </div>
+      ) : (
+        <div aria-hidden="true" />
+      )}
     </section>
   );
 }

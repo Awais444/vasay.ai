@@ -1,12 +1,13 @@
 import Link from "@/components/TransitionLink";
 import Logo from "./Logo";
 import { ServiceIcon } from "./ServiceIcon";
-import { nav, services, site } from "@/lib/content";
+import type { Navigation, Settings } from "@/cms/types";
+import type { NavService } from "./Navbar";
 
 const heading = "text-sm font-semibold uppercase tracking-[0.14em] text-white/75";
 const link = "text-white/75 transition-colors hover:text-brand-orange";
 
-export default function Footer() {
+export default function Footer({ nav, services, settings: site }: { nav: Navigation; services: NavService[]; settings: Settings }) {
   return (
     <footer className="relative overflow-clip bg-brand-black pt-20 text-white">
       <div className="mx-auto grid max-w-7xl gap-12 border-t border-white/10 px-4 pt-14 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.3fr_1.2fr_0.8fr_0.8fr]">
@@ -22,7 +23,7 @@ export default function Footer() {
             <a href={site.emailHref} className="block hover:text-white">
               {site.email}
             </a>
-            <a href={site.address.mapsHref} target="_blank" rel="noopener noreferrer" className="block hover:text-white">
+            <a href={site.mapsHref} target="_blank" rel="noopener noreferrer" className="block hover:text-white">
               {site.address.full}
             </a>
           </address>

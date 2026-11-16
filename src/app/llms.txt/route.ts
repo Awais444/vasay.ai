@@ -1,6 +1,7 @@
 import { llmsTxt } from "@/lib/llms";
+import { getContent } from "@/cms/content";
 
-/** /llms.txt: plain-markdown summary for AI tools, generated from the site content. */
-export function GET() {
-  return new Response(llmsTxt(), { headers: { "Content-Type": "text/plain; charset=utf-8" } });
+/** Plain-markdown summary for AI tools, generated from the CMS content. */
+export async function GET() {
+  return new Response(llmsTxt(await getContent()), { headers: { "Content-Type": "text/plain; charset=utf-8" } });
 }

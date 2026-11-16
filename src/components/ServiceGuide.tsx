@@ -1,6 +1,8 @@
 import { Check } from "lucide-react";
 import RichText from "./RichText";
-import type { ServiceGuide as Guide } from "@/lib/serviceGuides";
+import type { Service } from "@/cms/types";
+
+type Guide = Pick<Service, "definition" | "forWho" | "guide" | "comparison" | "updated">;
 
 const fmt = (iso: string) =>
   new Date(`${iso}T12:00:00`).toLocaleDateString("en-CA", { year: "numeric", month: "long", day: "numeric" });
@@ -11,6 +13,7 @@ const fmt = (iso: string) =>
  * last-updated date. All plain server-rendered HTML, so search engines and AI tools can read and quote it.
  */
 export default function ServiceGuide({ guide, title }: { guide: Guide; title: string }) {
+  if (!guide.definition.a && !guide.guide.length && !guide.comparison) return null;
   return (
     <section aria-labelledby="service-basics" className="bg-white section-y tone-white">
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
@@ -21,9 +24,11 @@ export default function ServiceGuide({ guide, title }: { guide: Guide; title: st
               {guide.definition.q}
             </h2>
             <p className="mt-6 text-xl leading-relaxed text-brand-black">{guide.definition.a}</p>
-            <p className="mt-6 text-sm text-ink-2">
-              Last updated <time dateTime={guide.updated}>{fmt(guide.updated)}</time>
-            </p>
+            {guide.updated && (
+              <p className="mt-6 text-sm text-ink-2">
+                Last updated <time dateTime={guide.updated}>{fmt(guide.updated)}</time>
+              </p>
+              )}
           </div>
           <div className="rounded-[var(--radius-card)] border border-brand-silver bg-brand-bg p-7 sm:p-8">
             <h3 className="font-display text-xl font-semibold tracking-tight">Who {title} is for</h3>
