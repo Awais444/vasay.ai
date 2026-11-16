@@ -44,6 +44,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const navServices = c.services.map((s) => ({ slug: s.slug, icon: s.icon, title: s.title, tag: s.tag, href: `/services/${s.slug}` }));
   // Site-wide entities; every page's WebPage/Service/BlogPosting links to these @ids.
   const jsonLd = [organization(c.settings), website()];
+  // Page names shown on the transition curtain.
+  const routeLabels: Record<string, string> = {
+    "/": "Home",
+    "/services": "Services",
+    "/about": "About",
+    "/contact": "Contact",
+    "/insights": "Insights",
+    "/privacy-policy": "Privacy Policy",
+    "/terms": "Terms",
+    ...Object.fromEntries(c.services.map((s) => [`/services/${s.slug}`, s.title])),
+  };
   return (
     <html lang="en-CA" suppressHydrationWarning className={`${heading.variable} ${body.variable} antialiased`}>
       <body>
@@ -60,7 +71,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <Analytics ga4Id={c.settings.ga4Id} gtmId={c.settings.gtmId} />
         <MotionProvider>
         <SmoothScroll>
-          <TransitionProvider>
+          <TransitionProvider labels={routeLabels}>
             <HideOnStudio>
               <Navbar nav={c.nav} services={navServices} settings={c.settings} />
             </HideOnStudio>

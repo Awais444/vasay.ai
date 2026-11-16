@@ -235,6 +235,7 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
             {next && (
               <Link
                 href={`/insights/${next.slug}`}
+                label={next.category?.title ?? "Insights"}
                 className="group mt-10 flex items-center justify-between gap-6 rounded-[20px] border border-brand-silver bg-white p-5 transition-colors hover:border-accent sm:p-6"
               >
                 <span>

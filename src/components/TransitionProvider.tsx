@@ -2,26 +2,55 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { loadGsap, refreshScrollTriggersNow } from "@/lib/gsap-lazy";
+import { refreshScrollTriggersNow } from "@/lib/gsap-lazy";
 import { getLenis } from "@/lib/lenis";
 import { preloadSanityImage } from "@/components/blog/SanityImg";
 import { ARTICLE_COVER_SIZES } from "@/lib/covers";
 import { anchorY, PAGE_NAVIGATE, PAGE_POSITIONED, PAGE_READY, settleLayout, tlog } from "@/lib/transition";
 
-type Direction = "forward" | "back";
-type Ctx = { navigate: (href: string) => void };
+/*
+ * Page transitions ("Curtain Wipe"):
+ *   LEAVE    page fades/lifts, two panels slide up and cover the screen, the next page's name shows.
+ *   COVERED  route change, layout settle, ScrollTrigger refresh, scroll to the top or the #hash target,
+ *            navbar state, focus. Covered for at least 250ms, revealed after 1500ms at the latest.
+ *   ENTER    panels exit upwards; "page:ready" fires when they're ~60% gone (hero intros start).
+ * Back/forward: quick fade with the scroll position restored. Reduced motion: a short fade only.
+ * The overlay code (src/lib/curtain.ts) is imported after first paint.
+ */
 
+type Ctx = { navigate: (href: string, label?: string) => void };
 const TransitionContext = createContext<Ctx>({ navigate: () => {} });
 export const usePageTransition = () => useContext(TransitionContext);
 
-const MAX_WAIT = 3500;
-/** Hero intros never wait longer than this after the new page should be visible. */
+/** Wraps the page (everything except the fixed Navbar); it fades/lifts on leave. */
+export const PAGE_ROOT_ID = "page-root";
+
+const MIN_COVERED = 250;
+const MAX_COVERED = 1500;
+const MAX_RENDER_WAIT = 8000;
+/** Hero intros never stay hidden longer than this after the page should be visible. */
 const INTRO_SAFETY = 500;
+const SCROLL_KEY = "vt-scroll";
 
 const prefersReduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
+const speed = () => (window.matchMedia("(max-width: 767px)").matches ? 0.85 : 1);
+const sleep = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
+const loadCurtain = () => import("@/lib/curtain");
+const pageEl = () => document.getElementById(PAGE_ROOT_ID);
+const here = () => window.location.pathname + window.location.search;
 
-/** Scroll instantly (Lenis and native) so the new page is captured at its final position. */
+/** Homepage anchors; fixed routes, services and articles come from `labels` / the link itself. */
+const HASH_LABELS: Record<string, string> = { "#process": "Process", "#work": "Work", "#faq": "FAQ", "#services": "Services" };
+
+function labelFor(url: URL, labels: Record<string, string>, explicit?: string) {
+  if (explicit) return explicit;
+  if (url.pathname === "/" && url.hash && HASH_LABELS[url.hash]) return HASH_LABELS[url.hash];
+  if (labels[url.pathname]) return labels[url.pathname];
+  const last = url.pathname.split("/").filter(Boolean).pop() ?? "";
+  return last ? last.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Home";
+}
+
+/** Scroll instantly (Lenis and native). */
 function scrollNow(y: number) {
   const l = getLenis();
   if (l) {
@@ -31,68 +60,216 @@ function scrollNow(y: number) {
   window.scrollTo(0, y);
 }
 
-/**
- * Puts the freshly mounted page at its final scroll position: the hash target (after the layout
- * has settled and ScrollTriggers have re-measured) or the top. Then writes the hash back to the URL.
- */
-async function positionPage(hash: string) {
-  const find = () => (hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null);
-  let target = find();
-  // A section that streams in a moment later: give the layout one settle window to produce it.
-  if (hash && !target) {
-    await settleLayout(300);
-    target = find();
+/** Scroll positions per URL (this tab), restored on back/forward. */
+function saveScroll(path: string) {
+  try {
+    const all = JSON.parse(sessionStorage.getItem(SCROLL_KEY) || "{}");
+    all[path] = Math.round(window.scrollY);
+    sessionStorage.setItem(SCROLL_KEY, JSON.stringify(all));
+  } catch {}
+}
+function savedScroll(path: string): number {
+  try {
+    return JSON.parse(sessionStorage.getItem(SCROLL_KEY) || "{}")[path] ?? 0;
+  } catch {
+    return 0;
   }
-  if (!target) {
-    scrollNow(0);
-    tlog("scroll set", { y: 0 });
-  } else {
-    await settleLayout(300);
-    await refreshScrollTriggersNow();
-    const y = anchorY(target);
-    scrollNow(y);
-    tlog("scroll set", { hash, y });
-  }
-  if (hash && window.location.hash !== hash) {
-    window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search + hash);
-  }
-  window.dispatchEvent(new Event(PAGE_POSITIONED));
 }
 
-/** Wraps the page (everything except the fixed Navbar) for the GSAP fallback. */
-export const PAGE_ROOT_ID = "page-root";
+/**
+ * Puts the freshly mounted page at its final position: the #hash target (after the layout has settled
+ * and ScrollTriggers re-measured), `y`, or the top. Writes the hash back to the URL.
+ */
+async function positionPage(hash: string, y?: number) {
+  await settleLayout(400);
+  await refreshScrollTriggersNow();
+  const target = hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
+  const top = target ? anchorY(target) : (y ?? 0);
+  scrollNow(top);
+  tlog("scroll set", { hash, y: Math.round(top) });
+  if (hash && window.location.hash !== hash) {
+    window.history.replaceState(window.history.state, "", here() + hash);
+  }
+  // The navbar takes the new page's state (transparent/glass) once, here, while nothing is visible.
+  window.dispatchEvent(new Event(PAGE_POSITIONED));
+  document.getElementById("main")?.focus({ preventScroll: true });
+}
 
-export default function TransitionProvider({ children }: { children: ReactNode }) {
+export default function TransitionProvider({ children, labels = {} }: { children: ReactNode; labels?: Record<string, string> }) {
   const router = useRouter();
   const pathname = usePathname();
   const busy = useRef(false);
   const resolveRendered = useRef<(() => void) | null>(null);
-  const stack = useRef<string[]>([]);
   const replaying = useRef(false);
+  const introStarted = useRef(true);
+  const current = useRef("");
+  const labelsRef = useRef(labels);
+  useEffect(() => {
+    labelsRef.current = labels;
+  }, [labels]);
 
   // We place the page ourselves after every navigation; the browser must not restore or jump.
   useEffect(() => {
     if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+    // Overlay code after first paint, off the critical path.
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500));
+    idle(() => loadCurtain().then((c) => c.prepareCurtain()));
   }, []);
 
-  // Article covers: fetched before the click (hover/touch on a card, idle for the featured card), so the
-  // article slides in with its sharp cover instead of the blur placeholder.
+  // The route committed: resolve the pending "rendered" promise.
   useEffect(() => {
-    const done = new Set<string>();
-    const warm = (a: Element | null) => {
-      const src = a?.getAttribute("data-cover-preload");
-      if (!src || done.has(src)) return;
-      done.add(src);
-      preloadSanityImage(src, ARTICLE_COVER_SIZES);
-    };
-    const onPointer = (e: Event) => warm((e.target as Element | null)?.closest?.("a[data-cover-preload]") ?? null);
-    document.addEventListener("pointerover", onPointer, { passive: true });
-    document.addEventListener("touchstart", onPointer, { passive: true });
-    return () => {
-      document.removeEventListener("pointerover", onPointer);
-      document.removeEventListener("touchstart", onPointer);
-    };
+    current.current = here();
+    resolveRendered.current?.();
+    resolveRendered.current = null;
+  }, [pathname]);
+
+  const waitForRender = useCallback(
+    () =>
+      new Promise<void>((resolve) => {
+        const t = window.setTimeout(() => {
+          tlog("route ready (timeout)");
+          resolve();
+        }, MAX_RENDER_WAIT);
+        resolveRendered.current = () => {
+          window.clearTimeout(t);
+          tlog("route ready");
+          resolve();
+        };
+      }),
+    [],
+  );
+
+  const startIntro = useCallback((why: string) => {
+    if (introStarted.current) return;
+    introStarted.current = true;
+    document.documentElement.dataset.intro = "play";
+    tlog("page:ready → hero intro start", why);
+    window.dispatchEvent(new Event(PAGE_READY));
   }, []);
+
+  const begin = useCallback((kind: string) => {
+    busy.current = true;
+    window.dispatchEvent(new Event(PAGE_NAVIGATE)); // closes the mega menu and mobile menu
+    const html = document.documentElement;
+    html.dataset.vt = kind;
+    // Hero intros on the incoming page hold their first frame until page:ready.
+    html.dataset.intro = "wait";
+    introStarted.current = false;
+  }, []);
+
+  const end = useCallback(() => {
+    document.documentElement.removeAttribute("data-vt");
+    busy.current = false;
+    startIntro("transition finished");
+    tlog("transition done");
+  }, [startIntro]);
+
+  /** Route change + render + positioning, while the page is hidden. */
+  const swap = useCallback(
+    async (update: () => void, hash: string, y?: number) => {
+      const rendered = waitForRender();
+      update();
+      await rendered;
+      await positionPage(hash, y);
+    },
+    [waitForRender],
+  );
+
+  const navigate = useCallback(
+    async (href: string, explicitLabel?: string) => {
+      if (busy.current) return; // double clicks
+      const url = new URL(href, window.location.href);
+      const hash = url.hash;
+      const path = url.pathname + url.search;
+      const update = () => router.push(path, { scroll: false });
+      tlog("click", href, true);
+      saveScroll(here());
+
+      if (prefersReduced()) {
+        begin("fade");
+        try {
+          const c = await loadCurtain();
+          await c.fade(pageEl(), 0, 120);
+          await swap(update, hash);
+          await c.fade(pageEl(), 1, 200);
+        } finally {
+          end();
+        }
+        return;
+      }
+
+      begin("curtain");
+      const k = speed();
+      const c = await loadCurtain();
+      try {
+        tlog("leave: covering");
+        await c.cover(labelFor(url, labelsRef.current, explicitLabel), pageEl(), k);
+        tlog("covered");
+        const coveredAt = performance.now();
+        c.resetPage(pageEl());
+        // Never reveal the old page: wait for the new route to render (slow network: the curtain and the
+        // label stay up; MAX_RENDER_WAIT is the hard stop). Settling and positioning get MAX_COVERED at most.
+        const rendered = waitForRender();
+        update();
+        await rendered;
+        const ready = positionPage(hash);
+        const budget = Math.max(0, MAX_COVERED - (performance.now() - coveredAt));
+        const timedOut = await Promise.race([ready.then(() => false), sleep(budget).then(() => true)]);
+        if (timedOut) tlog("positioning too long: revealing anyway");
+        const left = MIN_COVERED - (performance.now() - coveredAt);
+        if (left > 0) await sleep(left);
+        tlog("enter: revealing");
+        window.setTimeout(() => startIntro("safety fallback"), (150 + 600) * k + INTRO_SAFETY);
+        await c.reveal(() => startIntro("panels ~60% gone"), k);
+        if (timedOut) await ready; // finish positioning if the route was still loading
+      } catch (err) {
+        console.error(err);
+        c.hide();
+      } finally {
+        c.resetPage(pageEl());
+        end();
+      }
+    },
+    [begin, end, router, startIntro, swap, waitForRender],
+  );
+
+  // Internal links: TransitionLink calls navigate(); plain <a href="/..."> (hero buttons, rich text)
+  // are picked up here. Hover/touch prefetches the route and, for article cards, the cover image.
+  useEffect(() => {
+    const internal = (e: Event): { a: HTMLAnchorElement; url: URL } | null => {
+      const a = (e.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!a || (a.target && a.target !== "_self") || a.hasAttribute("download")) return null;
+      const url = new URL(a.href, window.location.href);
+      if (url.origin !== window.location.origin || url.pathname.startsWith("/studio") || url.pathname.startsWith("/api")) return null;
+      return { a, url };
+    };
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const hit = internal(e);
+      if (!hit || hit.url.pathname === window.location.pathname) return; // same page: SmoothScroll handles hashes
+      e.preventDefault();
+      navigate(hit.url.pathname + hit.url.search + hit.url.hash, hit.a.dataset.transitionLabel);
+    };
+    const warmed = new Set<string>();
+    const onWarm = (e: Event) => {
+      const hit = internal(e);
+      if (!hit || warmed.has(hit.a.href)) return;
+      warmed.add(hit.a.href);
+      if (hit.url.pathname !== window.location.pathname) router.prefetch(hit.url.pathname + hit.url.search);
+      const cover = hit.a.getAttribute("data-cover-preload");
+      if (cover) preloadSanityImage(cover, ARTICLE_COVER_SIZES);
+    };
+    document.addEventListener("click", onClick);
+    document.addEventListener("pointerover", onWarm, { passive: true });
+    document.addEventListener("touchstart", onWarm, { passive: true });
+    return () => {
+      document.removeEventListener("click", onClick);
+      document.removeEventListener("pointerover", onWarm);
+      document.removeEventListener("touchstart", onWarm);
+    };
+  }, [navigate, router]);
+
+  // The featured article's cover, on idle.
   useEffect(() => {
     const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1200));
     const id = idle(() => {
@@ -104,195 +281,50 @@ export default function TransitionProvider({ children }: { children: ReactNode }
     return () => (window.cancelIdleCallback ?? window.clearTimeout)(id as number);
   }, [pathname]);
 
-  // Resolve the pending "new route rendered" promise once the pathname commits.
-  useEffect(() => {
-    const s = stack.current;
-    if (s[s.length - 1] !== pathname) s.push(pathname);
-    resolveRendered.current?.();
-    resolveRendered.current = null;
-  }, [pathname]);
-
-  const waitForRender = useCallback(
-    () =>
-      new Promise<void>((resolve) => {
-        const t = window.setTimeout(() => {
-          tlog("route ready (timeout)");
-          resolve();
-        }, MAX_WAIT);
-        resolveRendered.current = () => {
-          window.clearTimeout(t);
-          tlog("route ready");
-          // Give the new page one frame to apply its initial (pre-intro) state. The timeout
-          // covers windows where requestAnimationFrame doesn't fire.
-          let fired = false;
-          const done = () => {
-            if (fired) return;
-            fired = true;
-            resolve();
-          };
-          requestAnimationFrame(done);
-          window.setTimeout(done, 50);
-        };
-      }),
-    [],
-  );
-
-  /** Starts the hero intros on the new page (once). */
-  const introStarted = useRef(true);
-  const startIntro = useCallback((why: string) => {
-    if (introStarted.current) return;
-    introStarted.current = true;
-    document.documentElement.dataset.intro = "play";
-    tlog("page:ready → hero intro start", why);
-    window.dispatchEvent(new Event(PAGE_READY));
-  }, []);
-
-  const finish = useCallback(() => {
-    const html = document.documentElement;
-    html.removeAttribute("data-vt");
-    html.removeAttribute("data-direction");
-    busy.current = false;
-    startIntro("transition finished");
-    void refreshScrollTriggersNow();
-    document.getElementById("main")?.focus({ preventScroll: true });
-    tlog("transition done");
-  }, [startIntro]);
-
-  /** Runs `update` (which changes the route) inside the right kind of transition. */
-  const run = useCallback(
-    async (update: () => void, direction: Direction, hash: string) => {
-      if (busy.current) return;
-      busy.current = true;
-      // Close menus first so they're never captured in the transition snapshot.
-      window.dispatchEvent(new Event(PAGE_NAVIGATE));
-      const html = document.documentElement;
-      const reduced = prefersReduced();
-      const k = isMobile() ? 0.56 : 1;
-      html.dataset.vt = reduced ? "fade" : "slide";
-      html.dataset.direction = direction;
-      html.style.setProperty("--vt", String(k));
-      // Hero intros on the incoming page wait (paused at their first frame) until it has slid in.
-      html.dataset.intro = "wait";
-      introStarted.current = false;
-      // Time from the start of the animations until the new page has finished sliding in.
-      const slideIn = reduced ? 200 : (300 + 800) * k;
-      const showIntroAfterAnimations = () => {
-        tlog("new page in (animating)");
-        window.setTimeout(() => startIntro("slide-in finished"), slideIn);
-        window.setTimeout(() => startIntro("safety fallback"), slideIn + INTRO_SAFETY);
-      };
-
-      const swap = async () => {
-        const rendered = waitForRender();
-        update();
-        await rendered;
-        await positionPage(hash);
-      };
-
-      try {
-        if (typeof document.startViewTransition === "function") {
-          let started = false;
-          tlog("old page out (snapshot)");
-          const vt = document.startViewTransition(async () => {
-            started = true;
-            await swap();
-          });
-          // Watchdog: if the browser never gets a frame to snapshot the old page (e.g. a hidden
-          // window), skip the animation. skipTransition() still runs the update, so navigation completes.
-          const watchdog = window.setTimeout(() => {
-            if (!started) vt.skipTransition();
-          }, 1000);
-          vt.ready.then(showIntroAfterAnimations, () => tlog("transition skipped"));
-          await vt.finished.catch(() => {});
-          window.clearTimeout(watchdog);
-        } else {
-          tlog("old page out (GSAP fallback)");
-          await gsapFallback(swap, direction, reduced, k, () => startIntro("slide-in finished"));
-        }
-      } finally {
-        finish();
-      }
-    },
-    [finish, startIntro, waitForRender],
-  );
-
-  const navigate = useCallback(
-    (href: string) => {
-      if (busy.current) return;
-      // The hash is handled by positionPage(), never by the browser or the router.
-      const url = new URL(href, window.location.href);
-      const hash = url.hash;
-      tlog("click", href, true);
-      run(() => router.push(url.pathname + url.search, { scroll: false }), "forward", hash);
-    },
-    [router, run],
-  );
-
-  // Browser back/forward: capture popstate before Next.js, start the transition (which snapshots
-  // the old page), then replay the event to Next.js inside the transition's update callback.
+  // Browser back/forward: no curtain. Capture popstate before Next.js, hide the page, replay the event
+  // to Next.js, restore the saved scroll position, then fade the page in (0.25s).
   useEffect(() => {
     const onPop = (e: PopStateEvent) => {
       if (replaying.current) return;
-      const target = window.location.pathname;
-      const s = stack.current;
-      if (target === s[s.length - 1]) return; // hash-only change
+      const target = here();
+      if (target === current.current) return; // hash-only change
       if (busy.current) return;
       e.stopImmediatePropagation();
-      const back = s[s.length - 2] === target;
-      if (back) s.pop();
-      tlog(back ? "back" : "forward", target + window.location.hash, true);
-      run(
-        () => {
-          replaying.current = true;
-          window.dispatchEvent(new PopStateEvent("popstate", { state: e.state }));
-          replaying.current = false;
-        },
-        back ? "back" : "forward",
-        window.location.hash,
-      );
+      saveScroll(current.current); // the URL already changed: save the page we're leaving under its path
+      const hash = window.location.hash;
+      tlog("back/forward", target + hash, true);
+      (async () => {
+        busy.current = true;
+        window.dispatchEvent(new Event(PAGE_NAVIGATE));
+        const html = document.documentElement;
+        html.dataset.vt = "pop";
+        html.dataset.intro = "wait";
+        introStarted.current = false;
+        const page = pageEl();
+        try {
+          const c = await loadCurtain();
+          if (page) page.style.opacity = "0";
+          await swap(
+            () => {
+              replaying.current = true;
+              window.dispatchEvent(new PopStateEvent("popstate", { state: e.state }));
+              replaying.current = false;
+            },
+            hash,
+            savedScroll(target),
+          );
+          startIntro("back/forward shown");
+          if (page) page.style.opacity = "";
+          await c.fade(page, 1, 250);
+        } finally {
+          if (page) page.style.opacity = "";
+          end();
+        }
+      })();
     };
     window.addEventListener("popstate", onPop, { capture: true });
     return () => window.removeEventListener("popstate", onPop, { capture: true });
-  }, [run]);
+  }, [end, startIntro, swap]);
 
   return <TransitionContext.Provider value={{ navigate }}>{children}</TransitionContext.Provider>;
-}
-
-/** Fallback for browsers without View Transitions: animate the live page wrapper with GSAP. */
-async function gsapFallback(
-  swap: () => Promise<void>,
-  direction: Direction,
-  reduced: boolean,
-  k: number,
-  onSlidIn: () => void,
-) {
-  const el = document.getElementById(PAGE_ROOT_ID);
-  if (!el) {
-    await swap();
-    onSlidIn();
-    return;
-  }
-  // GSAP only loads for this fallback (browsers without View Transitions).
-  const { gsap } = await loadGsap();
-  const sign = direction === "back" ? -1 : 1;
-  gsap.set(el, { transformOrigin: "50% 50vh", overflow: "hidden", willChange: "transform, opacity" });
-
-  if (reduced) {
-    await gsap.to(el, { opacity: 0, duration: 0.2 });
-  } else {
-    await gsap.to(el, { scale: 0.9, borderRadius: 32, opacity: 0.3, xPercent: -40 * sign, duration: 0.45 * k, ease: "power3.inOut" });
-  }
-
-  await swap();
-
-  if (reduced) {
-    await gsap.to(el, { opacity: 1, duration: 0.2 });
-    onSlidIn();
-  } else {
-    gsap.set(el, { xPercent: 100 * sign, scale: 0.92, borderRadius: 32, opacity: 1 });
-    await gsap.to(el, { xPercent: 0, duration: 0.65 * k, ease: "expo.out" });
-    onSlidIn();
-    await gsap.to(el, { scale: 1, borderRadius: 0, duration: 0.5 * k, ease: "power3.out" });
-  }
-  gsap.set(el, { clearProps: "all" });
 }

@@ -180,61 +180,10 @@ blockquote {
   --ease-power3-out: cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
-/* The fixed navbar stays put and switches to the new page's state at once: no cross-fade of its
-   contents, no colour transitions while a page transition runs. */
-.vt-navbar { view-transition-name: navbar; }
-::view-transition-group(navbar) { animation: none; }
-::view-transition-old(navbar) { display: none; }
-::view-transition-new(navbar) { animation: none; }
+/* Page transitions (curtain, src/lib/curtain.ts): the navbar never animates its colours while one runs,
+   so it switches to the new page's state once, behind the curtain. */
 html[data-vt] :is(.vt-navbar, .vt-navbar *) { transition: none !important; }
 
-::view-transition { background: var(--brand-black); }
-::view-transition-image-pair(root) { isolation: auto; }
-
-html[data-vt="slide"]::view-transition-old(root),
-html[data-vt="slide"]::view-transition-new(root) {
-  mix-blend-mode: normal;
-  transform-origin: 50% 50%;
-  overflow: hidden;
-  box-shadow: 0 30px 80px rgb(0 0 0 / 0.35);
-}
-
-/* 1 + 3: old page shrinks and rounds, then is pushed left and dims */
-html[data-vt="slide"]::view-transition-old(root) {
-  animation:
-    vt-old-shrink calc(0.45s * var(--vt)) var(--ease-power3-inout) both,
-    vt-old-push calc(0.8s * var(--vt)) var(--ease-expo-inout) calc(0.3s * var(--vt)) both;
-}
-/* 2 + 4: new page slides in at 0.92, then grows to full screen */
-html[data-vt="slide"]::view-transition-new(root) {
-  animation:
-    vt-new-slide calc(0.8s * var(--vt)) var(--ease-expo-inout) calc(0.3s * var(--vt)) both,
-    vt-new-grow calc(0.5s * var(--vt)) var(--ease-power3-out) calc(1.1s * var(--vt)) both;
-}
-
-@keyframes vt-old-shrink { to { scale: 0.9; border-radius: 32px; } }
-@keyframes vt-old-push { to { translate: -40% 0; opacity: 0.3; } }
-@keyframes vt-new-slide { from { translate: 100% 0; } to { translate: 0 0; } }
-@keyframes vt-new-grow { from { scale: 0.92; border-radius: 32px; } to { scale: 1; border-radius: 0; } }
-
-/* Back button: mirror the direction */
-@keyframes vt-old-push-back { to { translate: 40% 0; opacity: 0.3; } }
-@keyframes vt-new-slide-back { from { translate: -100% 0; } to { translate: 0 0; } }
-html[data-vt="slide"][data-direction="back"]::view-transition-old(root) {
-  animation-name: vt-old-shrink, vt-old-push-back;
-}
-html[data-vt="slide"][data-direction="back"]::view-transition-new(root) {
-  animation-name: vt-new-slide-back, vt-new-grow;
-}
-
-/* Reduced motion: a short fade only */
-html[data-vt="fade"]::view-transition-old(root) { animation: vt-fade-out 0.2s ease both; }
-html[data-vt="fade"]::view-transition-new(root) { animation: vt-fade-in 0.2s ease both; }
-@keyframes vt-fade-out { to { opacity: 0; } }
-@keyframes vt-fade-in { from { opacity: 0; } }
-
-/* GSAP fallback (no View Transitions): black backdrop behind the page wrapper */
-html[data-vt] body { background: var(--brand-black); }
 #page-root { background: var(--brand-bg); }
 main:focus { outline: none; }
 /* Native anchor jumps (first load with a #hash) stop below the floating navbar, like ours do. */
@@ -326,7 +275,7 @@ main:focus { outline: none; }
 
 /* ---- Hero intros (homepage + inner pages): CSS only, transform/opacity, start at first paint ----
    No JavaScript on the critical path. The LCP text (.hero-rise/.ph-rise) only moves, never fades.
-   While a page transition runs (html[data-vt]) the intro waits, then plays when the new page is shown.
+   After a page transition the intro waits for page:ready (see html[data-intro] below).
    --i is the stagger index. */
 :root { --ease-intro: cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes intro-line { from { transform: translateY(110%); } }

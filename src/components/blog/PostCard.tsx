@@ -65,6 +65,7 @@ export default function PostCard({ post, priority }: { post: Post; priority?: bo
     <Link
       href={`/insights/${post.slug}`}
       {...preloadAttrs(post)}
+      label={post.category?.title ?? "Insights"}
       className="group flex h-full flex-col transition-transform duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-1 motion-reduce:hover:translate-y-0"
     >
       <CoverImage
@@ -100,6 +101,7 @@ export function FeaturedPostCard({ post, priority = false }: { post: Post; prior
     <Link
       href={`/insights/${post.slug}`}
       {...preloadAttrs(post, true)}
+      label={post.category?.title ?? "Insights"}
       className="group grid items-center gap-8 rounded-[28px] border border-brand-silver bg-white p-4 sm:p-5 lg:grid-cols-[1.2fr_1fr] lg:gap-12"
     >
       <CoverImage image={post.coverImage} category={post.category} priority={priority} zoom sizes="(min-width: 1280px) 680px, (min-width: 1024px) 54vw, 100vw" />
