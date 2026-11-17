@@ -60,7 +60,7 @@ export function Work({ head: workSection, items: work }: { head: Home["work"]; i
 }
 
 /* ---------- 6. Testimonials (visibility rules: showTestimonials in content.ts) ---------- */
-function TRow({ items, reverse, showPlaceholderLabel }: { items: Testimonial[]; reverse?: boolean; showPlaceholderLabel: boolean }) {
+function TRow({ items, reverse }: { items: Testimonial[]; reverse?: boolean; showPlaceholderLabel?: boolean }) {
   return (
     <div className="marquee overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]">
       <div className={`marquee-track flex w-max gap-4 ${reverse ? "reverse" : ""}`}>
@@ -72,11 +72,6 @@ function TRow({ items, reverse, showPlaceholderLabel }: { items: Testimonial[]; 
           >
             <div className="flex items-center justify-between gap-3">
               <div className="text-brand-orange" aria-label="5 stars">★★★★★</div>
-              {showPlaceholderLabel && !t.approved && (
-                <span className="rounded-full border border-dashed border-brand-orange/70 bg-brand-orange/10 px-2.5 py-0.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-brand-orange">
-                  Placeholder
-                </span>
-              )}
             </div>
             <blockquote className="mt-4 text-lg leading-snug text-white/90">“{t.quote}”</blockquote>
             <figcaption className="mt-6 text-sm">
