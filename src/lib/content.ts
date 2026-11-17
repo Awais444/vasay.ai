@@ -39,11 +39,11 @@ export const site = {
   hours: "Mon–Fri, 9am–6pm",
   copyright: "© 2026 Smart Solutions Inc. All rights reserved.",
   socials: [
-    { label: "Instagram", href: "https://instagram.com/" },
-    { label: "LinkedIn", href: "https://linkedin.com/" },
-    { label: "Facebook", href: "https://facebook.com/" },
-    { label: "X", href: "https://x.com/" },
-    { label: "Pinterest", href: "https://pinterest.com/" },
+    { label: "Instagram", href: "https://www.instagram.com/vasay.ai/" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/vasay-founder/" },
+    { label: "Facebook", href: "https://www.facebook.com/profile.php?id=61595589789856" },
+    { label: "X", href: "https://x.com/vasay_ai" },
+    { label: "Pinterest", href: "https://ca.pinterest.com/vasayai/" },
   ],
 };
 
