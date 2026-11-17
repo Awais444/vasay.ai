@@ -128,7 +128,7 @@ export function Team({ head: teamSection, members: team }: { head: Home["team"];
               {member.photo ? (
                 <Image
                   src={imageUrl(member.photo, 600, 750) ?? ""}
-                  alt={member.photo.alt ?? member.name}
+                  alt={member.photo.alt || `${member.name}, ${member.role} at Smart Solutions`}
                   fill
                   sizes="(min-width: 1024px) 240px, 50vw"
                   className="object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105"
@@ -137,7 +137,7 @@ export function Team({ head: teamSection, members: team }: { head: Home["team"];
                 // Real photo shipped with the site (fallback when the CMS is not configured)
                 <Image
                   src={member.photoSrc}
-                  alt={member.name}
+                  alt={`${member.name}, ${member.role} at Smart Solutions`}
                   fill
                   sizes="(min-width: 1024px) 240px, 50vw"
                   className="object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105"
