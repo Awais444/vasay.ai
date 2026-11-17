@@ -41,7 +41,7 @@ export default function WorkCard({ item, index, src }: { item: WorkItem; index: 
               </span>
             )}
           </div>
-          <span className="absolute left-5 top-5 rounded-full bg-white px-3 py-1 text-[13px] font-semibold text-brand-black">
+          <span className={`absolute left-5 ${src ? "bottom-5" : "top-5"} rounded-full bg-white px-3 py-1 text-[13px] font-semibold text-brand-black`}>
             {item.category}
           </span>
           <span className="absolute right-5 top-5 flex h-11 w-11 scale-75 items-center justify-center rounded-full bg-white text-brand-black opacity-0 transition-all duration-500 ease-[var(--ease-out-expo)] group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100" aria-hidden="true">
