@@ -14,8 +14,13 @@ export default function WhatsAppFloat({ href }: { href: string }) {
       dismissed = sessionStorage.getItem(DISMISS_KEY) === "1";
     } catch {}
     if (dismissed) return;
-    const t = window.setTimeout(() => setBubble(true), 2500);
-    return () => window.clearTimeout(t);
+    // Show the bubble after 2.5s, then hide it on its own after 8s on screen.
+    const show = window.setTimeout(() => setBubble(true), 2500);
+    const hide = window.setTimeout(() => setBubble(false), 2500 + 8000);
+    return () => {
+      window.clearTimeout(show);
+      window.clearTimeout(hide);
+    };
   }, []);
 
   const dismiss = () => {
