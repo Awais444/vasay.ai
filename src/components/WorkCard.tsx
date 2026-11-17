@@ -31,7 +31,8 @@ export default function WorkCard({ item, index, src }: { item: WorkItem; index: 
     <div ref={ref} {...revealProps()} className={index % 2 ? "md:mt-24" : ""}>
       <Link href={item.href} className="group block">
         <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)]">
-          <div className={`parallax absolute -inset-y-[10%] inset-x-0 bg-gradient-to-br ${item.gradient} transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105`}>
+          {/* Real cover images show in full (no parallax overscan, which crops text in portfolio banners). */}
+          <div className={`${src ? "absolute inset-0 group-hover:scale-[1.02]" : "parallax absolute -inset-y-[10%] inset-x-0 group-hover:scale-105"} bg-gradient-to-br ${item.gradient} transition-transform duration-700 ease-[var(--ease-out-expo)]`}>
             {src ? (
               <Image src={src} alt={item.image?.alt ?? item.title} fill className="object-cover" sizes="(min-width: 768px) 50vw, 100vw" />
             ) : (
