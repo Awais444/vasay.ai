@@ -39,7 +39,7 @@ const QUERY = `{
   "faqs": *[_type == "faq"] | order(order asc) { q, a, showOn, "services": services[]->slug.current },
   "team": *[_type == "teamMember" && show != false] | order(order asc) { name, role, "slug": slug.current, tint, photo, bio },
   "testimonials": *[_type == "testimonial"] | order(order asc) { quote, name, business, service, rating, approved },
-  "work": *[_type == "workItem"] | order(order asc) { title, category, description, gradient, href, image, result },
+  "work": *[_type == "workItem" && show != false] | order(order asc) { title, category, description, gradient, href, image, result },
   "redirects": *[_type == "redirect" && defined(from) && defined(to)] { from, to, permanent }
 }`;
 

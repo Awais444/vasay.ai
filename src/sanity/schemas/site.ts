@@ -474,6 +474,7 @@ export const workItem = defineType({
   type: "document",
   orderings: [{ title: "Order", name: "order", by: [{ field: "order", direction: "asc" }] }],
   fields: [
+    defineField({ name: "show", title: "Show on the site", type: "boolean", initialValue: true, description: "Turn off to hide this item from the website without deleting it." }),
     str("title", "Title", { required: true, max: 60 }),
     str("category", "Category", { required: true, max: 24 }),
     imageField("image", "Cover image", "4:3, at least 1200px wide. Without an image, a brand gradient is used."),
@@ -497,7 +498,7 @@ export const workItem = defineType({
     }),
     defineField({ name: "order", type: "number" }),
   ],
-  preview: { select: { title: "title", subtitle: "category", media: "image" } },
+  preview: { select: { title: "title", subtitle: "category", media: "image", show: "show" }, prepare: ({ title, subtitle, media, show }) => ({ title, subtitle: show === false ? `Hidden · ${subtitle}` : subtitle, media }) },
 });
 
 export const faq = defineType({
