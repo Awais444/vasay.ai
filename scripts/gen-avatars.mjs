@@ -4,7 +4,7 @@ import { createAvatar } from "@dicebear/core";
 import { notionists } from "@dicebear/collection";
 import { mkdirSync, writeFileSync } from "node:fs";
 
-const slugs = ["marcus-reynolds", "sophia-bennett", "ethan-carter", "amelia-hayes", "olivia-morgan"];
+const slugs = ["marcus-reynolds", "sophia-bennett", "ethan-carter", "amelia-hayes", "olivia-morgan", "adnan-dar"];
 mkdirSync("public/team", { recursive: true });
 for (const seed of slugs) {
   const svg = createAvatar(notionists, { seed, backgroundColor: ["transparent"] }).toString();
