@@ -364,9 +364,9 @@ export const teamSection = {
 export const team = [
   { name: "Sadaqat Sheikh", role: "Founder & CEO", slug: "sadaqat-sheikh", tint: "#E7EAEC", photoSrc: "/team/sadaqat-sheikh.jpg" },
   { name: "Adnan Dar", role: "Business Development Lead", slug: "adnan-dar", tint: "#E7EAEC", photoSrc: "/team/adnan-dar.jpg" },
-  { name: "Fahad Bin Khalid", role: "Web Development Lead", slug: "fahad", tint: "#E7EAEC", photoSrc: "/team/fahad.jpg" },
-  { name: "Hidayatul Haq", role: "Search Engine Optimization Lead", slug: "hidayat", tint: "#E7EAEC", photoSrc: "/team/hidayat.jpg" },
-  { name: "Abdul Muneeb", role: "AWS Lead", slug: "muneeb", tint: "#E7EAEC", photoSrc: "/team/muneeb.jpg" },
+  { name: "Fahad Bin Khalid", role: "Software Development Lead", slug: "fahad", tint: "#E7EAEC", photoSrc: "/team/fahad.jpg" },
+  { name: "Hidayatul Haq", role: "Digital Marketing Manager", slug: "hidayat", tint: "#E7EAEC", photoSrc: "/team/hidayat.jpg" },
+  { name: "Abdul Muneeb", role: "Platform Engineering Lead", slug: "muneeb", tint: "#E7EAEC", photoSrc: "/team/muneeb.jpg" },
 ];
 
 export const faqSection = {
