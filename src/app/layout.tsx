@@ -12,6 +12,7 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Analytics from "@/components/Analytics";
 import PreviewTools from "@/components/PreviewTools";
+import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { Suspense } from "react";
 import { isIndexable, SITE_NAME } from "@/lib/seo";
 import { organization, website } from "@/lib/schema";
@@ -86,6 +87,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </TransitionProvider>
         </SmoothScroll>
         </MotionProvider>
+        <HideOnStudio>
+          <WhatsAppFloat href={c.settings.phoneHref} />
+        </HideOnStudio>
         {/* Studio preview only (Draft Mode); nothing for normal visitors */}
         <Suspense fallback={null}>
           <PreviewTools />

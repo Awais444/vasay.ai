@@ -390,3 +390,12 @@ main:focus { outline: none; }
 }
 .search-clear:hover { background: var(--brand-bg); color: var(--brand-black); }
 .search-clear:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; box-shadow: none; }
+
+/* Floating WhatsApp button: gentle float + bubble pop-in (off with reduced motion) */
+@media (prefers-reduced-motion: no-preference) {
+  .wa-float { animation: wa-float 3s ease-in-out infinite; }
+  .wa-float:hover, .wa-float:focus-visible { animation-play-state: paused; }
+  .wa-bubble { animation: wa-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; transform-origin: 28px 100%; }
+}
+@keyframes wa-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+@keyframes wa-pop { from { opacity: 0; transform: translateY(8px) scale(0.92); } to { opacity: 1; transform: none; } }
