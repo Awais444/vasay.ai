@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",
+    "export:godaddy": "node scripts/export-godaddy.mjs",
     "start": "next start",
     "lint": "eslint",
     "sanity:seed": "node --env-file=.env.local scripts/sanity-seed.mjs",

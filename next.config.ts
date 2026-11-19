@@ -26,9 +26,16 @@ async function loadRedirects(): Promise<{ from: string; to: string; permanent: b
   }
 }
 
+const staticExport = process.env.STATIC_EXPORT === "1";
+
 const nextConfig: NextConfig = {
+  // File Manager hosting has no Node process. `npm run export:godaddy` sets this and writes `out/`.
+  ...(staticExport ? { output: "export" as const } : {}),
   // GoDaddy Airo preview serves the dev server from this host.
   allowedDevOrigins: ["*.airoapp.ai", "**.airoapp.ai"],
+  ...(staticExport
+    ? {}
+    : {
   async headers() {
     return [
       {
@@ -59,18 +66,20 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [{ source: "/studio/:path+", destination: "/studio" }];
   },
-  images: {
-    // AVIF first (smallest), WebP fallback.
-    formats: ["image/avif", "image/webp"],
-    // Blog images from Sanity's CDN
-    remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
-  },
+      }),
+  images: staticExport
+    ? { unoptimized: true }
+    : {
+        // AVIF first (smallest), WebP fallback.
+        formats: ["image/avif", "image/webp"],
+        // Blog images from Sanity's CDN
+        remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
+      },
   experimental: {
     // Inline the (small, Tailwind) CSS into the HTML: no render-blocking stylesheet request.
     inlineCss: true,
   },
-  cacheComponents: true,
-  partialPrefetching: true,
+  ...(staticExport ? {} : { cacheComponents: true, partialPrefetching: true }),
 };
 
 export default nextConfig;

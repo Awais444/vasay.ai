@@ -1,5 +1,6 @@
 # GoDaddy / Apache (static export). Keep in sync with redirects() in next.config.ts.
 Options -Indexes
+DirectoryIndex index.html
 RewriteEngine On
 
 # Canonical origin: https://vasay.ai (https, no www) in one 301 hop
@@ -11,14 +12,20 @@ RewriteRule ^ https://vasay.ai%{REQUEST_URI} [L,R=301]
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.+)/$ /$1 [L,R=301]
 
+# Sanity Studio is a single-page app at /studio
+RewriteCond %{REQUEST_URI} ^/studio(/|$)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^studio(?:/.*)?$ /studio/index.html [L]
+
 # Old-site URLs (301)
 RewriteRule ^our-services/?$ /services [R=301,L]
 RewriteRule ^lead-generation-ai-automation/?$ /services/ai-automation [R=301,L]
 
 # Serve exported pages without .html: /about -> /about.html
+# Each page also has a folder of the same name. Apache would 403 that folder.
+# Match the .html file from the URL, not from the folder path.
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteCond %{DOCUMENT_ROOT}/$1.html -f
 RewriteRule ^(.+?)/?$ $1.html [L]
 
 ErrorDocument 404 /404.html
