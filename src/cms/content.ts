@@ -5,7 +5,7 @@ import { createClient, type FilterDefault } from "next-sanity";
 import type { PortableTextBlock } from "@portabletext/react";
 import { apiVersion, dataset, isSanityConfigured, projectId } from "@/sanity/env";
 import { seedContent, finishSettings } from "./seed";
-import type { CmsContent, Faq, Link, Rich, Seo, SystemShowcase } from "./types";
+import type { CmsContent, Faq, Link, Rich, Seo, SystemShowcase, TeamMember } from "./types";
 import { SHOWCASE_ICONS, SHOWCASE_VISUALS } from "./showcase-options";
 
 /*
@@ -26,7 +26,10 @@ const QUERY = `{
   "settings": *[_id == "siteSettings"][0],
   "nav": *[_id == "navigation"][0],
   "home": *[_id == "homePage"][0],
-  "about": *[_id == "aboutPage"][0],
+  "about": *[_id == "aboutPage"][0]{
+    ...,
+    leadership{ ..., "members": members[]->{ name, role, "slug": slug.current, tint, photo, bio, linkedin, isFounder, show } }
+  },
   "contact": *[_id == "contactPage"][0],
   "servicesPage": *[_id == "servicesPage"][0],
   "insightsPage": *[_id == "insightsPage"][0],
@@ -37,7 +40,7 @@ const QUERY = `{
     ..., "slug": slug.current, "related": related[]->slug.current
   },
   "faqs": *[_type == "faq"] | order(order asc) { q, a, showOn, "services": services[]->slug.current },
-  "team": *[_type == "teamMember" && show != false] | order(order asc) { name, role, "slug": slug.current, tint, photo, bio },
+  "team": *[_type == "teamMember" && show != false && isFounder != true] | order(order asc) { name, role, "slug": slug.current, tint, photo, bio },
   "testimonials": *[_type == "testimonial"] | order(order asc) { quote, name, business, service, rating, approved },
   "work": *[_type == "workItem" && show != false] | order(order asc) { title, category, description, gradient, href, image, result },
   "redirects": *[_type == "redirect" && defined(from) && defined(to)] { from, to, permanent }
@@ -170,6 +173,7 @@ function build(raw: Raw, seed: CmsContent): CmsContent {
     seed.home,
   );
 
+  const member = (t: Raw): TeamMember => ({ name: t.name ?? "", role: t.role ?? "", slug: t.slug ?? "", tint: t.tint ?? "#E7EAEC", photo: t.photo ?? undefined, photoSrc: undefined, bio: t.bio ?? undefined, linkedin: t.linkedin || undefined, isFounder: !!t.isFounder });
   const pageHero = (d: Raw) => ({ eyebrow: d.eyebrow ?? "", lines: toLines(d.lines), sub: d.sub ?? "" });
   const about = single(
     "About page",
@@ -179,6 +183,7 @@ function build(raw: Raw, seed: CmsContent): CmsContent {
       primaryCta: L(d.primaryCta),
       secondaryCta: L(d.secondaryCta),
       story: { show: !!d.story && d.story.show !== false, ...head(d.story), paragraphs: arr(d.story?.paragraphs) },
+      leadership: { show: !!d.leadership && d.leadership.show !== false, ...head(d.leadership), members: arr(d.leadership?.members).filter((m: Raw | null) => m && m.show !== false).map(member) },
       mission: { show: !!d.mission && d.mission.show !== false, ...head(d.mission), statement: d.mission?.statement ?? "", values: arr(d.mission?.values).map((v: Raw) => ({ title: v.title ?? "", body: v.body ?? "" })) },
       showStats: d.showStats !== false,
       showTeam: d.showTeam !== false,
@@ -267,7 +272,7 @@ function build(raw: Raw, seed: CmsContent): CmsContent {
     nav,
     home,
     services,
-    team: arr(raw.team).map((t: Raw) => ({ name: t.name ?? "", role: t.role ?? "", slug: t.slug ?? "", tint: t.tint ?? "#E7EAEC", photo: t.photo ?? undefined, photoSrc: undefined, bio: t.bio ?? undefined })),
+    team: arr(raw.team).map(member),
     testimonials: arr(raw.testimonials).map((t: Raw) => ({ quote: t.quote ?? "", name: t.name ?? "", role: t.service ?? t.business ?? "", business: t.business ?? undefined, rating: t.rating ?? 5, approved: !!t.approved })),
     work: arr(raw.work).map((w: Raw) => ({ category: w.category ?? "", title: w.title ?? "", description: w.description ?? "", gradient: w.gradient ?? "from-accent via-accent-bright to-accent-deep", href: w.href ?? "/services", image: w.image ?? undefined, result: w.result || undefined })),
     faqs: { home: faqFor((f) => arr(f.showOn).includes("home")), contact: faqFor((f) => arr(f.showOn).includes("contact")) },

@@ -141,7 +141,7 @@ export type Service = {
   updated: string;
 };
 
-export type TeamMember = { name: string; role: string; slug: string; tint: string; photo?: SanityImage; photoSrc?: string; bio?: string };
+export type TeamMember = { name: string; role: string; slug: string; tint: string; photo?: SanityImage; photoSrc?: string; bio?: string; linkedin?: string; isFounder?: boolean };
 export type Testimonial = { quote: string; name: string; role: string; business?: string; rating?: number; approved: boolean };
 export type WorkItem = { category: string; title: string; description: string; gradient: string; href: string; image?: SanityImage; imageSrc?: string; result?: string };
 
@@ -164,6 +164,7 @@ export type AboutPage = {
   primaryCta: Link;
   secondaryCta: Link;
   story: SectionHead & { show: boolean; paragraphs: string[] };
+  leadership: SectionHead & { show: boolean; members: TeamMember[] };
   mission: SectionHead & { show: boolean; statement: string; values: { title: string; body: string }[] };
   showStats: boolean;
   showTeam: boolean;

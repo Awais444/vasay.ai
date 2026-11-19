@@ -137,6 +137,8 @@ export function seedContent(): CmsContent {
       primaryCta: { label: "Book a free strategy call", href: "#contact" },
       secondaryCta: { label: "Meet the team", href: "#team" },
       story: { show: true, eyebrow: c.about.story.eyebrow, title: rich(c.about.story.title, c.about.story.accent), paragraphs: c.about.story.paragraphs },
+      // Leadership content lives in Sanity only (no fallback copy).
+      leadership: { show: false, eyebrow: "", title: [], members: [] },
       mission: { show: true, eyebrow: c.about.mission.eyebrow, title: rich(c.about.mission.title, c.about.mission.accent), statement: c.about.mission.statement, values: c.about.mission.values },
       showStats: true,
       showTeam: true,

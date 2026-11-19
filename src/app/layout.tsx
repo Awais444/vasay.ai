@@ -44,7 +44,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const c = await getContent();
   const navServices = c.services.map((s) => ({ slug: s.slug, icon: s.icon, title: s.title, tag: s.tag, href: `/services/${s.slug}` }));
   // Site-wide entities; every page's WebPage/Service/BlogPosting links to these @ids.
-  const jsonLd = [organization(c.settings), website()];
+  const founders = c.about.leadership.show ? c.about.leadership.members.filter((m) => m.isFounder) : [];
+  const jsonLd = [organization(c.settings, founders), website()];
   // Page names shown on the transition curtain.
   const routeLabels: Record<string, string> = {
     "/": "Home",

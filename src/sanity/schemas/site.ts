@@ -232,6 +232,20 @@ export const aboutPage = defineType({
     defineField({ ...link("secondaryCta", "Hero secondary button"), group: "content" }),
     defineField({ ...sectionObject("story", "Our story", [...sectionHead(), stringList("paragraphs", "Paragraphs")]), group: "content" }),
     defineField({
+      ...sectionObject("leadership", "Leadership", [
+        ...sectionHead(),
+        defineField({
+          name: "members",
+          title: "Leaders",
+          type: "array",
+          description: "Up to 3 Team members. Founders (\"Is a founder\" on) appear here only, not in the team grid.",
+          validation: (r) => r.max(3),
+          of: [defineArrayMember({ type: "reference", to: [{ type: "teamMember" }] })],
+        }),
+      ]),
+      group: "content",
+    }),
+    defineField({
       ...sectionObject("mission", "Mission & values", [
         ...sectionHead(),
         str("statement", "Mission statement", { rows: 3, max: 220 }),
@@ -442,8 +456,10 @@ export const teamMember = defineType({
   fields: [
     str("name", "Name", { required: true, max: 40 }),
     str("role", "Role", { max: 40 }),
-    imageField("photo", "Photo", "Portrait, at least 800px tall. Without a photo, the illustrated avatar is used."),
+    imageField("photo", "Photo", "Portrait, at least 800px tall. Without a photo, an initials tile is shown."),
     str("bio", "Bio", { rows: 3, max: 300 }),
+    defineField({ name: "linkedin", title: "LinkedIn profile URL", type: "url" }),
+    defineField({ name: "isFounder", title: "Is a founder", type: "boolean", initialValue: false, description: "Founders are shown in the About page Leadership section, not in the team grid." }),
     defineField({ name: "order", type: "number" }),
     defineField({ name: "show", title: "Show on the site", type: "boolean", initialValue: true }),
     defineField({ name: "slug", type: "slug", options: { source: "name" }, hidden: true }),

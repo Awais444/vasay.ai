@@ -30,7 +30,26 @@ const realProfiles = (links: { href: string }[]) =>
   });
 
 /** Site-wide business entity (from Site settings in the CMS). */
-export function organization(site: Settings) {
+export const personId = (slug: string) => `${abs("/about")}#person-${slug}`;
+
+type PersonInput = { name: string; role: string; slug: string; image?: string | null; linkedin?: string };
+
+/** Person entity (worksFor the organisation; LinkedIn as sameAs). */
+const person = (m: PersonInput) => ({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": personId(m.slug),
+  name: m.name,
+  ...(m.role ? { jobTitle: m.role } : {}),
+  worksFor: { "@id": ORG_ID },
+  ...(m.image ? { image: abs(m.image) } : {}),
+  ...(m.linkedin ? { sameAs: [m.linkedin] } : {}),
+});
+
+/** Leaders get a Person entry once they have a photo or a title. */
+export const leaderPeople = (leaders: PersonInput[]) => leaders.filter((m) => m.image || m.role).map(person);
+
+export function organization(site: Settings, founders: { name: string; slug: string }[] = []) {
   const sameAs = realProfiles(site.socials);
   return {
     "@context": "https://schema.org",
@@ -76,8 +95,8 @@ export function organization(site: Settings) {
       "Brand identity",
       "Website security",
     ],
-    // TODO: add when confirmed — geo (latitude/longitude), openingHoursSpecification, email,
-    // foundingDate, founder, and sameAs (social profiles, Google Business Profile, directories).
+    // TODO: add when confirmed — geo (latitude/longitude), openingHoursSpecification, foundingDate.
+    ...(founders.length ? { founder: founders.map((p) => ({ "@type": "Person", "@id": personId(p.slug), name: p.name })) } : {}),
     ...(sameAs.length ? { sameAs } : {}),
   };
 }
@@ -176,16 +195,6 @@ export function faqPage(path: string, faqs: { q: string; a: string }[]) {
  * Person entities for team members with a real photo (show is already filtered in the CMS query).
  * Members without a photo are left out on purpose.
  */
-export function teamPeople(members: { name: string; role: string; slug: string; image?: string | null }[]) {
-  return members
-    .filter((m) => m.image)
-    .map((m) => ({
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "@id": `${abs("/about")}#person-${m.slug}`,
-      name: m.name,
-      jobTitle: m.role,
-      worksFor: { "@id": ORG_ID },
-      image: abs(m.image as string),
-    }));
+export function teamPeople(members: PersonInput[]) {
+  return members.filter((m) => m.image).map(person);
 }

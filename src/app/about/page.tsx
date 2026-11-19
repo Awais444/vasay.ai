@@ -1,5 +1,6 @@
 import { getContent } from "@/cms/content";
-import { breadcrumbs, ORG_ID, teamPeople, webPage } from "@/lib/schema";
+import { breadcrumbs, leaderPeople, ORG_ID, teamPeople, webPage } from "@/lib/schema";
+import Leadership from "@/components/Leadership";
 import { memberPhoto } from "@/lib/team";
 import { pageMetadata, withSeo } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
@@ -29,7 +30,8 @@ export default async function AboutPage() {
             { name: "Home", path: "/" },
             { name: "About", path: "/about" },
           ]),
-          ...(about.showTeam ? teamPeople(c.team.map((m) => ({ name: m.name, role: m.role, slug: m.slug, image: memberPhoto(m, 800) }))) : []),
+          ...(about.leadership.show ? leaderPeople(about.leadership.members.map((m) => ({ ...m, image: memberPhoto(m, 800) }))) : []),
+          ...(about.showTeam ? teamPeople(c.team.map((m) => ({ ...m, image: memberPhoto(m, 800) }))) : []),
         ]}
       />
       <PageHero
@@ -51,6 +53,8 @@ export default async function AboutPage() {
         </div>
       </section>
       )}
+
+      <Leadership data={about.leadership} />
 
       {about.mission.show && (
       <section aria-label="Mission and values" className="bg-brand-black text-white section-y">
