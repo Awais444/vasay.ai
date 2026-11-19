@@ -4,6 +4,7 @@ import type { Home, TeamMember, Testimonial, WorkItem } from "@/cms/types";
 import { imageUrl } from "@/sanity/client";
 import { memberPhoto } from "@/lib/team";
 import InitialsTile from "./InitialsTile";
+import CarouselArrows from "./CarouselArrows";
 import { revealProps } from "@/lib/reveal";
 import WorkCard from "./WorkCard";
 
@@ -110,15 +111,29 @@ export function Testimonials({
 }
 
 /* ---------- 7. Team ---------- */
-/** Card width per breakpoint: 2 columns (mobile, tablet; last row centred), 5 on desktop (last row left-aligned). */
-const teamCard = "w-[calc((100%-1rem)/2)] lg:w-[calc((100%-6rem)/5)]";
+/**
+ * Team carousel (CSS scroll-snap, swipe on touch, arrows on larger screens). Cards visible per view:
+ * ~1.4 on mobile, 2.4 on small tablets, 3 on tablets, 4 on desktop; the next card peeks in as a hint.
+ */
+const teamCard = "w-[70%] shrink-0 snap-start sm:w-[calc((100%-2rem)/2.4)] md:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-4.5rem)/4)]";
 
 export function Team({ head: teamSection, members: team }: { head: Home["team"]; members: TeamMember[] }) {
   if (!teamSection.show || !team.length) return null;
   return (
     <section id="team" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
-      <Heading {...teamSection} />
-      <ul className="mx-auto mt-[var(--head-gap)] flex max-w-7xl flex-wrap justify-center lg:justify-start gap-x-4 gap-y-8 lg:gap-x-6 lg:gap-y-12">
+      <div className="flex items-end justify-between gap-6">
+        <Heading {...teamSection} />
+        {team.length > 1 && (
+          <div className="hidden shrink-0 sm:block">
+            <CarouselArrows targetId="team-track" label="Team members" />
+          </div>
+        )}
+      </div>
+      <ul
+        id="team-track"
+        aria-label="Team members"
+        className="no-scrollbar -mx-5 mt-[var(--head-gap)] flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto overscroll-x-contain px-5 pb-2 sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:gap-6"
+      >
         {team.map((member, i) => {
           const photo = memberPhoto(member, 720);
           return (
@@ -130,7 +145,7 @@ export function Team({ head: teamSection, members: team }: { head: Home["team"];
                       src={photo.src}
                       alt={member.photo?.alt || `${member.name}, ${member.role} at Smart Solutions`}
                       fill
-                      sizes="(min-width: 1024px) 240px, 50vw"
+                      sizes="(min-width: 1024px) 300px, (min-width: 640px) 40vw, 70vw"
                       className="team-photo object-cover"
                       style={{ objectPosition: photo.position }}
                     />

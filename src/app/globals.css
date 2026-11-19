@@ -407,3 +407,7 @@ main:focus { outline: none; }
   .team-bio { opacity: 0; transform: translateY(4px); transition: opacity 0.3s ease, transform 0.3s ease; }
   .group:hover .team-bio, .group:focus-within .team-bio { opacity: 1; transform: none; }
 }
+
+/* Horizontal carousels: hide the scrollbar (swipe, trackpad and arrow buttons still scroll). */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
