@@ -1,6 +1,6 @@
 // Server Component: About page "Leadership" (founders and leaders picked in Sanity). No client JavaScript.
-// Cards fill their height with whatever content exists (bio, quote or highlights) and shrink
-// (square photo, centred content) when there is none, so they never show empty space.
+// Cards fill their height with whatever content exists (bio, quote or highlights). With none, the
+// photo stays 4:5 and the content is centred vertically, so they never show an empty block.
 import Image from "next/image";
 import type { AboutPage, Settings } from "@/cms/types";
 import { revealProps } from "@/lib/reveal";
@@ -28,9 +28,9 @@ export default function Leadership({ data, settings }: { data: AboutPage["leader
       </div>
       <ul className={`mt-[var(--head-gap)] grid items-start gap-6 ${data.members.length > 1 ? "lg:grid-cols-2" : "max-w-3xl"}`}>
         {data.members.map((m, i) => {
-          const src = memberPhoto(m, 800);
+          const photo = memberPhoto(m, 900);
           const highlights = m.highlights ?? [];
-          // What fills the middle of the card: bio/quote first, then highlights; nothing = compact card.
+          // What fills the middle of the card: bio/quote first, then highlights; nothing = content centred.
           const middle = m.quote || m.bio ? "text" : highlights.length ? "chips" : null;
           const compact = !middle;
           return (
@@ -39,17 +39,18 @@ export default function Leadership({ data, settings }: { data: AboutPage["leader
               {...revealProps(i * 0.08)}
               className="group grid overflow-hidden rounded-[var(--radius-card)] border border-brand-silver bg-white sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]"
             >
-              {/* The spacer sets the minimum ratio (4:5, or 1:1 when compact); the photo stretches with taller content. */}
-              <div className={`relative overflow-hidden rounded-[22px] bg-accent sm:m-3 sm:mr-0 ${compact ? "sm:self-center" : ""}`}>
-                <span aria-hidden="true" className={`block ${compact ? "aspect-square" : "aspect-[4/5]"}`} />
-                {src ? (
+              {/* The spacer keeps the photo at least 4:5 in every state; it stretches with taller content. */}
+              <div className="relative overflow-hidden rounded-[22px] bg-accent sm:m-3 sm:mr-0">
+                <span aria-hidden="true" className="block aspect-[4/5]" />
+                {photo ? (
                   <>
                     <Image
-                      src={src}
+                      src={photo.src}
                       alt={m.photo?.alt || `${m.name}, ${m.role} at Smart Solutions`}
                       fill
                       sizes="(min-width: 1024px) 280px, (min-width: 640px) 45vw, 100vw"
                       className="team-photo object-cover"
+                      style={{ objectPosition: photo.position }}
                     />
                     <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-accent/55 to-transparent" />
                   </>

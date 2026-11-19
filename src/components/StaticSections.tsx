@@ -120,18 +120,19 @@ export function Team({ head: teamSection, members: team }: { head: Home["team"];
       <Heading {...teamSection} />
       <ul className="mx-auto mt-[var(--head-gap)] flex max-w-7xl flex-wrap justify-center lg:justify-start gap-x-4 gap-y-8 lg:gap-x-6 lg:gap-y-12">
         {team.map((member, i) => {
-          const src = memberPhoto(member);
+          const photo = memberPhoto(member, 720);
           return (
             <li key={member.slug} {...revealProps(i * 0.07)} className={`group ${teamCard}`}>
               <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] bg-accent">
-                {src ? (
+                {photo ? (
                   <>
                     <Image
-                      src={src}
+                      src={photo.src}
                       alt={member.photo?.alt || `${member.name}, ${member.role} at Smart Solutions`}
                       fill
                       sizes="(min-width: 1024px) 240px, 50vw"
                       className="team-photo object-cover"
+                      style={{ objectPosition: photo.position }}
                     />
                     {/* Klein Blue fade over the bottom quarter */}
                     <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-accent/55 to-transparent" />

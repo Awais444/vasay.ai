@@ -30,8 +30,8 @@ export default async function AboutPage() {
             { name: "Home", path: "/" },
             { name: "About", path: "/about" },
           ]),
-          ...(about.leadership.show ? leaderPeople(about.leadership.members.map((m) => ({ ...m, image: memberPhoto(m, 800) }))) : []),
-          ...(about.showTeam ? teamPeople(c.team.map((m) => ({ ...m, image: memberPhoto(m, 800) }))) : []),
+          ...(about.leadership.show ? leaderPeople(about.leadership.members.map((m) => ({ ...m, image: memberPhoto(m)?.src }))) : []),
+          ...(about.showTeam ? teamPeople(c.team.map((m) => ({ ...m, image: memberPhoto(m)?.src }))) : []),
         ]}
       />
       <PageHero

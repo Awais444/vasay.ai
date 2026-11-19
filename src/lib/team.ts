@@ -1,14 +1,27 @@
 import type { TeamMember } from "@/cms/types";
 import { imageUrl } from "@/sanity/client";
 
+/** Default focus for portraits without a hotspot: biased to the top so heads are never cut off. */
+export const PORTRAIT_POSITION = "50% 18%";
+
+type Hotspot = { x?: number; y?: number };
+
 /**
- * A member's real photo (Sanity image cropped to 4:5 around the editor's hotspot, or a JPG/PNG/WebP
- * shipped with the site). Illustrated SVG avatars are never used on the public site: null means
- * "show the initials tile".
+ * A member's real photo: { src, position }. The image is requested uncropped (only the editor's
+ * crop rectangle from Sanity is applied) and framed in the card with object-fit: cover plus an
+ * object-position from the Sanity hotspot, or the top-biased default. This keeps headroom instead
+ * of letting a centre crop cut the head. Illustrated SVG avatars are never used on the public site:
+ * null means "show the initials tile".
  */
-export function memberPhoto(m: TeamMember, width = 720): string | null {
-  if (m.photo) return imageUrl(m.photo, width, Math.round((width * 5) / 4));
-  if (m.photoSrc && /\.(jpe?g|png|webp|avif)$/i.test(m.photoSrc)) return m.photoSrc;
+export function memberPhoto(m: TeamMember, width = 800): { src: string; position: string } | null {
+  if (m.photo) {
+    const src = imageUrl(m.photo, width);
+    if (!src) return null;
+    const h = m.photo.hotspot as Hotspot | undefined;
+    const position = h && typeof h.x === "number" && typeof h.y === "number" ? `${(h.x * 100).toFixed(1)}% ${(h.y * 100).toFixed(1)}%` : PORTRAIT_POSITION;
+    return { src, position };
+  }
+  if (m.photoSrc && /\.(jpe?g|png|webp|avif)$/i.test(m.photoSrc)) return { src: m.photoSrc, position: PORTRAIT_POSITION };
   return null;
 }
 
