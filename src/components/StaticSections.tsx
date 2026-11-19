@@ -109,15 +109,15 @@ export function Testimonials({
 }
 
 /* ---------- 7. Team ---------- */
-/** Card width per breakpoint: 2 columns (mobile, tablet), 3 on desktop; an unfilled last row is centred. */
-const teamCard = "w-[calc((100%-1rem)/2)] lg:w-[calc((100%-3rem)/3)]";
+/** Card width per breakpoint: 2 columns (mobile, tablet), 4 on desktop; an unfilled last row is centred. */
+const teamCard = "w-[calc((100%-1rem)/2)] lg:w-[calc((100%-4.5rem)/4)]";
 
 export function Team({ head: teamSection, members: team }: { head: Home["team"]; members: TeamMember[] }) {
   if (!teamSection.show || !team.length) return null;
   return (
     <section id="team" className="mx-auto max-w-7xl px-5 sm:px-6 section-y tone-light">
       <Heading {...teamSection} />
-      <ul className="mx-auto mt-[var(--head-gap)] flex max-w-5xl flex-wrap justify-center gap-x-4 gap-y-8 lg:gap-x-6 lg:gap-y-12">
+      <ul className="mx-auto mt-[var(--head-gap)] flex max-w-6xl flex-wrap justify-center gap-x-4 gap-y-8 lg:gap-x-6 lg:gap-y-12">
         {team.map((member, i) => {
           const src = memberPhoto(member);
           return (
@@ -129,7 +129,7 @@ export function Team({ head: teamSection, members: team }: { head: Home["team"];
                       src={src}
                       alt={member.photo?.alt || `${member.name}, ${member.role} at Smart Solutions`}
                       fill
-                      sizes="(min-width: 1024px) 330px, 50vw"
+                      sizes="(min-width: 1024px) 270px, 50vw"
                       className="team-photo object-cover"
                     />
                     {/* Klein Blue fade over the bottom quarter */}
