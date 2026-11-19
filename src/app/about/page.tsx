@@ -30,7 +30,8 @@ export default async function AboutPage() {
             { name: "Home", path: "/" },
             { name: "About", path: "/about" },
           ]),
-          ...(about.leadership.show ? leaderPeople(about.leadership.members.map((m) => ({ ...m, image: memberPhoto(m)?.src }))) : []),
+          // Founders: Person entries without an image (Leadership cards are text-only).
+          ...(about.leadership.show ? leaderPeople(about.leadership.members.map((m) => ({ ...m, image: undefined }))) : []),
           ...(about.showTeam ? teamPeople(c.team.map((m) => ({ ...m, image: memberPhoto(m)?.src }))) : []),
         ]}
       />
