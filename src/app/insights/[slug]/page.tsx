@@ -11,7 +11,7 @@ import PostBody, { getFaqs, getHeadings } from "@/components/blog/PostBody";
 import Toc from "@/components/blog/Toc";
 import ReadingProgress from "@/components/blog/ReadingProgress";
 import ShareButtons from "@/components/blog/ShareButtons";
-import AuthorBox, { AuthorAvatar } from "@/components/blog/AuthorBox";
+import AuthorBox from "@/components/blog/AuthorBox";
 import { CategoryChip } from "@/components/blog/PostCard";
 import CoverImage from "@/components/blog/CoverImage";
 import { ARTICLE_COVER_SIZES } from "@/lib/covers";
@@ -155,15 +155,7 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
           <h1 className="mt-4 font-display text-[clamp(34px,4.8vw,60px)] font-semibold leading-[1.04] tracking-[-0.04em]">{post.title}</h1>
           <p className="mt-5 text-xl leading-relaxed text-ink-2">{post.excerpt}</p>
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4 border-t border-brand-silver pt-6 text-sm text-ink-2">
-            {post.author && (
-              <Link href={`/insights/author/${post.author.slug}`} className="flex items-center gap-3">
-                <AuthorAvatar author={post.author} size={44} />
-                <span>
-                  <span className="block font-semibold text-brand-black">{post.author.name}</span>
-                  {post.author.role && <span>{post.author.role}</span>}
-                </span>
-              </Link>
-            )}
+            {/* Author is shown once, in the author box at the end of the article. */}
             <span>
               Published <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
             </span>
