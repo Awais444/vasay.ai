@@ -28,7 +28,7 @@ const QUERY = `{
   "home": *[_id == "homePage"][0],
   "about": *[_id == "aboutPage"][0]{
     ...,
-    leadership{ ..., "members": members[]->{ name, role, "slug": slug.current, tint, photo, bio, linkedin, isFounder, show } }
+    leadership{ ..., "members": members[]->{ name, role, "slug": slug.current, tint, photo, bio, quote, highlights, email, linkedin, isFounder, show } }
   },
   "contact": *[_id == "contactPage"][0],
   "servicesPage": *[_id == "servicesPage"][0],
@@ -173,7 +173,7 @@ function build(raw: Raw, seed: CmsContent): CmsContent {
     seed.home,
   );
 
-  const member = (t: Raw): TeamMember => ({ name: t.name ?? "", role: t.role ?? "", slug: t.slug ?? "", tint: t.tint ?? "#E7EAEC", photo: t.photo ?? undefined, photoSrc: undefined, bio: t.bio ?? undefined, linkedin: t.linkedin || undefined, isFounder: !!t.isFounder });
+  const member = (t: Raw): TeamMember => ({ name: t.name ?? "", role: t.role ?? "", slug: t.slug ?? "", tint: t.tint ?? "#E7EAEC", photo: t.photo ?? undefined, photoSrc: undefined, bio: t.bio || undefined, quote: t.quote || undefined, highlights: arr(t.highlights).filter(Boolean), email: t.email || undefined, linkedin: t.linkedin || undefined, isFounder: !!t.isFounder });
   const pageHero = (d: Raw) => ({ eyebrow: d.eyebrow ?? "", lines: toLines(d.lines), sub: d.sub ?? "" });
   const about = single(
     "About page",

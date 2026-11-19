@@ -54,7 +54,7 @@ export default async function AboutPage() {
       </section>
       )}
 
-      <Leadership data={about.leadership} />
+      <Leadership data={about.leadership} settings={c.settings} />
 
       {about.mission.show && (
       <section aria-label="Mission and values" className="bg-brand-black text-white section-y">

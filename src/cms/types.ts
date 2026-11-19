@@ -141,7 +141,7 @@ export type Service = {
   updated: string;
 };
 
-export type TeamMember = { name: string; role: string; slug: string; tint: string; photo?: SanityImage; photoSrc?: string; bio?: string; linkedin?: string; isFounder?: boolean };
+export type TeamMember = { name: string; role: string; slug: string; tint: string; photo?: SanityImage; photoSrc?: string; bio?: string; quote?: string; highlights?: string[]; email?: string; linkedin?: string; isFounder?: boolean };
 export type Testimonial = { quote: string; name: string; role: string; business?: string; rating?: number; approved: boolean };
 export type WorkItem = { category: string; title: string; description: string; gradient: string; href: string; image?: SanityImage; imageSrc?: string; result?: string };
 

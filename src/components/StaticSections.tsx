@@ -2,7 +2,8 @@
 import Image from "next/image";
 import type { Home, TeamMember, Testimonial, WorkItem } from "@/cms/types";
 import { imageUrl } from "@/sanity/client";
-import { memberPhoto, initials } from "@/lib/team";
+import { memberPhoto } from "@/lib/team";
+import InitialsTile from "./InitialsTile";
 import { revealProps } from "@/lib/reveal";
 import WorkCard from "./WorkCard";
 
@@ -137,10 +138,7 @@ export function Team({ head: teamSection, members: team }: { head: Home["team"];
                   </>
                 ) : (
                   // No real photo yet: initials tile in brand colours (no illustrated avatars).
-                  <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-accent to-accent-deep font-display text-5xl font-semibold tracking-tight text-white sm:text-7xl">
-                    {initials(member.name)}
-                    <span className="absolute bottom-5 left-5 h-2 w-10 rounded-full bg-brand-orange" />
-                  </span>
+                  <InitialsTile name={member.name} />
                 )}
               </div>
               <h3 className="mt-4 text-lg font-semibold">{member.name}</h3>
