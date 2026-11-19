@@ -267,7 +267,7 @@ function build(raw: Raw, seed: CmsContent): CmsContent {
     nav,
     home,
     services,
-    team: arr(raw.team).map((t: Raw) => ({ name: t.name ?? "", role: t.role ?? "", slug: t.slug ?? "", tint: t.tint ?? "#E7EAEC", photo: t.photo ?? undefined, photoSrc: t.photo ? undefined : t.slug ? `/team/${t.slug}.svg` : undefined, bio: t.bio ?? undefined })),
+    team: arr(raw.team).map((t: Raw) => ({ name: t.name ?? "", role: t.role ?? "", slug: t.slug ?? "", tint: t.tint ?? "#E7EAEC", photo: t.photo ?? undefined, photoSrc: undefined, bio: t.bio ?? undefined })),
     testimonials: arr(raw.testimonials).map((t: Raw) => ({ quote: t.quote ?? "", name: t.name ?? "", role: t.service ?? t.business ?? "", business: t.business ?? undefined, rating: t.rating ?? 5, approved: !!t.approved })),
     work: arr(raw.work).map((w: Raw) => ({ category: w.category ?? "", title: w.title ?? "", description: w.description ?? "", gradient: w.gradient ?? "from-accent via-accent-bright to-accent-deep", href: w.href ?? "/services", image: w.image ?? undefined, result: w.result || undefined })),
     faqs: { home: faqFor((f) => arr(f.showOn).includes("home")), contact: faqFor((f) => arr(f.showOn).includes("contact")) },

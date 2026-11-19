@@ -1,5 +1,6 @@
 import { getContent } from "@/cms/content";
-import { breadcrumbs, ORG_ID, webPage } from "@/lib/schema";
+import { breadcrumbs, ORG_ID, teamPeople, webPage } from "@/lib/schema";
+import { memberPhoto } from "@/lib/team";
 import { pageMetadata, withSeo } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
 import { Stats } from "@/components/Sections";
@@ -28,6 +29,7 @@ export default async function AboutPage() {
             { name: "Home", path: "/" },
             { name: "About", path: "/about" },
           ]),
+          ...(about.showTeam ? teamPeople(c.team.map((m) => ({ name: m.name, role: m.role, slug: m.slug, image: memberPhoto(m, 800) }))) : []),
         ]}
       />
       <PageHero

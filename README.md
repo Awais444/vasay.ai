@@ -13,7 +13,7 @@ npm run dev                  # http://localhost:3000
 - **All copy and data:** `src/lib/content.ts`
 - **Brand colours / theme:** `:root` in `src/app/globals.css`
 - **Components:** `src/components/`
-- Team avatars are generated into `public/team/` by `npm run avatars` (this runs automatically before every build).
+- Team photos come from Sanity (Team member → Photo). Members without a photo show an initials tile.
 
 ## Environment variables
 

@@ -171,3 +171,21 @@ export function faqPage(path: string, faqs: { q: string; a: string }[]) {
     mainEntity: faqs.map((f) => ({ "@type": "Question", name: plain(f.q), acceptedAnswer: { "@type": "Answer", text: plain(f.a) } })),
   };
 }
+
+/**
+ * Person entities for team members with a real photo (show is already filtered in the CMS query).
+ * Members without a photo are left out on purpose.
+ */
+export function teamPeople(members: { name: string; role: string; slug: string; image?: string | null }[]) {
+  return members
+    .filter((m) => m.image)
+    .map((m) => ({
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "@id": `${abs("/about")}#person-${m.slug}`,
+      name: m.name,
+      jobTitle: m.role,
+      worksFor: { "@id": ORG_ID },
+      image: abs(m.image as string),
+    }));
+}
