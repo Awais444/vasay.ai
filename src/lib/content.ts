@@ -367,6 +367,7 @@ export const team = [
   { name: "Fahad Bin Khalid", role: "Software Development Lead", slug: "fahad", tint: "#E7EAEC", photoSrc: "/team/fahad.jpg" },
   { name: "Hidayatul Haq", role: "Digital Marketing Manager", slug: "hidayat", tint: "#E7EAEC", photoSrc: "/team/hidayat.jpg" },
   { name: "Abdul Muneeb", role: "Platform Engineering Lead", slug: "muneeb", tint: "#E7EAEC", photoSrc: "/team/muneeb.jpg" },
+  { name: "Hayyan Ahmed", role: "Media & Corporate Lead", slug: "hayyan-ahmed", tint: "#E7EAEC", photoSrc: "/team/hayyan-ahmed.jpg" },
 ];
 
 export const faqSection = {
