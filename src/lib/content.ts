@@ -362,7 +362,7 @@ export const teamSection = {
 
 // Fallback team (used when Sanity is not configured). Photos live in /public/team/.
 export const team = [
-  { name: "Sadaqat Sheikh", role: "Founder & CEO", slug: "sadaqat-sheikh", tint: "#E7EAEC", photoSrc: "/team/sadaqat-sheikh.jpg" },
+  { name: "Hamdan Ahmed", role: "Chief Strategic Executive", slug: "hamdan-ahmed", tint: "#E7EAEC", photoSrc: "/team/hamdan-ahmed.jpg" },
   { name: "Adnan Dar", role: "Business Development Lead", slug: "adnan-dar", tint: "#E7EAEC", photoSrc: "/team/adnan-dar.jpg" },
   { name: "Fahad Bin Khalid", role: "Software Development Lead", slug: "fahad", tint: "#E7EAEC", photoSrc: "/team/fahad.jpg" },
   { name: "Hidayatul Haq", role: "Digital Marketing Manager", slug: "hidayat", tint: "#E7EAEC", photoSrc: "/team/hidayat.jpg" },
