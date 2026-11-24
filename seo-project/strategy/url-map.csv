@@ -1,0 +1,34 @@
+url,status,decision,page_type,cluster,primary_query,month
+/,exists,improve,home,digital marketing agency (GTA),digital marketing agency Vaughan GTA,1
+/services,exists,keep,hub,digital marketing services,digital marketing services Vaughan GTA,
+/services/seo,exists,improve,service,SEO services,SEO services Vaughan,1
+/services/paid-ads,exists,improve,service,Google Ads / PPC,Google Ads agency Toronto,1
+/services/ai-automation,exists,improve,service,AI automation / GoHighLevel,GoHighLevel agency Canada,2
+/services/web-development,exists,improve,service,Web development,custom web development Toronto,3
+/services/website-design,exists,improve,service,Web design,web design company Vaughan,4
+/services/social-media,exists,keep,service,Social media management,social media management Toronto,4
+/services/brand-identity,exists,keep,service,Branding,branding agency Toronto,
+/services/cybersecurity,exists,improve (title),service,Website security,website security small business Toronto,4
+/about,exists,keep,about,brand,Smart Solutions team,
+/contact,exists,improve,contact,brand,contact digital marketing agency Concord,1
+/work,new,create,hub,proof,Smart Solutions case studies,1
+/work/serik-seo,new,create,case study,SEO services,SEO case study Toronto,1
+/work/serik-google-ads,new,create,case study,Google Ads / PPC,Google Ads case study,1
+/work/tms-task-attendance-lead-management,new,create,case study,Web development,custom CRM development case study,3
+/work/nahj-hrms,new,create,case study,Web development,HRMS development Laravel,3
+/work/property-investment-platform,new,create,case study,Web development,real estate platform development,3
+/insights/what-is-ai-lead-follow-up,exists,keep,article,AI lead follow-up,what is AI lead follow-up,
+/insights/seo-cost-toronto,new,create,article,SEO cost,how much does SEO cost in Toronto,1
+/insights/gohighlevel-canada,new,create,article,GoHighLevel cost,GoHighLevel Canada pricing,2
+/insights/missed-call-text-back,new,create,article,Missed-call text-back,missed call text back small business,2
+/insights/website-cost-toronto,new,create,article,Website cost,how much does a website cost in Toronto,3
+/insights/google-ads-budget-toronto,new,create,article,Google Ads budget,how much to spend on Google Ads Toronto,3
+/insights/google-business-profile-guide,new,create,article,Google Business Profile,how to rank on Google Maps,4
+/insights/casl-sms-email-rules,new,create,article,CASL,CASL rules SMS email marketing,4
+/insights/ai-search-visibility,new,create,article,AI search,how to show up in ChatGPT and AI Overviews,5
+/insights/social-media-management-cost,new,create,article,Social media cost,social media management cost Toronto,5
+/insights/website-hacked,new,create,article,Website hacked,my website was hacked what to do,5
+/insights/choose-marketing-agency,new,create,article,Choosing an agency,how to choose a marketing agency Toronto,6
+/insights/agency-vs-freelancer,new,create,article,Agency vs freelancer,marketing agency vs freelancer,6
+/privacy-policy,exists,keep,legal,,,
+/terms,exists,keep,legal,,,
