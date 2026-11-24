@@ -26,10 +26,10 @@ export type Settings = {
   tagline: string;
   description: string;
   phone: string;
-  /** E.164 (+14375640199) */
+  /** E.164 (+16475593900) */
   phoneE164: string;
   phoneHref: string;
-  /** +1-437-564-0199, for structured data */
+  /** +1-647-559-3900, for structured data */
   phoneSchema: string;
   email: string;
   emailHref: string;
