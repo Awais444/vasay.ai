@@ -14,10 +14,12 @@ import { structure, SINGLETON_TYPES } from "./src/sanity/structure";
 export default defineConfig({
   name: "default",
   title: "Smart Solutions CMS",
-  basePath: "/studio",
+  // Next.js serves it at /studio. `sanity deploy` hosts it at the studio domain root.
+  basePath: process.env.SANITY_STUDIO_HOSTED === "1" ? "/" : "/studio",
   // Placeholder only when unset: /studio shows setup steps instead of loading the Studio.
-  projectId: projectId || "missing",
-  dataset,
+  // `sanity build` only inlines SANITY_STUDIO_* variables into the browser bundle.
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID || projectId || "missing",
+  dataset: process.env.SANITY_STUDIO_DATASET || dataset,
   schema: {
     types: schemaTypes,
     // Singletons can't be created from the "+" menu (they exist once, with fixed IDs).
@@ -29,8 +31,10 @@ export default defineConfig({
   },
   plugins: [
     structureTool({ structure }),
-    // Live preview of the real site with click-to-edit (Draft Mode via /api/draft-mode/enable).
-    presentationTool({ resolve, previewUrl: { previewMode: { enable: "/api/draft-mode/enable" } } }),
+    // Live preview needs the Next.js server. The static GoDaddy studio edits content without it.
+    ...(process.env.SANITY_STUDIO_STATIC === "1"
+      ? []
+      : [presentationTool({ resolve, previewUrl: { previewMode: { enable: "/api/draft-mode/enable" } } })]),
     visionTool({ defaultApiVersion: apiVersion }),
     // Search and pick free Unsplash photos inside any image field (uploads still work).
     unsplashImageAsset(),
