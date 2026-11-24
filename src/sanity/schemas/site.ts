@@ -24,7 +24,7 @@ export const siteSettings = defineType({
     str("legalName", "Legal name", { required: true, max: 60 }),
     str("tagline", "Tagline", { max: 80 }),
     str("description", "Short description", { rows: 3, max: 220, description: "Used in structured data, llms.txt and as the default meta description." }),
-    str("phone", "Phone (as displayed)", { required: true, max: 20, description: "e.g. (437) 564-0199. Links and structured data are generated from it." }),
+    str("phone", "Phone (as displayed)", { required: true, max: 20, description: "e.g. (647) 559-3900. Links and structured data are generated from it." }),
     defineField({ name: "email", title: "Email", type: "string", validation: (r) => r.required().email() }),
     defineField({
       name: "address",

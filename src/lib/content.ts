@@ -17,12 +17,12 @@ export const site = {
   description:
     "Smart Solutions, powered by VASAY.AI, is a full-service digital marketing agency in Concord, Ontario. Brand, websites, SEO, paid ads, content and AI automation, built to work together.",
   // Contact details: the only place they're defined. Everything else reads from here.
-  phone: "(437) 564-0199",
+  phone: "(647) 559-3900",
   /** E.164, for tel: links */
-  phoneE164: "+14375640199",
-  phoneHref: "https://wa.me/14375640199",
+  phoneE164: "+16475593900",
+  phoneHref: "https://wa.me/16475593900",
   /** International format for structured data */
-  phoneSchema: "+1-437-564-0199",
+  phoneSchema: "+1-647-559-3900",
   email: "info@smartsolutionsinc.ca",
   emailHref: "mailto:info@smartsolutionsinc.ca",
   address: {
